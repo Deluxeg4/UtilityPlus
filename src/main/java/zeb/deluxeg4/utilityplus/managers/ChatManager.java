@@ -1,6 +1,8 @@
 package zeb.deluxeg4.utilityplus.managers;
 
 import zeb.deluxeg4.utilityplus.UtilityPlus;
+import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -28,6 +30,7 @@ public class ChatManager {
     private final UtilityPlus plugin;
     private File dataFile;
     private FileConfiguration dataConfig;
+    private ScheduledTask pendingSaveTask;
 
     private final Set<UUID> globalMuted   = ConcurrentHashMap.newKeySet();
     private final Set<UUID> teamChatMuted = ConcurrentHashMap.newKeySet();
@@ -108,11 +111,11 @@ public class ChatManager {
     public boolean toggleHardDeathMessages(UUID uuid) {
         if (hardDeathMessagesMuted.contains(uuid)) {
             hardDeathMessagesMuted.remove(uuid);
-            saveData();
+            saveLater();
             return false;
         }
         hardDeathMessagesMuted.add(uuid);
-        saveData();
+        saveLater();
         return true;
     }
 
@@ -126,13 +129,13 @@ public class ChatManager {
 
     public boolean toggleHardIgnore(UUID viewer, String targetName) {
         boolean ignored = toggleName(hardIgnoredPlayers.computeIfAbsent(viewer, uuid -> ConcurrentHashMap.newKeySet()), targetName);
-        saveData();
+        saveLater();
         return ignored;
     }
 
     public boolean toggleDeathMessageIgnore(UUID viewer, String targetName) {
         boolean ignored = toggleName(ignoredDeathMessages.computeIfAbsent(viewer, uuid -> ConcurrentHashMap.newKeySet()), targetName);
-        saveData();
+        saveLater();
         return ignored;
     }
 
@@ -158,6 +161,22 @@ public class ChatManager {
     }
 
     public void saveData() {
+        cancelPendingSave();
+        saveNow();
+    }
+
+    private synchronized void saveLater() {
+        if (pendingSaveTask != null && !pendingSaveTask.isCancelled()) {
+            return;
+        }
+
+        pendingSaveTask = PaperFoliaTasks.runGlobalDelayed(plugin, task -> {
+            pendingSaveTask = null;
+            saveNow();
+        }, 30L * 20L);
+    }
+
+    private synchronized void saveNow() {
         if (dataConfig == null) {
             return;
         }
@@ -178,6 +197,13 @@ public class ChatManager {
         } catch (IOException e) {
             plugin.getLogger().severe("[ChatManager] Could not save chat.yml!");
         }
+    }
+
+    private synchronized void cancelPendingSave() {
+        if (pendingSaveTask != null && !pendingSaveTask.isCancelled()) {
+            pendingSaveTask.cancel();
+        }
+        pendingSaveTask = null;
     }
 
     private void loadData() {

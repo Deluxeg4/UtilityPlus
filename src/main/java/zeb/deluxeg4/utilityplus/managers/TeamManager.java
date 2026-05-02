@@ -109,6 +109,7 @@ public class TeamManager {
     private File             dataFile;
     private FileConfiguration dataConfig;
     private ScheduledTask    offlineCheckTask;
+    private ScheduledTask    pendingSaveTask;
 
     public TeamManager(UtilityPlus plugin) {
         this.plugin = plugin;
@@ -200,26 +201,26 @@ public class TeamManager {
     // ── Create ───────────────────────────────────────────────────────
 
     /** Returns null on success, error string on failure. */
-    public String createTeam(UUID ownerUUID, String ownerName) {
+    public synchronized String createTeam(UUID ownerUUID, String ownerName) {
         if (isInTeam(ownerUUID)) return "You are already in a team! Use /team leave first.";
 
         String id = ownerUUID.toString();
         Team team = new Team(id, ownerUUID, ownerName);
         teams.put(id, team);
         playerTeam.put(ownerUUID, id);
-        saveData();
+        saveLater();
         return null;
     }
 
     // ── Disband ──────────────────────────────────────────────────────
 
-    public void disbandTeam(Team team) {
+    public synchronized void disbandTeam(Team team) {
         new ArrayList<>(team.getMembers().keySet()).forEach(uuid -> {
             playerTeam.remove(uuid);
             offlineSince.remove(uuid);
         });
         teams.remove(team.id);
-        saveData();
+        saveLater();
     }
 
     // ── Invite system ────────────────────────────────────────────────
@@ -248,7 +249,7 @@ public class TeamManager {
     public void removeInvite(UUID inviteeUUID) { invites.remove(inviteeUUID); }
 
     /** Accept invite — returns error or null on success. */
-    public String acceptInvite(UUID inviteeUUID) {
+    public synchronized String acceptInvite(UUID inviteeUUID) {
         Invite inv = getInvite(inviteeUUID);
         if (inv == null) return "You have no pending invite (or it expired).";
         if (isInTeam(inviteeUUID)) { invites.remove(inviteeUUID); return "You are already in a team."; }
@@ -261,14 +262,14 @@ public class TeamManager {
         playerTeam.put(inviteeUUID, inv.teamId);
         offlineSince.remove(inviteeUUID);
         invites.remove(inviteeUUID);
-        saveData();
+        saveLater();
         return null;
     }
 
     // ── Leave ────────────────────────────────────────────────────────
 
     /** Returns true if the team was disbanded (owner left with no members). */
-    public boolean leaveTeam(UUID uuid) {
+    public synchronized boolean leaveTeam(UUID uuid) {
         Team team = getPlayerTeam(uuid);
         if (team == null) return false;
 
@@ -279,7 +280,7 @@ public class TeamManager {
 
         if (team.size() == 0) {
             teams.remove(team.id);
-            saveData();
+            saveLater();
             return true;
         }
 
@@ -295,24 +296,24 @@ public class TeamManager {
             if (newOwner != null) team.displayName = newOwner.getName() + "'s Team";
         }
 
-        saveData();
+        saveLater();
         return false;
     }
 
     // ── Kick ─────────────────────────────────────────────────────────
 
-    public boolean kickMember(Team team, UUID target) {
+    public synchronized boolean kickMember(Team team, UUID target) {
         if (!team.hasMember(target)) return false;
         team.removeMember(target);
         playerTeam.remove(target);
         offlineSince.remove(target);
-        saveData();
+        saveLater();
         return true;
     }
 
     // ── Promote / Demote ─────────────────────────────────────────────
 
-    public String promote(Team team, UUID actor, UUID target) {
+    public synchronized String promote(Team team, UUID actor, UUID target) {
         Role actorRole  = team.getRole(actor);
         Role targetRole = team.getRole(target);
         if (actorRole == null || targetRole == null) return "Player not in team.";
@@ -324,15 +325,15 @@ public class TeamManager {
             // Update displayName
             Player newOwner = Bukkit.getPlayer(target);
             if (newOwner != null) team.displayName = newOwner.getName() + "'s Team";
-            saveData(); return null;
+            saveLater(); return null;
         }
         Role next = targetRole.promoted();
         if (next == null) return "Cannot promote further.";
         team.setRole(target, next);
-        saveData(); return null;
+        saveLater(); return null;
     }
 
-    public String demote(Team team, UUID actor, UUID target) {
+    public synchronized String demote(Team team, UUID actor, UUID target) {
         Role actorRole  = team.getRole(actor);
         Role targetRole = team.getRole(target);
         if (actorRole == null || targetRole == null) return "Player not in team.";
@@ -340,7 +341,7 @@ public class TeamManager {
         Role next = targetRole.demoted();
         if (next == null || next == Role.OWNER)      return "Cannot demote further.";
         team.setRole(target, next);
-        saveData(); return null;
+        saveLater(); return null;
     }
 
     // ── Persistence ──────────────────────────────────────────────────
@@ -379,6 +380,22 @@ public class TeamManager {
     }
 
     public void saveData() {
+        cancelPendingSave();
+        saveNow();
+    }
+
+    private synchronized void saveLater() {
+        if (pendingSaveTask != null && !pendingSaveTask.isCancelled()) {
+            return;
+        }
+
+        pendingSaveTask = PaperFoliaTasks.runGlobalDelayed(plugin, task -> {
+            pendingSaveTask = null;
+            saveNow();
+        }, 30L * 20L);
+    }
+
+    private synchronized void saveNow() {
         if (dataFile == null) dataFile = new File(plugin.getDataFolder(), "teams.yml");
         dataConfig = new YamlConfiguration();
         for (Team team : teams.values()) {
@@ -397,6 +414,13 @@ public class TeamManager {
         }
         try { dataConfig.save(dataFile); }
         catch (IOException e) { plugin.getLogger().severe("[TeamManager] Cannot save teams.yml!"); }
+    }
+
+    private synchronized void cancelPendingSave() {
+        if (pendingSaveTask != null && !pendingSaveTask.isCancelled()) {
+            pendingSaveTask.cancel();
+        }
+        pendingSaveTask = null;
     }
 
     // ── Broadcast helper ─────────────────────────────────────────────

@@ -47,10 +47,7 @@ public class StatsListener implements Listener {
 
         colorDeathMessage(event, victim, killer);
         
-        // Auto-save every few deaths or use periodic save
-        // For simplicity, we save on every death/kill here, but in a busy server 
-        // you might want to save periodically.
-        statsManager.saveData();
+        statsManager.saveLater();
     }
 
     private void colorDeathMessage(PlayerDeathEvent event, Player victim, Player killer) {
@@ -84,7 +81,7 @@ public class StatsListener implements Listener {
         }
 
         if (killer != null && !selfKillCommand) {
-            Component itemComponent = createNamedWeaponComponent(killer, messageColor);
+            Component itemComponent = createNamedWeaponComponent(killer);
             if (itemComponent != null) {
                 broadcastDeathMessage(event, victim, message, itemComponent);
                 return;
@@ -124,7 +121,7 @@ public class StatsListener implements Listener {
         Bukkit.getConsoleSender().sendMessage(message + " using " + LegacyComponentSerializer.legacySection().serialize(itemComponent));
     }
 
-    private Component createNamedWeaponComponent(Player killer, String messageColor) {
+    private Component createNamedWeaponComponent(Player killer) {
         ItemStack weapon = killer.getInventory().getItemInMainHand();
         if (weapon.getType() == Material.AIR || !weapon.hasItemMeta()) {
             return null;
@@ -135,8 +132,13 @@ public class StatsListener implements Listener {
             return null;
         }
 
+        String displayName = ChatColor.stripColor(meta.getDisplayName());
+        if (displayName == null || displayName.isEmpty()) {
+            return null;
+        }
+
         return LegacyComponentSerializer.legacySection()
-                .deserialize(ChatColor.RESET + meta.getDisplayName())
+                .deserialize(ChatColor.GOLD + displayName)
                 .hoverEvent(weapon.asHoverEvent());
     }
 

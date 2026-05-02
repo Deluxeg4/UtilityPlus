@@ -1,6 +1,8 @@
 package zeb.deluxeg4.utilityplus.managers;
 
 import zeb.deluxeg4.utilityplus.UtilityPlus;
+import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,6 +16,7 @@ public class StatsManager {
     private final UtilityPlus plugin;
     private File dataFile;
     private FileConfiguration dataConfig;
+    private ScheduledTask pendingSaveTask;
 
     private final Map<UUID, PlayerStats> statsMap = new HashMap<>();
 
@@ -48,6 +51,22 @@ public class StatsManager {
     }
 
     public void saveData() {
+        cancelPendingSave();
+        saveNow();
+    }
+
+    public synchronized void saveLater() {
+        if (pendingSaveTask != null && !pendingSaveTask.isCancelled()) {
+            return;
+        }
+
+        pendingSaveTask = PaperFoliaTasks.runGlobalDelayed(plugin, task -> {
+            pendingSaveTask = null;
+            saveNow();
+        }, 30L * 20L);
+    }
+
+    private synchronized void saveNow() {
         for (Map.Entry<UUID, PlayerStats> entry : statsMap.entrySet()) {
             String path = "stats." + entry.getKey().toString();
             dataConfig.set(path + ".kills", entry.getValue().getKills());
@@ -59,6 +78,13 @@ public class StatsManager {
         } catch (IOException e) {
             plugin.getLogger().severe("[StatsManager] Could not save stats.yml!");
         }
+    }
+
+    private synchronized void cancelPendingSave() {
+        if (pendingSaveTask != null && !pendingSaveTask.isCancelled()) {
+            pendingSaveTask.cancel();
+        }
+        pendingSaveTask = null;
     }
 
     public PlayerStats getStats(UUID uuid) {
@@ -74,13 +100,13 @@ public class StatsManager {
         return statsMap.computeIfAbsent(uuid, k -> new PlayerStats(k, name != null ? name : "Unknown", 0, 0));
     }
 
-    public void addKill(UUID uuid, String name) {
+    public synchronized void addKill(UUID uuid, String name) {
         PlayerStats ps = getOrCreateStats(uuid, name);
         ps.setName(name);
         ps.setKills(ps.getKills() + 1);
     }
 
-    public void addDeath(UUID uuid, String name) {
+    public synchronized void addDeath(UUID uuid, String name) {
         PlayerStats ps = getOrCreateStats(uuid, name);
         ps.setName(name);
         ps.setDeaths(ps.getDeaths() + 1);

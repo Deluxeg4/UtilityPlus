@@ -1,6 +1,7 @@
 package zeb.deluxeg4.utilityplus.managers;
 
 import zeb.deluxeg4.utilityplus.UtilityPlus;
+import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,6 +37,7 @@ public class HomeManager {
 
     // Active warmup tasks
     private final Map<UUID, ScheduledTask> warmupTasks = new HashMap<>();
+    private ScheduledTask pendingSaveTask;
 
     // Config values (refreshed on reload)
     private int warmupSeconds;
@@ -101,6 +103,22 @@ public class HomeManager {
     }
 
     public void saveData() {
+        cancelPendingSave();
+        saveNow();
+    }
+
+    private synchronized void saveLater() {
+        if (pendingSaveTask != null && !pendingSaveTask.isCancelled()) {
+            return;
+        }
+
+        pendingSaveTask = PaperFoliaTasks.runGlobalDelayed(plugin, task -> {
+            pendingSaveTask = null;
+            saveNow();
+        }, 30L * 20L);
+    }
+
+    private synchronized void saveNow() {
         if (dataFile == null) dataFile = new File(plugin.getDataFolder(), "homes.dat");
         plugin.getDataFolder().mkdirs();
 
@@ -132,6 +150,13 @@ public class HomeManager {
         }
     }
 
+    private synchronized void cancelPendingSave() {
+        if (pendingSaveTask != null && !pendingSaveTask.isCancelled()) {
+            pendingSaveTask.cancel();
+        }
+        pendingSaveTask = null;
+    }
+
     // ── CRUD ─────────────────────────────────────────────────────────
 
     /** Slots currently available based on max-homes config. */
@@ -141,10 +166,10 @@ public class HomeManager {
 
     public boolean isValidSlot(String name) { return getActiveSlots().contains(name); }
 
-    public boolean setHome(UUID uuid, String name, Location loc) {
+    public synchronized boolean setHome(UUID uuid, String name, Location loc) {
         if (!isValidSlot(name)) return false;
         homes.computeIfAbsent(uuid, k -> new LinkedHashMap<>()).put(name, loc);
-        saveData();
+        saveLater();
         return true;
     }
 
@@ -155,11 +180,11 @@ public class HomeManager {
 
     public boolean hasHome(UUID uuid, String name) { return getHome(uuid, name) != null; }
 
-    public boolean deleteHome(UUID uuid, String name) {
+    public synchronized boolean deleteHome(UUID uuid, String name) {
         Map<String, Location> m = homes.get(uuid);
         if (m == null || !m.containsKey(name)) return false;
         m.remove(name);
-        saveData();
+        saveLater();
         return true;
     }
 

@@ -48,25 +48,14 @@ public class    SpawnListener implements Listener {
                     Location target = randomSpawn != null ? randomSpawn : spawnManager.getSpawn();
                     if (target == null) return;
 
-                    PaperFoliaTasks.runForPlayer(spawnManager.getPlugin(), player, () -> {
-                        PaperFoliaTasks.teleport(player, target, spawnManager.getPlugin(), success -> {
-                            if (success) {
-                                player.sendMessage(randomSpawn != null
-                                        ? "Â§aWelcome to the server! You have been sent to a random spawn."
-                                        : "Â§aWelcome to the server! You have been teleported to spawn.");
-                            }
-                        });
-                    });
+                    PaperFoliaTasks.runForPlayer(spawnManager.getPlugin(), player, () ->
+                            PaperFoliaTasks.teleport(player, target, spawnManager.getPlugin(), null));
                 });
                 return;
             }
 
             if (spawnManager.hasSpawn()) {
-                PaperFoliaTasks.teleport(player, spawnManager.getSpawn(), spawnManager.getPlugin(), success -> {
-                    if (success) {
-                        player.sendMessage("§aWelcome to the server! You have been teleported to spawn.");
-                    }
-                });
+                PaperFoliaTasks.teleport(player, spawnManager.getSpawn(), spawnManager.getPlugin(), null);
             }
         }
     }

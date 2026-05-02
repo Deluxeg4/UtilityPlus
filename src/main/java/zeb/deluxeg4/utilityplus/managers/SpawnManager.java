@@ -52,6 +52,7 @@ public class SpawnManager {
 
     // Warmup task tracker: UUID -> active warmup task
     private final Map<UUID, ScheduledTask> warmupTasks = new HashMap<>();
+    private ScheduledTask pendingSaveTask;
 
     // Tracks players who have joined before (persisted in spawn.yml)
     // We store them as a list so first-join detection survives restarts
@@ -154,6 +155,22 @@ public class SpawnManager {
     }
 
     public void saveData() {
+        cancelPendingSave();
+        saveNow();
+    }
+
+    private synchronized void saveLater() {
+        if (pendingSaveTask != null && !pendingSaveTask.isCancelled()) {
+            return;
+        }
+
+        pendingSaveTask = PaperFoliaTasks.runGlobalDelayed(plugin, task -> {
+            pendingSaveTask = null;
+            saveNow();
+        }, 30L * 20L);
+    }
+
+    private synchronized void saveNow() {
         if (spawnLocation != null) {
             dataConfig.set("spawn.world", spawnLocation.getWorld().getName());
             dataConfig.set("spawn.x",     spawnLocation.getX());
@@ -173,6 +190,13 @@ public class SpawnManager {
         } catch (IOException e) {
             plugin.getLogger().severe("[SpawnManager] Could not save spawn.yml!");
         }
+    }
+
+    private synchronized void cancelPendingSave() {
+        if (pendingSaveTask != null && !pendingSaveTask.isCancelled()) {
+            pendingSaveTask.cancel();
+        }
+        pendingSaveTask = null;
     }
 
     // ---------------------------------------------------------------
@@ -395,9 +419,9 @@ public class SpawnManager {
     }
 
     /** Mark a player as having joined before. */
-    public void markKnown(UUID uuid) {
+    public synchronized void markKnown(UUID uuid) {
         if (knownPlayers.add(uuid)) {
-            saveData(); // persist immediately so restarts don't re-trigger
+            saveLater();
         }
     }
 }
