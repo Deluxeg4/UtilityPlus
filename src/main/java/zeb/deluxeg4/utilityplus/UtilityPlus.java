@@ -1,6 +1,8 @@
 package zeb.deluxeg4.utilityplus;
 
 import zeb.deluxeg4.utilityplus.commands.*;
+import zeb.deluxeg4.utilityplus.invsee.InventorySeeMode;
+import zeb.deluxeg4.utilityplus.invsee.InventorySeeSessionManager;
 import zeb.deluxeg4.utilityplus.listeners.*;
 import zeb.deluxeg4.utilityplus.managers.*;
 import zeb.deluxeg4.utilityplus.tabcomplete.TabCompleterManager;
@@ -24,6 +26,8 @@ public class UtilityPlus extends JavaPlugin {
     private VanishCommand vanishCommand;
     private TickMonitor tickMonitor;
     private CpuMonitor  cpuMonitor;
+    private InventorySeeSessionManager inventorySeeSessionManager;
+    private InventorySeeSessionManager enderChestSeeSessionManager;
 
     @Override
     public void onEnable() {
@@ -40,6 +44,8 @@ public class UtilityPlus extends JavaPlugin {
         tabListManager = new TabListManager(this);
         tickMonitor  = new TickMonitor(this);
         cpuMonitor   = new CpuMonitor(this);
+        inventorySeeSessionManager = new InventorySeeSessionManager(this, InventorySeeMode.INVENTORY);
+        enderChestSeeSessionManager = new InventorySeeSessionManager(this, InventorySeeMode.ENDER_CHEST);
 
         // ── Executors ─────────────────────────────────────────────────
         // Spawn
@@ -143,6 +149,7 @@ public class UtilityPlus extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new StatsGUIListener(), this);
         getServer().getPluginManager().registerEvents(new TabListListener(this, tabListManager), this);
         getServer().getPluginManager().registerEvents(new VanishListener(this, vanishCommand), this);
+        getServer().getPluginManager().registerEvents(new InventorySeeListener(this), this);
 
         getLogger().info("UtilityPlus enabled!");
     }
@@ -156,6 +163,8 @@ public class UtilityPlus extends JavaPlugin {
         if (statsManager != null) statsManager.saveData();
         if (tabListManager != null) tabListManager.stop();
         if (vanishCommand != null) vanishCommand.saveData();
+        if (inventorySeeSessionManager != null) inventorySeeSessionManager.closeAll();
+        if (enderChestSeeSessionManager != null) enderChestSeeSessionManager.closeAll();
         getLogger().info("UtilityPlus disabled!");
     }
 
@@ -167,6 +176,8 @@ public class UtilityPlus extends JavaPlugin {
     public StatsManager getStatsManager() { return statsManager; }
     public DeathMessageManager getDeathMessageManager() { return deathMessageManager; }
     public TabListManager getTabListManager() { return tabListManager; }
+    public InventorySeeSessionManager getInventorySeeSessionManager() { return inventorySeeSessionManager; }
+    public InventorySeeSessionManager getEnderChestSeeSessionManager() { return enderChestSeeSessionManager; }
 
     private void registerCommands(CommandExecutor executor, String... names) {
         for (String name : names) {

@@ -1,14 +1,15 @@
 package zeb.deluxeg4.utilityplus.commands;
 
-import zeb.deluxeg4.utilityplus.UtilityPlus;
-import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import zeb.deluxeg4.utilityplus.UtilityPlus;
+import zeb.deluxeg4.utilityplus.invsee.InventorySeeMode;
 
-public class InventorySeeCommand implements CommandExecutor {
+public final class InventorySeeCommand implements CommandExecutor {
 
     private final UtilityPlus plugin;
 
@@ -18,40 +19,40 @@ public class InventorySeeCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        String cmd = command.getName().toLowerCase();
-        String permission = cmd.equals("enderchestsee") ? "utilityplus.enderchestsee" : "utilityplus.invsee";
-
-        if (!sender.hasPermission(permission)) {
-            sender.sendMessage("§cYou don't have permission to use this command.");
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("§cOnly players can use this command.");
             return true;
         }
 
-        if (!(sender instanceof Player viewer)) {
-            sender.sendMessage("§cOnly players can open this GUI.");
+        InventorySeeMode mode = label.equalsIgnoreCase("invsee") ? InventorySeeMode.INVENTORY : InventorySeeMode.ENDER_CHEST;
+        String permission = mode == InventorySeeMode.INVENTORY ? "utilityplus.invsee" : "utilityplus.enderchestsee";
+        if (!player.hasPermission(permission)) {
+            player.sendMessage("§cYou don't have permission to use this command.");
             return true;
         }
 
         if (args.length != 1) {
-            sender.sendMessage("§cUsage: /" + label + " <player>");
+            player.sendMessage("§cUsage: /" + label + " <player>");
             return true;
         }
 
-        Player target = Bukkit.getPlayerExact(args[0]);
-        if (target == null) {
-            sender.sendMessage("§cPlayer not found: " + args[0]);
+        Player online = Bukkit.getPlayerExact(args[0]);
+        OfflinePlayer target = online != null ? online : Bukkit.getOfflinePlayer(args[0]);
+        if (target.getUniqueId().equals(player.getUniqueId())) {
+            player.sendMessage("§cYou cannot open your own inventory.");
             return true;
         }
 
-        PaperFoliaTasks.runForPlayer(plugin, viewer, () -> {
-            if (cmd.equals("enderchestsee")) {
-                viewer.openInventory(target.getEnderChest());
-                viewer.sendMessage("§aOpened §e" + target.getName() + "§a's ender chest.");
-                return;
-            }
+        if (!target.isOnline() && !target.hasPlayedBefore() && !player.hasPermission("utilityplus.invsee.unseen")) {
+            player.sendMessage("§cThat player has never joined this server.");
+            return true;
+        }
 
-            viewer.openInventory(target.getInventory());
-            viewer.sendMessage("§aOpened §e" + target.getName() + "§a's inventory.");
-        });
+        if (mode == InventorySeeMode.INVENTORY) {
+            plugin.getInventorySeeSessionManager().open(target, player);
+        } else {
+            plugin.getEnderChestSeeSessionManager().open(target, player);
+        }
         return true;
     }
 }

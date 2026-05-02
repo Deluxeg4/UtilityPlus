@@ -4,6 +4,7 @@ import zeb.deluxeg4.utilityplus.managers.HomeManager;
 import zeb.deluxeg4.utilityplus.managers.TeamManager;
 import zeb.deluxeg4.utilityplus.managers.TeamManager.Team;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -12,8 +13,11 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class TabCompleterManager implements TabCompleter {
@@ -23,6 +27,7 @@ public class TabCompleterManager implements TabCompleter {
     private static final List<String> TEAM_SUBS   = Arrays.asList("invite","accept","deny","leave","disband","kick","promote","demote","list","chat","info");
     private static final List<String> STOPNOW_ARGS = Arrays.asList("10s", "30s", "1m", "5m", "10m", "30m", "1h", "now", "cancel", "time", "status");
     private static final List<String> TPA_NO_ARGS = Arrays.asList("tpaccept","tpdeny","tpcancel","tpaon","tpaoff");
+    private static final int OFFLINE_PLAYER_SUGGESTION_LIMIT = 80;
     // subcommands ที่ไม่ต้องการ player argument
     private static final List<String> TEAM_NO_PLAYER = Arrays.asList("accept","deny","leave","disband","list","info","chat");
 
@@ -68,9 +73,9 @@ public class TabCompleterManager implements TabCompleter {
             return onlinePlayers(sender, args[0]);
         }
 
-        if (cmd.equals("invsee") || cmd.equals("enderchestsee")) {
+        if (cmd.equals("invsee") || cmd.equals("enderchestsee") || cmd.equals("endersee")) {
             if (args.length != 1) return Collections.emptyList();
-            return onlinePlayers(sender, args[0]);
+            return knownPlayers(sender, args[0]);
         }
 
         if (cmd.equals("stopnow")) {
@@ -154,6 +159,35 @@ public class TabCompleterManager implements TabCompleter {
             if (p.getName().toLowerCase().startsWith(low)) names.add(p.getName());
         }
         return names;
+    }
+
+    private List<String> knownPlayers(CommandSender sender, String input) {
+        String low = input.toLowerCase();
+        Set<String> names = new LinkedHashSet<>();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (sender instanceof Player && player.equals(sender)) continue;
+            String name = player.getName();
+            if (name.toLowerCase().startsWith(low)) {
+                names.add(name);
+            }
+        }
+
+        List<String> offlineNames = new ArrayList<>();
+        for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+            if (sender instanceof Player player && offlinePlayer.getUniqueId().equals(player.getUniqueId())) continue;
+            String name = offlinePlayer.getName();
+            if (name == null || !name.toLowerCase().startsWith(low)) continue;
+            offlineNames.add(name);
+        }
+        offlineNames.sort(Comparator.naturalOrder());
+
+        for (String name : offlineNames) {
+            names.add(name);
+            if (names.size() >= OFFLINE_PLAYER_SUGGESTION_LIMIT) break;
+        }
+
+        return new ArrayList<>(names);
     }
 
     private List<String> filter(List<String> options, String input) {

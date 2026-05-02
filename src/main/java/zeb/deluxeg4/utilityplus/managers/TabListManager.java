@@ -11,7 +11,10 @@ import org.bukkit.entity.Player;
 
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class TabListManager {
@@ -22,6 +25,13 @@ public class TabListManager {
     private long updateIntervalTicks;
     private List<String> headerLines;
     private List<String> footerLines;
+
+    // Cache reflection Method — สร้างครั้งเดียว
+    private Method worldTpsMethod;
+    private boolean worldTpsMethodChecked = false;
+
+    // Cache last sent header/footer per player — skip packet ถ้าไม่มีอะไรเปลี่ยน
+    private final Map<UUID, String[]> lastSent = new HashMap<>();
 
     public TabListManager(UtilityPlus plugin) {
         this.plugin = plugin;
@@ -34,6 +44,11 @@ public class TabListManager {
         this.updateIntervalTicks = updateIntervalSeconds * 20L;
         this.headerLines = plugin.getConfig().getStringList("tab-list.header");
         this.footerLines = plugin.getConfig().getStringList("tab-list.footer");
+
+        // Reset reflection cache เมื่อ reload
+        worldTpsMethod = null;
+        worldTpsMethodChecked = false;
+        lastSent.clear();
 
         stop();
         if (enabled) {
@@ -57,19 +72,46 @@ public class TabListManager {
             return;
         }
 
-        String header = formatLines(headerLines, player);
-        String footer = formatLines(footerLines, player);
-        player.setPlayerListHeaderFooter(header, footer);
+        // คำนวณ shared values ก่อน แล้วส่ง player เข้าไป
+        double tps = getAverageWorldTps();
+        String uptime = formatUptime();
+        updatePlayerTabList(player, tps, uptime);
     }
+
+    // ─── Private helpers ──────────────────────────────────────────────────────
 
     private void start() {
         updateTask = PaperFoliaTasks.runGlobalTimer(plugin, task -> updateAll(), updateIntervalTicks, updateIntervalTicks);
     }
 
     private void updateAll() {
+        // คำนวณ shared values ครั้งเดียวต่อ tick — ไม่ใช่ต่อ player
+        double tps = getAverageWorldTps();
+        String uptime = formatUptime();
+        String onlineCount = String.valueOf(Bukkit.getOnlinePlayers().size());
+
         for (Player player : Bukkit.getOnlinePlayers()) {
-            PaperFoliaTasks.runForPlayer(plugin, player, () -> update(player));
+            PaperFoliaTasks.runForPlayer(plugin, player, () ->
+                    updatePlayerTabList(player, tps, uptime, onlineCount));
         }
+    }
+
+    private void updatePlayerTabList(Player player, double tps, String uptime) {
+        updatePlayerTabList(player, tps, uptime, String.valueOf(Bukkit.getOnlinePlayers().size()));
+    }
+
+    private void updatePlayerTabList(Player player, double tps, String uptime, String onlineCount) {
+        String header = formatLines(headerLines, player, tps, uptime, onlineCount);
+        String footer = formatLines(footerLines, player, tps, uptime, onlineCount);
+
+        // Skip packet ถ้า header/footer เหมือนเดิมทุกประการ
+        String[] prev = lastSent.get(player.getUniqueId());
+        if (prev != null && prev[0].equals(header) && prev[1].equals(footer)) {
+            return;
+        }
+
+        player.setPlayerListHeaderFooter(header, footer);
+        lastSent.put(player.getUniqueId(), new String[]{header, footer});
     }
 
     private void clearAll() {
@@ -80,15 +122,26 @@ public class TabListManager {
 
     private void clear(Player player) {
         player.setPlayerListHeaderFooter("", "");
+        lastSent.remove(player.getUniqueId());
     }
 
-    private String formatLines(List<String> lines, Player player) {
-        return color(String.join("\n", lines)
-                .replace("%server_tps_1_colored%", formatTps(getAverageWorldTps()))
-                .replace("%server_online%", String.valueOf(Bukkit.getOnlinePlayers().size()))
-                .replace("%player_ping%", String.valueOf(player.getPing()))
-                .replace("%server_uptime%", formatUptime()));
+    /** เรียกเมื่อ player ออกจากเซิร์ฟเวอร์ เพื่อป้องกัน memory leak */
+    public void onPlayerQuit(Player player) {
+        lastSent.remove(player.getUniqueId());
     }
+
+    // ─── Formatting ───────────────────────────────────────────────────────────
+
+    private String formatLines(List<String> lines, Player player,
+                               double tps, String uptime, String onlineCount) {
+        return color(String.join("\n", lines)
+                .replace("%server_tps_1_colored%", formatTps(tps))
+                .replace("%server_online%", onlineCount)
+                .replace("%player_ping%", String.valueOf(player.getPing()))
+                .replace("%server_uptime%", uptime));
+    }
+
+    // ─── TPS ──────────────────────────────────────────────────────────────────
 
     private double getAverageWorldTps() {
         String[] worldNames = {"world", "world_nether", "world_the_end"};
@@ -97,9 +150,7 @@ public class TabListManager {
 
         for (String worldName : worldNames) {
             World world = Bukkit.getWorld(worldName);
-            if (world == null) {
-                continue;
-            }
+            if (world == null) continue;
 
             Double tps = getWorldTps(world);
             if (tps != null) {
@@ -108,23 +159,30 @@ public class TabListManager {
             }
         }
 
-        if (count > 0) {
-            return total / count;
-        }
-
-        return Bukkit.getTPS()[0];
+        return count > 0 ? total / count : Bukkit.getTPS()[0];
     }
 
     private Double getWorldTps(World world) {
+        // Lazy-init + cache Method — ไม่ใช้ reflection ซ้ำทุก call
+        if (!worldTpsMethodChecked) {
+            worldTpsMethodChecked = true;
+            try {
+                worldTpsMethod = Bukkit.getServer().getClass()
+                        .getMethod("getTPS", Location.class);
+            } catch (NoSuchMethodException ignored) {
+                // Fork นี้ไม่รองรับ per-location TPS
+            }
+        }
+
+        if (worldTpsMethod == null) return null;
+
         try {
-            Method getTps = Bukkit.getServer().getClass().getMethod("getTPS", Location.class);
-            double[] tps = (double[]) getTps.invoke(Bukkit.getServer(), world.getSpawnLocation());
+            double[] tps = (double[]) worldTpsMethod.invoke(
+                    Bukkit.getServer(), world.getSpawnLocation());
             if (tps != null && tps.length > 0) {
                 return tps[0];
             }
-        } catch (ReflectiveOperationException | ClassCastException ignored) {
-            // Official Folia/Paper do not expose per-location TPS; some forks do.
-        }
+        } catch (ReflectiveOperationException | ClassCastException ignored) {}
 
         return null;
     }
@@ -134,15 +192,19 @@ public class TabListManager {
         return color + String.format("%.2f", Math.min(tps, 20.0D));
     }
 
-    private String formatUptime() {
-        long totalSeconds = TimeUnit.MILLISECONDS.toSeconds(ManagementFactory.getRuntimeMXBean().getUptime());
-        long days = totalSeconds / 86400L;
-        long hours = (totalSeconds % 86400L) / 3600L;
-        long minutes = (totalSeconds % 3600L) / 60L;
-        long seconds = totalSeconds % 60L;
+    // ─── Uptime ───────────────────────────────────────────────────────────────
 
+    private String formatUptime() {
+        long totalSeconds = TimeUnit.MILLISECONDS.toSeconds(
+                ManagementFactory.getRuntimeMXBean().getUptime());
+        long days    = totalSeconds / 86400L;
+        long hours   = (totalSeconds % 86400L) / 3600L;
+        long minutes = (totalSeconds % 3600L)  / 60L;
+        long seconds = totalSeconds % 60L;
         return days + "d " + hours + "h " + minutes + "m " + seconds + "s";
     }
+
+    // ─── Color ────────────────────────────────────────────────────────────────
 
     private String color(String value) {
         return ChatColor.translateAlternateColorCodes('&', value);

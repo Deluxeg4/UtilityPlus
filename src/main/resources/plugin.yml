@@ -219,6 +219,7 @@ commands:
     description: Open another player's ender chest
     usage: /enderchestsee <player>
     permission: utilityplus.enderchestsee
+    aliases: [endersee]
 
   s:
     description: Summon a player to your location
@@ -313,10 +314,13 @@ permissions:
     description: Overclock items and apply unsafe enchantments
     default: op
   utilityplus.invsee:
-    description: Open another player's inventory
+    description: View another player's inventory
     default: op
   utilityplus.enderchestsee:
-    description: Open another player's ender chest
+    description: View another player's ender chest
+    default: op
+  utilityplus.invsee.unseen:
+    description: View data for players that have never joined this server
     default: op
   utilityplus.stats:
     description: View kills and deaths

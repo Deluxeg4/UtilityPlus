@@ -3,6 +3,7 @@ plugins {
     id 'com.gradleup.shadow' version '9.4.1'
     id 'xyz.jpenilla.run-paper' version '3.0.2'
     id 'de.undercouch.download' version '5.7.0'
+    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.21'
 }
 
 group = 'zeb.deluxeg4'
@@ -23,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT'
+    paperweight.paperDevBundle('1.21.1-R0.1-SNAPSHOT')
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -31,7 +32,7 @@ tasks.withType(JavaCompile).configureEach {
     options.release = 21
 }
 
-processResources {
+tasks.withType(ProcessResources).configureEach {
     def props = [version: version]
     inputs.properties props
     filteringCharset 'UTF-8'
@@ -43,24 +44,8 @@ processResources {
 shadowJar {
     archiveClassifier.set('')
     archiveFileName.set("${project.name}-${project.version}.jar")
-}
-
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
-tasks.register("paperJar", ShadowJar) {
-    group = "build"
-    archiveBaseName.set("${project.name}-Paper")
-    archiveClassifier.set('')
-    from sourceSets.main.output
     configurations = [project.configurations.runtimeClasspath]
-}
-
-tasks.register("foliaJar", ShadowJar) {
-    group = "build"
-    archiveBaseName.set("${project.name}-Folia")
-    archiveClassifier.set('')
-    from sourceSets.main.output
-    configurations = [project.configurations.runtimeClasspath]
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 def mcVersion = providers.gradleProperty("minecraftVersion").orElse("1.21.11").get()
@@ -80,17 +65,18 @@ task downloadLeaf(type: Download) {
     overwrite false
 }
 
-task setupServer(dependsOn: [downloadLeaf, shadowJar]) {
+task setupServer(dependsOn: [downloadLeaf, ":bukkit:shadowJar"]) {
     doLast {
         if (!serverDir.exists()) serverDir.mkdirs()
         
         // Copy plugin to run/plugins
         def pluginsDir = new File(serverDir, "plugins")
-        if (!pluginsDir.exists()) pluginsDir.mkdirs()o
+        if (!pluginsDir.exists()) pluginsDir.mkdirs()
         
         copy {
-            from shadowJar.archiveFile
+            from project(":bukkit").tasks.named("shadowJar").flatMap { it.archiveFile }
             into pluginsDir
+            rename { "${project.name}-${project.version}.jar" }
         }
         
         // Create eula.txt
@@ -102,7 +88,7 @@ task setupServer(dependsOn: [downloadLeaf, shadowJar]) {
 }
 
 task runLeaf(type: JavaExec, dependsOn: setupServer) {
-    group = "run paper"
+    group = "run server"
     mainClass = "-jar" 
     args = [
         downloadLeaf.dest.absolutePath,
@@ -112,16 +98,12 @@ task runLeaf(type: JavaExec, dependsOn: setupServer) {
     standardInput = System.in
 }
 
-// Paper run configuration
+// Server run configuration
 runServer {
     minecraftVersion(mcVersion)
     runDirectory(paperRunDir)
-}
-
-tasks.register("runPaper") {
-    group = "run paper"
+    group = "run server"
     description = "Runs a Paper test server in ./run-paper"
-    dependsOn tasks.named("runServer")
 }
 
 runPaper {
@@ -129,8 +111,20 @@ runPaper {
         registerTask {
             minecraftVersion(mcVersion)
             runDirectory(foliaRunDir)
+            group = "run server"
         }
     }
 }
 
-build.dependsOn paperJar, foliaJar
+gradle.projectsEvaluated {
+    tasks.named("runServer") {
+        pluginJars.setFrom(project(":bukkit").tasks.named("shadowJar").flatMap { it.archiveFile })
+        dependsOn project(":bukkit").tasks.named("shadowJar")
+    }
+    tasks.named("runFolia") {
+        pluginJars.setFrom(project(":folia").tasks.named("shadowJar").flatMap { it.archiveFile })
+        dependsOn project(":folia").tasks.named("shadowJar")
+    }
+}
+
+build.dependsOn ":bukkit:shadowJar", ":folia:shadowJar"

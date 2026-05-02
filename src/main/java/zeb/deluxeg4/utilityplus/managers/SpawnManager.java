@@ -1,9 +1,9 @@
 package zeb.deluxeg4.utilityplus.managers;
 
 import zeb.deluxeg4.utilityplus.UtilityPlus;
+import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
-import org.bukkit.HeightMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,12 +14,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
 public class SpawnManager {
 
@@ -38,26 +37,15 @@ public class SpawnManager {
     private boolean tpNoRespawnPoint;
     private int cooldownSeconds;
     private int warmupSeconds;
-
-    // Random Spawn Settings
-    private boolean rtpEnabled;
-    private int rtpMinRadius;
-    private int rtpMaxRadius;
-    private int rtpAttempts;
-    private String rtpWorldName;
-
-    private static final Set<Material> UNSAFE_RANDOM_RESPAWN_GROUND = EnumSet.of(
-            Material.CACTUS,
-            Material.CAMPFIRE,
-            Material.FIRE,
-            Material.LAVA,
-            Material.MAGMA_BLOCK,
-            Material.POWDER_SNOW,
-            Material.SOUL_CAMPFIRE,
-            Material.SOUL_FIRE,
-            Material.SWEET_BERRY_BUSH,
-            Material.WATER
-    );
+    private boolean randomFirstJoin;
+    private boolean randomNoRespawnPoint;
+    private String randomWorldName;
+    private boolean randomUseWorldBorder;
+    private int randomCenterX;
+    private int randomCenterZ;
+    private int randomMinRadius;
+    private int randomMaxRadius;
+    private int randomMaxAttempts;
 
     // Cooldown tracker: UUID -> last /spawn use timestamp (ms)
     private final Map<UUID, Long> cooldowns = new HashMap<>();
@@ -82,12 +70,15 @@ public class SpawnManager {
         this.tpNoRespawnPoint = cfg.getBoolean("spawn.tp-spawn-no-respawn-point", true);
         this.cooldownSeconds  = cfg.getInt    ("spawn.tp-spawn-cooldown",         30);
         this.warmupSeconds    = cfg.getInt    ("spawn.tp-spawn-warmup",           5);
-
-        this.rtpEnabled   = cfg.getBoolean("random-respawn.enabled", true);
-        this.rtpMinRadius = Math.max(0, cfg.getInt("random-respawn.min-radius", 50));
-        this.rtpMaxRadius = Math.max(rtpMinRadius, cfg.getInt("random-respawn.max-radius", 1000));
-        this.rtpAttempts  = Math.max(1, cfg.getInt("random-respawn.attempts", 48));
-        this.rtpWorldName = cfg.getString("random-respawn.world", "world");
+        this.randomFirstJoin = cfg.getBoolean("spawn.random-spawn.first-join", false);
+        this.randomNoRespawnPoint = cfg.getBoolean("spawn.random-spawn.no-respawn-point", false);
+        this.randomWorldName = cfg.getString("spawn.random-spawn.world", "world");
+        this.randomUseWorldBorder = cfg.getBoolean("spawn.random-spawn.use-world-border", true);
+        this.randomCenterX = cfg.getInt("spawn.random-spawn.center-x", 0);
+        this.randomCenterZ = cfg.getInt("spawn.random-spawn.center-z", 0);
+        this.randomMinRadius = Math.max(0, cfg.getInt("spawn.random-spawn.min-radius", 100));
+        this.randomMaxRadius = Math.max(randomMinRadius + 1, cfg.getInt("spawn.random-spawn.max-radius", 5000));
+        this.randomMaxAttempts = Math.max(1, cfg.getInt("spawn.random-spawn.max-attempts", 32));
     }
 
     // ---------------------------------------------------------------
@@ -269,94 +260,129 @@ public class SpawnManager {
     public boolean isTpOnFirstJoin()    { return tpOnFirstJoin; }
     public boolean isTpOnDeath()        { return tpOnDeath; }
     public boolean isTpNoRespawnPoint() { return tpNoRespawnPoint; }
-    public boolean isRtpEnabled()       { return rtpEnabled; }
+    public boolean isRandomFirstJoin() { return randomFirstJoin; }
+    public boolean isRandomNoRespawnPoint() { return randomNoRespawnPoint; }
 
-    public Location getRandomLocation() {
-        World world = Bukkit.getWorld(rtpWorldName);
-        if (world == null) {
-            world = Bukkit.getWorlds().get(0);
-        }
+    public Location findRandomSpawn(Location fallback) {
+        World world = getRandomSpawnWorld(fallback);
+        if (world == null) return null;
 
-        Location center = getRandomRespawnCenter(world);
         ThreadLocalRandom random = ThreadLocalRandom.current();
+        for (int attempt = 0; attempt < randomMaxAttempts; attempt++) {
+            int x = randomCoordinate(random, true, world);
+            int z = randomCoordinate(random, false, world);
 
-        for (int attempt = 0; attempt < rtpAttempts; attempt++) {
-            // Polar coordinates for uniform distribution in the ring
-            // θ: 0 to 2π, r: rtpMinRadius to rtpMaxRadius
-            double theta = random.nextDouble(0, Math.PI * 2);
-            double r = randomRadius(random);
+            if (!isInsideAllowedBorder(world, x, z)) continue;
 
-            int x = center.getBlockX() + (int) Math.round(r * Math.cos(theta));
-            int z = center.getBlockZ() + (int) Math.round(r * Math.sin(theta));
-            if (!isInsideWorldBorder(world, x, z)) {
-                continue;
-            }
-
-            Location loc = world.getHighestBlockAt(x, z, HeightMap.MOTION_BLOCKING_NO_LEAVES)
-                    .getLocation()
-                    .add(0.5, 1, 0.5);
-
-            if (isSafeLocation(loc)) {
-                loc.setYaw(random.nextFloat() * 360.0F);
-                loc.setPitch(0.0F);
-                return loc;
-            }
+            Location safe = findSafeSurface(world, x, z);
+            if (safe != null) return safe;
         }
-
-        return spawnLocation != null ? spawnLocation : world.getSpawnLocation();
+        return null;
     }
 
-    private Location getRandomRespawnCenter(World world) {
-        if (spawnLocation != null && spawnLocation.getWorld() != null
-                && spawnLocation.getWorld().getName().equals(world.getName())) {
-            return spawnLocation;
-        }
-
-        return world.getSpawnLocation();
-    }
-
-    private double randomRadius(ThreadLocalRandom random) {
-        if (rtpMaxRadius <= rtpMinRadius) {
-            return rtpMinRadius;
-        }
-
-        double minSquared = (double) rtpMinRadius * rtpMinRadius;
-        double maxSquared = (double) rtpMaxRadius * rtpMaxRadius;
-        return Math.sqrt(random.nextDouble(minSquared, maxSquared));
-    }
-
-    private boolean isInsideWorldBorder(World world, int x, int z) {
-        WorldBorder border = world.getWorldBorder();
-        Location center = border.getCenter();
-        double radius = border.getSize() / 2.0D;
-
-        return x + 0.5D >= center.getX() - radius
-                && x + 0.5D <= center.getX() + radius
-                && z + 0.5D >= center.getZ() - radius
-                && z + 0.5D <= center.getZ() + radius;
-    }
-
-    private boolean isSafeLocation(Location loc) {
-        World world = loc.getWorld();
+    public void findRandomSpawnAsync(Location fallback, Consumer<Location> callback) {
+        World world = getRandomSpawnWorld(fallback);
         if (world == null) {
-            return false;
+            callback.accept(null);
+            return;
         }
 
-        int y = loc.getBlockY();
-        if (y <= world.getMinHeight() || y + 1 >= world.getMaxHeight()) {
-            return false;
+        findRandomSpawnAsync(world, callback, 0);
+    }
+
+    private void findRandomSpawnAsync(World world, Consumer<Location> callback, int attempt) {
+        if (attempt >= randomMaxAttempts) {
+            callback.accept(null);
+            return;
         }
 
-        Block feet = loc.getBlock();
-        Block head = loc.clone().add(0, 1, 0).getBlock();
-        Block ground = loc.clone().add(0, -1, 0).getBlock();
-        Material groundType = ground.getType();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int x = randomCoordinate(random, true, world);
+        int z = randomCoordinate(random, false, world);
 
-        return feet.isPassable()
-                && head.isPassable()
-                && groundType.isSolid()
-                && !ground.isLiquid()
-                && !UNSAFE_RANDOM_RESPAWN_GROUND.contains(groundType);
+        if (!isInsideAllowedBorder(world, x, z)) {
+            findRandomSpawnAsync(world, callback, attempt + 1);
+            return;
+        }
+
+        PaperFoliaTasks.runAtLocation(plugin, world, x, z, () -> {
+            Location safe = findSafeSurface(world, x, z);
+            if (safe != null) {
+                callback.accept(safe);
+                return;
+            }
+
+            findRandomSpawnAsync(world, callback, attempt + 1);
+        });
+    }
+
+    private World getRandomSpawnWorld(Location fallback) {
+        World configured = Bukkit.getWorld(randomWorldName);
+        if (configured != null) return configured;
+        return fallback != null ? fallback.getWorld() : null;
+    }
+
+    private int randomCoordinate(ThreadLocalRandom random, boolean xAxis, World world) {
+        if (randomUseWorldBorder) {
+            WorldBorder border = world.getWorldBorder();
+            Location center = border.getCenter();
+            int halfSize = Math.max(1, (int) Math.floor(border.getSize() / 2.0D) - 1);
+            int range = Math.min(randomMaxRadius, halfSize);
+            int min = -range;
+            int max = range;
+            int offset = randomNonZeroOffset(random, min, max);
+            return (int) Math.floor((xAxis ? center.getX() : center.getZ()) + offset);
+        }
+
+        int offset = randomNonZeroOffset(random, -randomMaxRadius, randomMaxRadius);
+        return (xAxis ? randomCenterX : randomCenterZ) + offset;
+    }
+
+    private int randomNonZeroOffset(ThreadLocalRandom random, int min, int max) {
+        int effectiveMinRadius = Math.min(randomMinRadius, Math.max(Math.abs(min), Math.abs(max)));
+        if (effectiveMinRadius <= 0) return random.nextInt(min, max + 1);
+
+        int offset;
+        do {
+            offset = random.nextInt(min, max + 1);
+        } while (Math.abs(offset) < effectiveMinRadius);
+        return offset;
+    }
+
+    private boolean isInsideAllowedBorder(World world, int x, int z) {
+        if (!randomUseWorldBorder) return true;
+        WorldBorder border = world.getWorldBorder();
+        double halfSize = border.getSize() / 2.0D;
+        Location center = border.getCenter();
+        return x >= center.getX() - halfSize
+                && x <= center.getX() + halfSize
+                && z >= center.getZ() - halfSize
+                && z <= center.getZ() + halfSize;
+    }
+
+    private Location findSafeSurface(World world, int x, int z) {
+        int highestY = world.getHighestBlockYAt(x, z);
+        if (highestY <= world.getMinHeight() || highestY + 2 >= world.getMaxHeight()) return null;
+
+        for (int feetY = highestY; feetY <= highestY + 1; feetY++) {
+            Block ground = world.getBlockAt(x, feetY - 1, z);
+            Block feet = world.getBlockAt(x, feetY, z);
+            Block head = world.getBlockAt(x, feetY + 1, z);
+
+            if (!isSafeGround(ground.getType())) continue;
+            if (!feet.isPassable() || !head.isPassable()) continue;
+
+            return new Location(world, x + 0.5D, feetY, z + 0.5D, 0.0F, 0.0F);
+        }
+        return null;
+    }
+
+    private boolean isSafeGround(Material material) {
+        if (!material.isSolid()) return false;
+        return switch (material) {
+            case BEDROCK, CACTUS, CAMPFIRE, SOUL_CAMPFIRE, FIRE, SOUL_FIRE, LAVA, MAGMA_BLOCK, POWDER_SNOW -> false;
+            default -> true;
+        };
     }
 
     // ---------------------------------------------------------------

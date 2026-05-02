@@ -2,6 +2,7 @@ package zeb.deluxeg4.utilityplus.listeners;
 
 import zeb.deluxeg4.utilityplus.managers.SpawnManager;
 import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,8 +40,27 @@ public class    SpawnListener implements Listener {
 
         if (spawnManager.isFirstJoin(player.getUniqueId())) {
             spawnManager.markKnown(player.getUniqueId());
-            
-            // Only teleport to spawn on first join, NO RTP here.
+
+            if (spawnManager.isRandomFirstJoin()) {
+                spawnManager.findRandomSpawnAsync(player.getLocation(), randomSpawn -> {
+                    if (!player.isOnline()) return;
+
+                    Location target = randomSpawn != null ? randomSpawn : spawnManager.getSpawn();
+                    if (target == null) return;
+
+                    PaperFoliaTasks.runForPlayer(spawnManager.getPlugin(), player, () -> {
+                        PaperFoliaTasks.teleport(player, target, spawnManager.getPlugin(), success -> {
+                            if (success) {
+                                player.sendMessage(randomSpawn != null
+                                        ? "Â§aWelcome to the server! You have been sent to a random spawn."
+                                        : "Â§aWelcome to the server! You have been teleported to spawn.");
+                            }
+                        });
+                    });
+                });
+                return;
+            }
+
             if (spawnManager.hasSpawn()) {
                 PaperFoliaTasks.teleport(player, spawnManager.getSpawn(), spawnManager.getPlugin(), success -> {
                     if (success) {
@@ -60,17 +80,35 @@ public class    SpawnListener implements Listener {
 
         // Priority: Bed/Anchor spawn first
         if (hasBedSpawn) {
-            return; // Keep bed/anchor spawn, no random respawn
-        }
-
-        // No bed/anchor — use random respawn if enabled
-        if (spawnManager.isRtpEnabled()) {
-            event.setRespawnLocation(spawnManager.getRandomLocation());
             return;
         }
 
         // Fallback to normal spawn if configured
         if (spawnManager.isTpNoRespawnPoint() || spawnManager.isTpOnDeath()) {
+            if (spawnManager.isRandomNoRespawnPoint() && PaperFoliaTasks.isFolia()) {
+                Player player = event.getPlayer();
+                Location fallback = event.getRespawnLocation();
+                spawnManager.findRandomSpawnAsync(fallback, randomSpawn -> {
+                    if (randomSpawn != null && player.isOnline()) {
+                        PaperFoliaTasks.runForPlayer(spawnManager.getPlugin(), player, () -> {
+                            PaperFoliaTasks.teleport(player, randomSpawn, spawnManager.getPlugin(), null);
+                        });
+                    }
+                });
+                if (spawnManager.hasSpawn()) {
+                    event.setRespawnLocation(spawnManager.getSpawn());
+                }
+                return;
+            }
+
+            Location randomSpawn = spawnManager.isRandomNoRespawnPoint()
+                    ? spawnManager.findRandomSpawn(event.getRespawnLocation())
+                    : null;
+            if (randomSpawn != null) {
+                event.setRespawnLocation(randomSpawn);
+                return;
+            }
+
             if (spawnManager.hasSpawn()) {
                 event.setRespawnLocation(spawnManager.getSpawn());
             }
