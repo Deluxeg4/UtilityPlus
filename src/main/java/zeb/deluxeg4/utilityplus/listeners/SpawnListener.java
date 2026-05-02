@@ -7,16 +7,32 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
-public class    SpawnListener implements Listener {
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * Hybrid Spawn Listener - works on both Folia and Paper/Bukkit
+ *
+ * Folia: Uses async pool-based RTP with deferred teleport
+ * Paper/Bukkit: Uses synchronous RTP generation in PlayerRespawnEvent
+ */
+public class SpawnListener implements Listener {
 
     private final SpawnManager spawnManager;
+    private final boolean isFolia;
+
+    // Folia only: pending RTP tracking for deferred teleport
+    private final Set<UUID> pendingRtp = ConcurrentHashMap.newKeySet();
 
     public SpawnListener(SpawnManager spawnManager) {
         this.spawnManager = spawnManager;
+        this.isFolia = spawnManager.isFolia();
     }
 
     // ---------------------------------------------------------------
@@ -34,73 +50,147 @@ public class    SpawnListener implements Listener {
     // ---------------------------------------------------------------
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (!spawnManager.isTpOnFirstJoin()) return;
-
         Player player = event.getPlayer();
-
+        if (!spawnManager.isTpOnFirstJoin()) return;
         if (spawnManager.isFirstJoin(player.getUniqueId())) {
             spawnManager.markKnown(player.getUniqueId());
-
-            if (spawnManager.isRandomFirstJoin()) {
-                spawnManager.findRandomSpawnAsync(player.getLocation(), randomSpawn -> {
-                    if (!player.isOnline()) return;
-
-                    Location target = randomSpawn != null ? randomSpawn : spawnManager.getSpawn();
-                    if (target == null) return;
-
-                    PaperFoliaTasks.runForPlayer(spawnManager.getPlugin(), player, () ->
-                            PaperFoliaTasks.teleport(player, target, spawnManager.getPlugin(), null));
-                });
-                return;
-            }
-
             if (spawnManager.hasSpawn()) {
-                PaperFoliaTasks.teleport(player, spawnManager.getSpawn(), spawnManager.getPlugin(), null);
+                if (isFolia) {
+                    PaperFoliaTasks.teleport(player, spawnManager.getSpawn(), spawnManager.getPlugin(), null);
+                } else {
+                    player.teleport(spawnManager.getSpawn());
+                }
             }
         }
     }
 
     // ---------------------------------------------------------------
-    // On-death / no-respawn-point teleport
+    // Player Respawn - Different logic for Folia vs Paper
     // ---------------------------------------------------------------
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        boolean hasBedSpawn = event.isBedSpawn() || event.isAnchorSpawn();
+        Player player = event.getPlayer();
 
-        // Priority: Bed/Anchor spawn first
-        if (hasBedSpawn) {
+        boolean hasBedOrAnchor = event.isBedSpawn() || event.isAnchorSpawn();
+        if (hasBedOrAnchor) {
+            if (isFolia) {
+                pendingRtp.remove(player.getUniqueId());
+            }
             return;
         }
 
-        // Fallback to normal spawn if configured
+        if (spawnManager.isRtpEnabled()) {
+            if (isFolia) {
+                handleFoliaRespawn(event, player);
+            } else {
+                handlePaperRespawn(event, player);
+            }
+            return;
+        }
+
+        // RTP disabled - fallback to spawn
         if (spawnManager.isTpNoRespawnPoint() || spawnManager.isTpOnDeath()) {
-            if (spawnManager.isRandomNoRespawnPoint() && PaperFoliaTasks.isFolia()) {
-                Player player = event.getPlayer();
-                Location fallback = event.getRespawnLocation();
-                spawnManager.findRandomSpawnAsync(fallback, randomSpawn -> {
-                    if (randomSpawn != null && player.isOnline()) {
-                        PaperFoliaTasks.runForPlayer(spawnManager.getPlugin(), player, () -> {
-                            PaperFoliaTasks.teleport(player, randomSpawn, spawnManager.getPlugin(), null);
-                        });
-                    }
-                });
-                if (spawnManager.hasSpawn()) {
-                    event.setRespawnLocation(spawnManager.getSpawn());
-                }
-                return;
-            }
-
-            Location randomSpawn = spawnManager.isRandomNoRespawnPoint()
-                    ? spawnManager.findRandomSpawn(event.getRespawnLocation())
-                    : null;
-            if (randomSpawn != null) {
-                event.setRespawnLocation(randomSpawn);
-                return;
-            }
-
             if (spawnManager.hasSpawn()) {
                 event.setRespawnLocation(spawnManager.getSpawn());
             }
+        }
+    }
+
+    // ==================== FOLIA: Async Pool-based ====================
+
+    private void handleFoliaRespawn(PlayerRespawnEvent event, Player player) {
+        pendingRtp.remove(player.getUniqueId());
+
+        Location loc = spawnManager.pollFromPool();
+        if (loc != null) {
+            event.setRespawnLocation(loc);
+        } else {
+            if (spawnManager.hasSpawn()) {
+                event.setRespawnLocation(spawnManager.getSpawn());
+            }
+            scheduleFoliaRtpRetry(player, 0);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (!isFolia) return;
+        if (!spawnManager.isRtpEnabled()) return;
+
+        Player player = event.getEntity();
+        if (player.getBedSpawnLocation() != null || hasValidRespawnAnchor(player)) return;
+
+        pendingRtp.add(player.getUniqueId());
+        scheduleFoliaAliveCheck(player, 0);
+    }
+
+    private void scheduleFoliaAliveCheck(Player player, int elapsed) {
+        if (elapsed > 1200) {
+            pendingRtp.remove(player.getUniqueId());
+            return;
+        }
+
+        PaperFoliaTasks.runForPlayerDelayed(spawnManager.getPlugin(), player, task -> {
+            if (!player.isOnline()) {
+                pendingRtp.remove(player.getUniqueId());
+                return;
+            }
+
+            if (!player.isDead()) {
+                if (pendingRtp.remove(player.getUniqueId())) {
+                    doFoliaRtpTeleport(player);
+                }
+            } else {
+                if (pendingRtp.contains(player.getUniqueId())) {
+                    scheduleFoliaAliveCheck(player, elapsed + 5);
+                }
+            }
+        }, 5L);
+    }
+
+    private void doFoliaRtpTeleport(Player player) {
+        Location loc = spawnManager.pollFromPool();
+        if (loc != null) {
+            player.teleportAsync(loc);
+        } else {
+            scheduleFoliaRtpRetry(player, 0);
+        }
+    }
+
+    private void scheduleFoliaRtpRetry(Player player, int attempt) {
+        if (attempt >= 10) return;
+        PaperFoliaTasks.runForPlayerDelayed(spawnManager.getPlugin(), player, task -> {
+            if (!player.isOnline()) return;
+            Location loc = spawnManager.pollFromPool();
+            if (loc != null) {
+                player.teleportAsync(loc);
+            } else {
+                scheduleFoliaRtpRetry(player, attempt + 1);
+            }
+        }, 20L);
+    }
+
+    // ==================== PAPER/BUKKIT: Sync ====================
+
+    private void handlePaperRespawn(PlayerRespawnEvent event, Player player) {
+        Location loc = spawnManager.getRandomLocation();
+        if (loc != null) {
+            event.setRespawnLocation(loc);
+        } else if (spawnManager.hasSpawn()) {
+            event.setRespawnLocation(spawnManager.getSpawn());
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Helper
+    // ---------------------------------------------------------------
+    private boolean hasValidRespawnAnchor(Player player) {
+        try {
+            return player.getRespawnLocation() != null
+                    && player.getRespawnLocation().getBlock().getType()
+                    == org.bukkit.Material.RESPAWN_ANCHOR;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

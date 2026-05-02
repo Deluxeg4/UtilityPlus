@@ -4,27 +4,29 @@
 # -----------------------------------------------
 spawn:
   # Teleport player to spawn on their very first join
-  tp-spawn-first-join: true
+  tp-spawn-first-join: false
   # Teleport player to spawn after they click the Respawn button
   tp-spawn-on-death: false
   # Teleport to spawn on respawn ONLY if they have no bed/respawn anchor
-  tp-spawn-no-respawn-point: true
+  tp-spawn-no-respawn-point: false
   # Cooldown (seconds) between /spawn uses. 0 = disabled. OP bypasses.
   tp-spawn-cooldown: 30
   # Warmup (seconds) before teleporting — player must stand still. 0 = instant.
   tp-spawn-warmup: 5
-  # Random spawn for new players and players who die without a bed/anchor.
-  random-spawn:
-    first-join: true
-    no-respawn-point: true
-    # Empty/missing world falls back to the player's current respawn world.
-    world: "world"
-    use-world-border: true
-    center-x: 0
-    center-z: 0
-    min-radius: 100
-    max-radius: 5000
-    max-attempts: 32
+
+# -----------------------------------------------
+# Random Respawn Settings
+# (When enabled, players respawn at a random location on death)
+# Completely independent from the /setspawn system above.
+# -----------------------------------------------
+random-respawn:
+  enabled: true
+  min-radius: 0
+  max-radius: 300
+  # How many locations to try before falling back to spawn
+  attempts: 48
+  # The world name where random respawn should happen (default to world)
+  world: "world"
 
 # -----------------------------------------------
 # TPA Settings
@@ -79,7 +81,7 @@ leave-message:
   # Broadcast to all players
   broadcast: true
   # Message shown when player leaves
-  message: "&3{player} left the game"
+  message: "&e{player} left the game"
 
 # -----------------------------------------------
 # Custom Death Message Settings
@@ -106,7 +108,7 @@ death-message:
 tab-list:
   enabled: true
   # How often to refresh dynamic placeholders, in seconds
-  update-interval: 1
+  update-interval: 5
   header:
     - ""
     - "&7&o&l  2BUILDERS      "

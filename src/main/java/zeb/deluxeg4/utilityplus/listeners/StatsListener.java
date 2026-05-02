@@ -65,7 +65,7 @@ public class StatsListener implements Listener {
 
         String originalMessage = deathMessageManager.getMessage(event, victim, killer, selfKillCommand);
 
-        String messageColor = color(plugin.getConfig().getString("death-message.message-color", "&c"));
+        String messageColor = color(plugin.getConfig().getString("death-message.message-color", "&4"));
         String template = color(plugin.getConfig().getString("death-message.message", "{message}"));
         String killerName = killer != null ? killer.getName() : "";
 
@@ -108,7 +108,7 @@ public class StatsListener implements Listener {
         event.setDeathMessage(null);
 
         Component component = LegacyComponentSerializer.legacySection()
-                .deserialize(message + color(plugin.getConfig().getString("death-message.message-color", "&c")) + " using ")
+                .deserialize(message + color(plugin.getConfig().getString("death-message.message-color", "&4")) + " using ")
                 .append(itemComponent);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -147,8 +147,8 @@ public class StatsListener implements Listener {
             return message;
         }
 
-        String messageColor = color(plugin.getConfig().getString("death-message.message-color", "&c"));
-        String nameColor = color(plugin.getConfig().getString("death-message.name-color", "&b"));
+        String messageColor = color(plugin.getConfig().getString("death-message.message-color", "&4"));
+        String nameColor = color(plugin.getConfig().getString("death-message.name-color", "&3"));
 
         return message.replace(name, nameColor + name + messageColor);
     }

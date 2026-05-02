@@ -11,10 +11,11 @@ import org.bukkit.entity.Player;
 
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class TabListManager {
@@ -31,7 +32,7 @@ public class TabListManager {
     private boolean worldTpsMethodChecked = false;
 
     // Cache last sent header/footer per player — skip packet ถ้าไม่มีอะไรเปลี่ยน
-    private final Map<UUID, String[]> lastSent = new HashMap<>();
+    private final Map<UUID, String[]> lastSent = new ConcurrentHashMap<>();
 
     public TabListManager(UtilityPlus plugin) {
         this.plugin = plugin;
@@ -67,6 +68,11 @@ public class TabListManager {
     }
 
     public void update(Player player) {
+        if (!player.isOnline()) {
+            onPlayerQuit(player);
+            return;
+        }
+
         if (!enabled) {
             clear(player);
             return;
@@ -92,7 +98,7 @@ public class TabListManager {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             PaperFoliaTasks.runForPlayer(plugin, player, () ->
-                    updatePlayerTabList(player, tps, uptime, onlineCount));
+                    updateIfOnline(player, tps, uptime, onlineCount));
         }
     }
 
@@ -130,6 +136,14 @@ public class TabListManager {
         lastSent.remove(player.getUniqueId());
     }
 
+    private void updateIfOnline(Player player, double tps, String uptime, String onlineCount) {
+        if (player.isOnline()) {
+            updatePlayerTabList(player, tps, uptime, onlineCount);
+        } else {
+            onPlayerQuit(player);
+        }
+    }
+
     // ─── Formatting ───────────────────────────────────────────────────────────
 
     private String formatLines(List<String> lines, Player player,
@@ -144,14 +158,10 @@ public class TabListManager {
     // ─── TPS ──────────────────────────────────────────────────────────────────
 
     private double getAverageWorldTps() {
-        String[] worldNames = {"world", "world_nether", "world_the_end"};
         double total = 0.0D;
         int count = 0;
 
-        for (String worldName : worldNames) {
-            World world = Bukkit.getWorld(worldName);
-            if (world == null) continue;
-
+        for (World world : Bukkit.getWorlds()) {
             Double tps = getWorldTps(world);
             if (tps != null) {
                 total += tps;
@@ -189,7 +199,7 @@ public class TabListManager {
 
     private String formatTps(double tps) {
         String color = tps > 18.0D ? "&a" : tps > 16.0D ? "&e" : "&c";
-        return color + String.format("%.2f", Math.min(tps, 20.0D));
+        return color + String.format(Locale.US, "%.2f", Math.min(tps, 20.0D));
     }
 
     // ─── Uptime ───────────────────────────────────────────────────────────────

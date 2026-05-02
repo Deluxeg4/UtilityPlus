@@ -9,6 +9,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Method;
+
 public class JoinMessageListener implements Listener {
 
     private final JavaPlugin plugin;
@@ -17,7 +19,7 @@ public class JoinMessageListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
@@ -37,9 +39,16 @@ public class JoinMessageListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        boolean serverStopping = isServerStopping();
+
+        if (serverStopping) {
+            String message = plugin.getConfig().getString("leave-message.message", "&3{player} left the game");
+            event.setQuitMessage(formatMessage(message, player));
+            return;
+        }
 
         if (plugin.getConfig().getBoolean("leave-message.hide-vanilla", true)) {
             event.setQuitMessage(null);
@@ -49,7 +58,7 @@ public class JoinMessageListener implements Listener {
             return;
         }
 
-        String message = plugin.getConfig().getString("leave-message.message", "&3{player} left the game");
+        String message = plugin.getConfig().getString("leave-message.message", "&e{player} left the game");
         message = formatMessage(message, player);
 
         if (plugin.getConfig().getBoolean("leave-message.broadcast", true)) {
@@ -66,5 +75,15 @@ public class JoinMessageListener implements Listener {
                 .replace("{max}", String.valueOf(plugin.getServer().getMaxPlayers()));
 
         return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    private boolean isServerStopping() {
+        try {
+            Method method = plugin.getServer().getClass().getMethod("isStopping");
+            Object result = method.invoke(plugin.getServer());
+            return result instanceof Boolean && (Boolean) result;
+        } catch (ReflectiveOperationException ignored) {
+            return false;
+        }
     }
 }
