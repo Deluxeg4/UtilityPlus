@@ -11,14 +11,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 
-/**
- * Handles: /msg /tell /w /whisper /dm /pm  — send a private message
- *          /r /reply                        — reply to last PM sender
- *
- * Format matches vanilla Minecraft style:
- *   Sender sees:  [You -> PlayerName] message
- *   Target sees:  [PlayerName -> You] message
- */
 public class PMCommand implements CommandExecutor {
 
     private final ChatManager chatManager;
@@ -29,13 +21,11 @@ public class PMCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player from)) {
             sender.sendMessage("§cThis command can only be used by players!");
             return true;
         }
-        Player from = (Player) sender;
 
-        // /r /reply — reply to last PM sender
         if (label.equalsIgnoreCase("r") || label.equalsIgnoreCase("reply")) {
             return handleReply(from, args);
         }
@@ -43,7 +33,6 @@ public class PMCommand implements CommandExecutor {
             return handleLast(from, args);
         }
 
-        // /msg /tell /w /whisper /dm /pm <player> <message>
         if (args.length < 2) {
             from.sendMessage("§cUsage: /" + label + " <player> <message>");
             return true;
@@ -59,8 +48,7 @@ public class PMCommand implements CommandExecutor {
             return true;
         }
 
-        String message = buildMessage(args, 1);
-        sendPM(from, to, message);
+        sendPM(from, to, buildMessage(args, 1));
         return true;
     }
 
@@ -82,56 +70,51 @@ public class PMCommand implements CommandExecutor {
             return true;
         }
 
-        String message = buildMessage(args, 0);
-        sendPM(from, to, message);
+        sendPM(from, to, buildMessage(args, 0));
         return true;
     }
 
     private boolean handleLast(Player from, String[] args) {
         if (args.length < 1) {
-            from.sendMessage("Â§cUsage: /last <message>");
+            from.sendMessage("§cUsage: /last <message>");
             return true;
         }
 
         UUID lastTargetUUID = chatManager.getLastPmTarget(from.getUniqueId());
         if (lastTargetUUID == null) {
-            from.sendMessage("Â§cYou have no last messaged player!");
+            from.sendMessage("§cYou have no last messaged player!");
             return true;
         }
 
         Player to = from.getServer().getPlayer(lastTargetUUID);
         if (to == null || !to.isOnline()) {
-            from.sendMessage("Â§cThat player is no longer online.");
+            from.sendMessage("§cThat player is no longer online.");
             return true;
         }
 
-        String message = buildMessage(args, 0);
-        sendPM(from, to, message);
+        sendPM(from, to, buildMessage(args, 0));
         return true;
     }
 
     private void sendPM(Player from, Player to, String message) {
-        // Check if target has PM muted
         if (chatManager.isPmMuted(to.getUniqueId())) {
             from.sendMessage("§e" + to.getName() + " §7is not accepting private messages.");
             return;
         }
 
         if (chatManager.isIgnoring(to.getUniqueId(), from.getName())) {
-            from.sendMessage("Â§e" + to.getName() + " Â§7is ignoring you.");
+            from.sendMessage("§e" + to.getName() + " §7is ignoring you.");
             return;
         }
 
-        // Vanilla-style format
-        String toSender  = "§7[§fYou §8-> §f" + to.getName()   + "§7] §f" + message;
-        String toTarget  = "§7[§f" + from.getName() + " §8-> §fYou§7] §f" + message;
+        String toSender = "§7[§fYou §8-> §f" + to.getName() + "§7] §f" + message;
+        String toTarget = "§7[§f" + from.getName() + " §8-> §fYou§7] §f" + message;
         UtilityPlus plugin = JavaPlugin.getPlugin(UtilityPlus.class);
 
         from.sendMessage(toSender);
         PaperFoliaTasks.send(plugin, to, toTarget);
 
-        // Track last sender for /reply
-        chatManager.setLastPmSender(to.getUniqueId(),   from.getUniqueId());
+        chatManager.setLastPmSender(to.getUniqueId(), from.getUniqueId());
         chatManager.setLastPmSender(from.getUniqueId(), to.getUniqueId());
         chatManager.setLastPmTarget(from.getUniqueId(), to.getUniqueId());
         chatManager.setLastPmTarget(to.getUniqueId(), from.getUniqueId());

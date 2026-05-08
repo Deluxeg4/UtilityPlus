@@ -18,10 +18,8 @@ public class KillCommand implements CommandExecutor {
     public static final String SELF_KILL_METADATA = "utilityplus-self-kill";
 
     private final UtilityPlus plugin;
-    
-    // Track players who need to confirm their suicide
     private final Set<UUID> pendingConfirmation = ConcurrentHashMap.newKeySet();
-    
+
     public KillCommand(UtilityPlus plugin) {
         this.plugin = plugin;
     }
@@ -33,30 +31,21 @@ public class KillCommand implements CommandExecutor {
             return true;
         }
 
-        // Case: /kill (Self-kill with confirmation)
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage("§cOnly players can use this command.");
             return true;
         }
 
-        Player player = (Player) sender;
         UUID uuid = player.getUniqueId();
-
-        if (pendingConfirmation.contains(uuid)) {
-            // Second time: Kill them
+        if (pendingConfirmation.remove(uuid)) {
             player.setMetadata(SELF_KILL_METADATA, new FixedMetadataValue(plugin, true));
             player.setHealth(0);
-            //player.sendMessage("§eYou have killed yourself.");
-            pendingConfirmation.remove(uuid);
-        } else {
-            // First time: Ask for confirmation
-            pendingConfirmation.add(uuid);
-            player.sendMessage("§cAre you sure you want to die? §eType /kill again to confirm.");
-            
-            // Optional: Remove from pending after 10 seconds
-            PaperFoliaTasks.runForPlayerDelayed(plugin, player, task -> pendingConfirmation.remove(uuid), 200L);
+            return true;
         }
 
+        pendingConfirmation.add(uuid);
+        player.sendMessage("§eType /kill again to confirm.");
+        PaperFoliaTasks.runForPlayerDelayed(plugin, player, task -> pendingConfirmation.remove(uuid), 200L);
         return true;
     }
 }

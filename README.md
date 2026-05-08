@@ -1,6 +1,6 @@
 # UtilityPlus
 
-UtilityPlus is a comprehensive utility plugin for Minecraft servers, designed to work seamlessly on both **Paper** and **Folia**. It provides essential features like spawn management, homes, TPA requests, team systems, and administrative tools with a focus on performance and Folia compatibility.
+UtilityPlus is a comprehensive utility plugin for Minecraft servers, designed to work seamlessly on **Paper** and **Folia**. It provides essential features like spawn management, homes, TPA requests, team systems, and administrative tools with a focus on performance and Folia compatibility.
 
 ## 🚀 Features
 

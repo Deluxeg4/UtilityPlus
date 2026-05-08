@@ -28,6 +28,16 @@ random-respawn:
   # The world name where random respawn should happen (default to world)
   world: "world"
 
+# List of blocks that are considered unsafe to spawn on or next to
+unsafe-blocks:
+  - LAVA
+  - WATER
+  - CACTUS
+  - FIRE
+  - MAGMA_BLOCK
+  - SWEET_BERRY_BUSH
+  - POWDER_SNOW
+
 # -----------------------------------------------
 # TPA Settings
 # -----------------------------------------------
@@ -132,6 +142,19 @@ broadcast:
   prefix: "&6&l[Alert]&r "
 
 # -----------------------------------------------
+# Announcement Settings
+# -----------------------------------------------
+announcement:
+  action-bar:
+    enabled: true
+    # Duration to stay visible (seconds)
+    show-duration: 15
+    # Duration to stay hidden (seconds, 300 = 5 minutes)
+    hide-duration: 300
+    # The text to show in the Action Bar
+    text: "&62b2t-th.org"
+
+# -----------------------------------------------
 # Queue Command Settings
 # -----------------------------------------------
 queue:
@@ -146,63 +169,29 @@ queue:
 # -----------------------------------------------
 # Use & for color codes. Each page supports up to 5 lines.
 # Add more pages by creating '2:', '3:', etc.
-helps:
-  # Pages shown to normal players (non-OP)
-  normal:
-    '1':
-      - "&e/chatsettings &7- Open chat settings GUI"
-      - "&e/msg <player> <msg> &7- Send a private message"
-      - "&e/tell <player> <msg> &7- Alias for /msg"
-      - "&e/w <player> <msg> &7- Alias for /msg"
-      - "&e/whisper <player> <msg> &7- Alias for /msg"
-    '2':
-      - "&e/dm <player> <msg> &7- Alias for /msg"
-      - "&e/pm <player> <msg> &7- Alias for /msg"
-      - "&e/r <msg> &7- Reply to the last private message"
-      - "&e/reply <msg> &7- Alias for /r"
-      - "&e/stats [player] &7- View player stats"
-    '3':
-      - "&e/topstats &7- View leaderboard (GUI)"
-      - "&e/kill &7- Kill yourself"
-
-  # Pages shown to OP players (full help)
-  op:
-    '1':
-      - "&6--- Teleportation & Spawn ---"
-      - "&e/spawn &7- Teleport to spawn"
-      - "&e/setspawn &7- Set the spawn point (OP)"
-      - "&e/tpa <player> &7- Request to teleport to a player"
-      - "&e/tpahere <player> &7- Request a player to teleport to you"
-    '2':
-      - "&e/tpaccept / /tpdeny &7- Accept or deny TPA requests"
-      - "&e/tpcancel &7- Cancel your outgoing TPA request"
-      - "&e/tpaon / /tpaoff &7- Toggle receiving TPA requests"
-      - "&e/s <player> &7- Summon a player to you (OP)"
-      - "&6--- Homes ---"
-    '3':
-      - "&e/home [1-4] &7- Teleport to your home"
-      - "&e/sethome <1-4> &7- Set a home location"
-      - "&e/delhome <1-4> &7- Delete a home location"
-      - "&6--- Messaging & Chat ---"
-      - "&e/msg <player> <msg> &7- Send a private message"
-    '4':
-      - "&e/r <msg> &7- Reply to the last private message"
-      - "&e/chat <on|off|team|...> &7- Change chat settings"
-      - "&e/chatsettings &7- Open chat settings GUI"
-      - "&6--- Team System ---"
-      - "&e/team info &7- Show team information"
-    '5':
-      - "&e/team create <name> &7- Create a new team"
-      - "&e/team invite <player> &7- Invite a player to your team"
-      - "&e/team list &7- List all teams"
-      - "&6--- Utilities & Admin ---"
-      - "&e/stats [player] &7- View player stats"
-    '6':
-      - "&e/topstats &7- View leaderboard (GUI)"
-      - "&e/tpsmore [show] &7- View detailed performance info (OP)"
-      - "&e/v &7- Toggle vanish (OP)"
-      - "&e/bc <msg> &7- Broadcast a message (OP)"
-      - "&e/gmc/gms/gmsp/gma &7- Change gamemode (OP)"
-    '7':
-      - "&e/kill [player] &7- Kill yourself or others (OP)"
-      - "&e/upreload &7- Reload plugin configuration (OP)"
+#helps:
+#  normal:
+#    1:
+#      - "&b&lCommands &7(Messaging)"
+#      - "&e/msg <player> <message> &7- Send a private message"
+#      - "&e/whisper <player> <message> &7- Alias for /msg"
+#      - "&e/w <player> <message> &7- Alias for /msg"
+#      - "&e/r <message> &7- Reply to last message"
+#    2:
+#      - "&b&lCommands &7(Messaging cont.)"
+#      - "&e/reply <message> &7- Alias for /r"
+#      - "&e/l &7- View last player who messaged you"
+#      - "&e/last &7- Alias for /l"
+#      - "&e/ignore <player> &7- Ignore a player"
+#      - "&e/ignorehard <player> &7- Completely hide a player"
+#    3:
+#      - "&b&lCommands &7(Toggles)"
+#      - "&e/ignorelist &7- View ignored players"
+#      - "&e/togglechat &7- Toggle your public chat"
+#      - "&e/toggleprivatemsgs &7- Toggle private messages"
+#      - "&e/toggledeathmsgs &7- Toggle death messages"
+#      - "&e/toggledeathmsgshard &7- Hide all death messages"
+#    4:
+#      - "&b&lCommands &7(Misc)"
+#      - "&e/kill &7- Kill yourself"
+#      - "&e/help [page] &7- Show this help menu"

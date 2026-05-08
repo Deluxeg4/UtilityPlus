@@ -49,6 +49,7 @@ public class SpawnManager {
     private int rtpMaxRadius;
     private int rtpAttempts;
     private String rtpWorldName;
+    private Set<Material> unsafeGround;
 
     // ---------------------------------------------------------------
     // RTP Location Pool (Folia-safe pre-generation)
@@ -64,7 +65,7 @@ public class SpawnManager {
     // ---------------------------------------------------------------
     // Unsafe ground types for RTP
     // ---------------------------------------------------------------
-    private static final Set<Material> UNSAFE_GROUND = EnumSet.of(
+    private static final Set<Material> DEFAULT_UNSAFE_GROUND = EnumSet.of(
             Material.CACTUS,
             Material.CAMPFIRE,
             Material.FIRE,
@@ -130,6 +131,25 @@ public class SpawnManager {
         this.rtpMaxRadius = Math.max(rtpMinRadius,  cfg.getInt("random-respawn.max-radius", 1000));
         this.rtpAttempts  = Math.max(1,             cfg.getInt("random-respawn.attempts",   48));
         this.rtpWorldName = cfg.getString("random-respawn.world", "world");
+        this.unsafeGround = loadUnsafeGround(cfg);
+    }
+
+    private Set<Material> loadUnsafeGround(FileConfiguration cfg) {
+        java.util.List<String> configuredBlocks = cfg.getStringList("unsafe-blocks");
+        if (configuredBlocks.isEmpty()) {
+            return EnumSet.copyOf(DEFAULT_UNSAFE_GROUND);
+        }
+
+        Set<Material> loaded = EnumSet.noneOf(Material.class);
+        for (String blockName : configuredBlocks) {
+            try {
+                loaded.add(Material.valueOf(blockName.toUpperCase(java.util.Locale.ROOT)));
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("[SpawnManager] Invalid unsafe-blocks material: " + blockName);
+            }
+        }
+
+        return loaded.isEmpty() ? EnumSet.copyOf(DEFAULT_UNSAFE_GROUND) : loaded;
     }
 
     // ---------------------------------------------------------------
@@ -485,7 +505,6 @@ public class SpawnManager {
         return Math.sqrt(random.nextDouble(minSquared, maxSquared));
     }
 
-
     private boolean isInsideWorldBorder(World world, int x, int z) {
         WorldBorder border = world.getWorldBorder();
         Location center   = border.getCenter();
@@ -513,7 +532,7 @@ public class SpawnManager {
                 && head.isPassable()
                 && groundType.isSolid()
                 && !ground.isLiquid()
-                && !UNSAFE_GROUND.contains(groundType);
+                && !unsafeGround.contains(groundType);
     }
 
     // ---------------------------------------------------------------

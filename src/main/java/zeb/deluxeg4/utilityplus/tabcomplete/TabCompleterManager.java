@@ -99,10 +99,22 @@ public class TabCompleterManager implements TabCompleter {
         }
 
         // ── PM / reply ───────────────────────────────────────────────
-        if (cmd.equals("r") || cmd.equals("reply")) {
+        if (cmd.equals("ignore") || cmd.equals("ignorehard") || cmd.equals("ignoredeathmsgs")) {
+            if (args.length != 1) return Collections.emptyList();
+            return onlinePlayers(sender, args[0]);
+        }
+        if (cmd.equals("ignorelist")
+                || cmd.equals("togglechat")
+                || cmd.equals("toggleprivatemsgs")
+                || cmd.equals("toggledeathmsgs")
+                || cmd.equals("toggledeathmsgshard")) {
             return Collections.emptyList();
         }
-        if (Arrays.asList("msg","tell","w","whisper","dm","pm").contains(cmd)) {
+
+        if (cmd.equals("r") || cmd.equals("reply") || cmd.equals("l") || cmd.equals("last") || cmd.equals("kill")) {
+            return Collections.emptyList();
+        }
+        if (Arrays.asList("msg", "w", "whisper", "pm").contains(cmd)) {
             if (args.length != 1) return Collections.emptyList();
             return onlinePlayers(sender, args[0]);
         }

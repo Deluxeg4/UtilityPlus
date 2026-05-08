@@ -2,7 +2,6 @@ package zeb.deluxeg4.utilityplus.commands;
 
 import zeb.deluxeg4.utilityplus.UtilityPlus;
 import zeb.deluxeg4.utilityplus.managers.ChatManager;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,11 +12,9 @@ import java.util.Set;
 
 public class TwoBTwoTCommand implements CommandExecutor {
 
-    private final UtilityPlus plugin;
     private final ChatManager chatManager;
 
     public TwoBTwoTCommand(UtilityPlus plugin, ChatManager chatManager) {
-        this.plugin = plugin;
         this.chatManager = chatManager;
     }
 
@@ -45,8 +42,6 @@ public class TwoBTwoTCommand implements CommandExecutor {
                 return toggleDeathMessages(player, false);
             case "toggledeathmsgshard":
                 return toggleDeathMessages(player, true);
-            case "queue":
-                return sendQueue(player);
             default:
                 return true;
         }
@@ -104,12 +99,4 @@ public class TwoBTwoTCommand implements CommandExecutor {
         return true;
     }
 
-    private boolean sendQueue(Player player) {
-        for (String line : plugin.getConfig().getStringList("queue.message")) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', line)
-                    .replace("{online}", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
-                    .replace("{max}", String.valueOf(plugin.getServer().getMaxPlayers())));
-        }
-        return true;
-    }
 }

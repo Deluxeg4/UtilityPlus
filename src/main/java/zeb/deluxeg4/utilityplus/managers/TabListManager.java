@@ -20,12 +20,15 @@ import java.util.concurrent.TimeUnit;
 
 public class TabListManager {
 
+    private static final double DEFAULT_TPS = 20.0D;
+
     private final UtilityPlus plugin;
     private ScheduledTask updateTask;
     private boolean enabled;
     private long updateIntervalTicks;
     private List<String> headerLines;
     private List<String> footerLines;
+    private double lastKnownTps = DEFAULT_TPS;
 
     // Cache reflection Method — สร้างครั้งเดียว
     private Method worldTpsMethod;
@@ -169,7 +172,12 @@ public class TabListManager {
             }
         }
 
-        return count > 0 ? total / count : Bukkit.getTPS()[0];
+        if (count > 0) {
+            lastKnownTps = total / count;
+            return lastKnownTps;
+        }
+
+        return getServerTpsOrFallback();
     }
 
     private Double getWorldTps(World world) {
@@ -187,14 +195,27 @@ public class TabListManager {
         if (worldTpsMethod == null) return null;
 
         try {
-            double[] tps = (double[]) worldTpsMethod.invoke(
-                    Bukkit.getServer(), world.getSpawnLocation());
+            Location spawnLocation = world.getSpawnLocation();
+            double[] tps = (double[]) worldTpsMethod.invoke(Bukkit.getServer(), spawnLocation);
             if (tps != null && tps.length > 0) {
                 return tps[0];
             }
-        } catch (ReflectiveOperationException | ClassCastException ignored) {}
+        } catch (ReflectiveOperationException | RuntimeException ignored) {}
 
         return null;
+    }
+
+    private double getServerTpsOrFallback() {
+        try {
+            double[] tps = Bukkit.getTPS();
+            if (tps != null && tps.length > 0) {
+                lastKnownTps = tps[0];
+            }
+        } catch (UnsupportedOperationException ignored) {
+            // Canvas/Folia can reject global TPS access outside a region.
+        } catch (RuntimeException ignored) {
+        }
+        return lastKnownTps;
     }
 
     private String formatTps(double tps) {

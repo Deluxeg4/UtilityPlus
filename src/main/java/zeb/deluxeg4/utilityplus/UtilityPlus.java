@@ -23,6 +23,7 @@ public class UtilityPlus extends JavaPlugin {
     private StatsManager statsManager;
     private DeathMessageManager deathMessageManager;
     private TabListManager tabListManager;
+    private AnnouncementManager announcementManager;
     private VanishCommand vanishCommand;
     private TickMonitor tickMonitor;
     private CpuMonitor  cpuMonitor;
@@ -42,6 +43,7 @@ public class UtilityPlus extends JavaPlugin {
         statsManager = new StatsManager(this);
         deathMessageManager = new DeathMessageManager(this);
         tabListManager = new TabListManager(this);
+        announcementManager = new AnnouncementManager(this);
         tickMonitor  = new TickMonitor(this);
         cpuMonitor   = new CpuMonitor(this);
         inventorySeeSessionManager = new InventorySeeSessionManager(this, InventorySeeMode.INVENTORY);
@@ -50,29 +52,15 @@ public class UtilityPlus extends JavaPlugin {
         // ── Executors ─────────────────────────────────────────────────
         // Spawn
         SpawnCommand spawnCmd = new SpawnCommand(spawnManager);
-        registerCommands(spawnCmd, "setspawn", "spawn");
-
-        // Home
-        HomeCommand homeCmd = new HomeCommand(homeManager);
-        registerCommands(homeCmd, "sethome", "home", "delhome");
-
-        // TPA
-        TPACommand tpaCmd = new TPACommand(tpaManager, this);
-        registerCommands(tpaCmd, "tpa", "tpahere", "tpaccept", "tpdeny", "tpcancel", "tpaon", "tpaoff");
-
-        // Chat
-        ChatCommand chatCmd = new ChatCommand(chatManager);
-        registerCommands(chatCmd, "chat", "chatsettings");
-
-        // PM
-        PMCommand pmCmd = new PMCommand(chatManager);
-        registerCommands(pmCmd, "msg", "tell", "w", "whisper", "dm", "pm", "r", "reply", "l", "last");
+        registerCommand("setspawn", spawnCmd);
 
         TwoBTwoTCommand twoBTwoTCommand = new TwoBTwoTCommand(this, chatManager);
         registerCommands(twoBTwoTCommand,
                 "ignore", "ignorehard", "ignorelist", "ignoredeathmsgs",
-                "togglechat", "toggleprivatemsgs", "toggledeathmsgs", "toggledeathmsgshard",
-                "queue");
+                "togglechat", "toggleprivatemsgs", "toggledeathmsgs", "toggledeathmsgshard");
+
+        PMCommand pmCmd = new PMCommand(chatManager);
+        registerCommands(pmCmd, "msg", "w", "whisper", "pm", "r", "reply", "l", "last");
 
         // Team
         registerCommand("team", new TeamCommand(teamManager, chatManager));
@@ -110,11 +98,7 @@ public class UtilityPlus extends JavaPlugin {
         registerCommand("s", new STapwarp());
 
         // Help
-        registerCommand("helps", new HelpsCommand(this));
-
-        // Stats
-        StatsCommand statsCmd = new StatsCommand(statsManager);
-        registerCommands(statsCmd, "stats", "topstats");
+        registerCommand("help", new HelpCommand(this));
 
         // TPS More
         TPSMoreCommand tpsMoreCmd = new TPSMoreCommand(tickMonitor, cpuMonitor);
@@ -123,23 +107,19 @@ public class UtilityPlus extends JavaPlugin {
         // ── Tab Completers ────────────────────────────────────────────
         TabCompleterManager tab = new TabCompleterManager(homeManager, teamManager);
         List<String> allCmds = List.of(
-            "setspawn","spawn",
-            "sethome","home","delhome",
-            "tpa","tpahere","tpaccept","tpdeny","tpcancel","tpaon","tpaoff",
-            "chat","chatsettings",
-            "msg","tell","w","whisper","dm","pm","r","reply","l","last",
+            "setspawn",
             "ignore","ignorehard","ignorelist","ignoredeathmsgs",
-            "togglechat","toggleprivatemsgs","toggledeathmsgs","toggledeathmsgshard","queue",
+            "togglechat","toggleprivatemsgs","toggledeathmsgs","toggledeathmsgshard",
+            "msg","w","whisper","pm","r","reply","l","last",
             "team","upreload","stopnow",
-            "v","bc","broadcast","gmc","gms","gmsp","gma","kill","s","helps",
-            "stats", "topstats", "tpsmore", "tps", "invsee", "enderchestsee"
+            "v","bc","broadcast","gmc","gms","gmsp","gma","kill","s","help",
+            "tpsmore", "tps", "invsee", "enderchestsee"
         );
         registerTabCompleters(tab, allCmds);
         command("overclock").setTabCompleter(overclockCommand);
 
         // ── Listeners ─────────────────────────────────────────────────
         getServer().getPluginManager().registerEvents(new SpawnListener(spawnManager), this);
-        getServer().getPluginManager().registerEvents(new HomeGUIListener(homeManager), this);
         getServer().getPluginManager().registerEvents(new TPAListener(tpaManager), this);
         getServer().getPluginManager().registerEvents(new ChatListener(chatManager, teamManager), this);
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);
@@ -162,6 +142,7 @@ public class UtilityPlus extends JavaPlugin {
         if (teamManager  != null) teamManager.saveData();
         if (statsManager != null) statsManager.saveData();
         if (tabListManager != null) tabListManager.stop();
+        if (announcementManager != null) announcementManager.stop();
         if (vanishCommand != null) vanishCommand.saveData();
         if (inventorySeeSessionManager != null) inventorySeeSessionManager.closeAll();
         if (enderChestSeeSessionManager != null) enderChestSeeSessionManager.closeAll();
@@ -176,6 +157,7 @@ public class UtilityPlus extends JavaPlugin {
     public StatsManager getStatsManager() { return statsManager; }
     public DeathMessageManager getDeathMessageManager() { return deathMessageManager; }
     public TabListManager getTabListManager() { return tabListManager; }
+    public AnnouncementManager getAnnouncementManager() { return announcementManager; }
     public InventorySeeSessionManager getInventorySeeSessionManager() { return inventorySeeSessionManager; }
     public InventorySeeSessionManager getEnderChestSeeSessionManager() { return enderChestSeeSessionManager; }
 

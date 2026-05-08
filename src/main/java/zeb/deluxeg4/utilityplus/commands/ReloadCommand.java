@@ -38,9 +38,10 @@ public class ReloadCommand implements CommandExecutor {
         plugin.getStatsManager().reload();
         plugin.getDeathMessageManager().reload();
         plugin.getTabListManager().reload();
+        plugin.getAnnouncementManager().reload();
 
         sender.sendMessage("§a§lUtilityPlus reloaded!");
-        sender.sendMessage("§7config.yml §a✔  §7spawn §a✔  §7homes §a✔  §7teams §a✔  §7stats §a✔");
+        sender.sendMessage("§7config.yml §a✔  §7spawn §a✔  §7homes §a✔  §7teams §a✔  §7stats §a✔  §7announcement §a✔");
         return true;
     }
 }

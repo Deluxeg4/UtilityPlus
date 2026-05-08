@@ -71,7 +71,9 @@ public class DeathMessageManager {
             return fallbackMessage(victim, killer, selfKillCommand);
         }
 
-        return applyPlaceholders(template, victim, killer);
+        // Skip weapon in text if using custom weapon category - weapon will be shown as hover component instead
+        boolean skipWeapon = "player_using_item".equals(category);
+        return applyPlaceholders(template, victim, killer, skipWeapon);
     }
 
     private void load(JsonObject root) {
@@ -200,12 +202,12 @@ public class DeathMessageManager {
         return list.get(ThreadLocalRandom.current().nextInt(list.size()));
     }
 
-    private String applyPlaceholders(String template, Player victim, Player killer) {
+    private String applyPlaceholders(String template, Player victim, Player killer, boolean skipWeapon) {
         String weapon = killer != null ? weaponName(killer.getInventory().getItemInMainHand()) : "";
         return template
                 .replace("%victim%", victim.getName())
                 .replace("%killer%", killer != null ? killer.getName() : "the server")
-                .replace("%weapon%", weapon)
+                .replace("%weapon%", skipWeapon ? "" : weapon)
                 .replace("%world%", victim.getWorld().getName())
                 .replace("%x%", String.valueOf(victim.getLocation().getBlockX()))
                 .replace("%y%", String.valueOf(victim.getLocation().getBlockY()))

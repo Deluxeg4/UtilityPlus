@@ -3,7 +3,7 @@ version: ${version}
 main: zeb.deluxeg4.utilityplus.UtilityPlus
 api-version: '1.21'
 folia-supported: true
-description: Spawn, homes, TPA, chat, teams, stats, and admin utilities
+description: Chat controls, teams, death messages, and admin utilities
 author: CADS
 
 commands:
@@ -12,107 +12,6 @@ commands:
     description: Set the server spawn point
     usage: /setspawn
     permission: utilityplus.setspawn
-  spawn:
-    description: Teleport to spawn
-    usage: /spawn
-    permission: utilityplus.spawn
-
-  # --- Home ---
-  sethome:
-    description: Set a home slot
-    usage: /sethome <1|2|3|4>
-    permission: utilityplus.sethome
-  home:
-    description: Open homes or teleport to a home
-    usage: /home [1|2|3|4]
-    permission: utilityplus.home
-  delhome:
-    description: Delete a home slot
-    usage: /delhome <1|2|3|4>
-    permission: utilityplus.delhome
-
-  # --- TPA ---
-  tpa:
-    description: Request to teleport to another player
-    usage: /tpa <player>
-    permission: utilityplus.tpa
-  tpahere:
-    description: Request another player teleport to you
-    usage: /tpahere <player>
-    permission: utilityplus.tpa
-  tpaccept:
-    description: Accept a pending teleport request
-    usage: /tpaccept
-    permission: utilityplus.tpa
-  tpdeny:
-    description: Deny a pending teleport request
-    usage: /tpdeny
-    permission: utilityplus.tpa
-  tpcancel:
-    description: Cancel outgoing teleport requests
-    usage: /tpcancel
-    permission: utilityplus.tpa
-  tpaon:
-    description: Enable incoming teleport requests
-    usage: /tpaon
-    permission: utilityplus.tpa
-  tpaoff:
-    description: Disable incoming teleport requests
-    usage: /tpaoff
-    permission: utilityplus.tpa
-
-  # --- Chat ---
-  chat:
-    description: Manage chat preferences
-    usage: /chat <on|off|teamon|teamoff|pmon|pmoff|team>
-    permission: utilityplus.chat
-  chatsettings:
-    description: View chat settings
-    usage: /chatsettings
-    permission: utilityplus.chat
-
-  # --- PM ---
-  msg:
-    description: Send a private message
-    usage: /msg <player> <message>
-    permission: utilityplus.pm
-  tell:
-    description: Send a private message
-    usage: /tell <player> <message>
-    permission: utilityplus.pm
-  w:
-    description: Send a private message
-    usage: /w <player> <message>
-    permission: utilityplus.pm
-  whisper:
-    description: Send a private message
-    usage: /whisper <player> <message>
-    permission: utilityplus.pm
-  dm:
-    description: Send a private message
-    usage: /dm <player> <message>
-    permission: utilityplus.pm
-  pm:
-    description: Send a private message
-    usage: /pm <player> <message>
-    permission: utilityplus.pm
-  r:
-    description: Reply to the last private message
-    usage: /r <message>
-    permission: utilityplus.pm
-  reply:
-    description: Reply to the last private message
-    usage: /reply <message>
-    permission: utilityplus.pm
-  l:
-    description: Message the player you last messaged
-    usage: /l <message>
-    permission: utilityplus.pm
-  last:
-    description: Message the player you last messaged
-    usage: /last <message>
-    permission: utilityplus.pm
-
   # --- 2b2t-style chat controls ---
   ignore:
     description: Temporarily ignore a player
@@ -146,10 +45,40 @@ commands:
     description: Toggle death message visibility permanently
     usage: /toggledeathmsgshard
     permission: utilityplus.chat
-  queue:
-    description: Displays current queue lengths
-    usage: /queue
-    permission: utilityplus.queue
+
+  # --- PM ---
+  msg:
+    description: Send a private message
+    usage: /msg <player> <message>
+    permission: utilityplus.pm
+  w:
+    description: Send a private message
+    usage: /w <player> <message>
+    permission: utilityplus.pm
+  whisper:
+    description: Send a private message
+    usage: /whisper <player> <message>
+    permission: utilityplus.pm
+  pm:
+    description: Send a private message
+    usage: /pm <player> <message>
+    permission: utilityplus.pm
+  r:
+    description: Reply to the last private message
+    usage: /r <message>
+    permission: utilityplus.pm
+  reply:
+    description: Reply to the last private message
+    usage: /reply <message>
+    permission: utilityplus.pm
+  l:
+    description: Message the player you last messaged
+    usage: /l <message>
+    permission: utilityplus.pm
+  last:
+    description: Message the player you last messaged
+    usage: /last <message>
+    permission: utilityplus.pm
 
   # --- Team ---
   team:
@@ -197,8 +126,8 @@ commands:
     permission: utilityplus.gamemode
 
   kill:
-    description: Kill yourself (needs confirmation) or another player
-    usage: /kill [player]
+    description: Kill yourself with confirmation
+    usage: /kill
     permission: utilityplus.kill
 
   stopnow:
@@ -226,19 +155,10 @@ commands:
     usage: /s <player>
     permission: utilityplus.summon
 
-  helps:
+  help:
     description: Show UtilityPlus help menu
-    usage: /helps [page]
+    usage: /help [page]
     permission: utilityplus.helps
-
-  stats:
-    description: View your kills and deaths
-    usage: /stats [player]
-    permission: utilityplus.stats
-  topstats:
-    description: View the top killers and deaths in a GUI
-    usage: /topstats
-    permission: utilityplus.topstats
 
   tpsmore:
     description: Show detailed TPS and performance info
@@ -256,21 +176,6 @@ permissions:
   utilityplus.setspawn:
     description: Set the server spawn point
     default: op
-  utilityplus.spawn:
-    description: Teleport to spawn
-    default: true
-  utilityplus.sethome:
-    description: Set homes
-    default: true
-  utilityplus.home:
-    description: Use homes
-    default: true
-  utilityplus.delhome:
-    description: Delete homes
-    default: true
-  utilityplus.tpa:
-    description: Use teleport requests
-    default: true
   utilityplus.chat:
     description: Manage chat preferences
     default: true
@@ -305,7 +210,7 @@ permissions:
     description: Summon other players to your location
     default: op
   utilityplus.kill:
-    description: Kill yourself (needs confirmation)
+    description: Kill yourself with confirmation
     default: true
   server.stop:
     description: Allows starting the server shutdown countdown
@@ -322,15 +227,6 @@ permissions:
   utilityplus.invsee.unseen:
     description: View data for players that have never joined this server
     default: op
-  utilityplus.stats:
-    description: View kills and deaths
-    default: true
-  utilityplus.topstats:
-    description: View the top players GUI
-    default: true
   utilityplus.tpsmore:
     description: View detailed TPS and performance info
     default: op
-  utilityplus.queue:
-    description: View queue lengths
-    default: true

@@ -9,7 +9,17 @@
     "%victim% made natural selection look productive",
     "%victim% discovered the hard limit of confidence",
     "%victim% logged a skill issue at %x% %y% %z%",
-    "%victim% was removed from the timeline"
+    "%victim% was removed from the timeline",
+    "%victim% was repossessed by the server",
+    "%victim% became lore in a dead chunk",
+    "%victim% got archived due to low relevance",
+    "%victim% met the server's minimum IQ requirement and failed",
+    "%victim% was erased by technical difficulties",
+    "%victim% was disconnected from life by server policy",
+    "%victim% ran out of plot armor",
+    "%victim% was formatted by the environment",
+    "%victim%'s session was terminated for lack of survival skill",
+    "%victim% became a background character in someone else's base tour"
   ],
   "player_kill": [
     "%victim% got packed up by %killer%",
@@ -21,19 +31,39 @@
     "%victim% challenged %killer% and lost the argument",
     "%killer% made %victim% uninstall mentally",
     "%victim% got 2b2t'd by %killer%",
-    "%killer% converted %victim% into loot"
+    "%killer% converted %victim% into loot",
+    "%killer% showed %victim% why they're on top",
+    "%victim% was sent to the shadow realm by %killer%",
+    "%killer% wrote %victim%'s resignation letter",
+    "%victim% was just a speedbump for %killer%",
+    "%killer% liquidated %victim%'s assets",
+    "%killer% forced %victim% to take a break",
+    "%victim% was recycled by %killer%",
+    "%killer% ended %victim%'s subscription to living",
+    "%victim% was sent to the menu by %killer%'s superior setup",
+    "%killer% harvested %victim%'s dignity"
   ],
   "player_using_item": [
-    "%victim% got erased by %killer%'s %weapon%",
-    "%killer% used %weapon% to write %victim%'s obituary",
-    "%victim% met %weapon% and did not survive the introduction",
-    "%killer%'s %weapon% turned %victim% into floor loot",
-    "%victim% got audited by %weapon%",
-    "%killer% made %weapon% everyone else's problem",
-    "%victim% learned why %weapon% has a name",
-    "%weapon% claimed %victim% for the archive",
-    "%killer% clicked once and %weapon% handled the paperwork",
-    "%victim% got signed out by %killer%'s %weapon%"
+    "%victim% got erased by %killer%",
+    "%killer% used a named weapon to write %victim%'s obituary",
+    "%victim% met %killer%'s legendary weapon and did not survive",
+    "%killer%'s weapon turned %victim% into floor loot",
+    "%victim% got audited by %killer%'s named weapon",
+    "%killer% made their weapon everyone else's problem",
+    "%victim% learned why %killer%'s weapon has a name",
+    "%killer%'s legendary weapon claimed %victim% for the archive",
+    "%killer% clicked once and their weapon handled %victim%",
+    "%victim% got signed out by %killer%",
+    "%killer% used premium violence on %victim%",
+    "%victim% was dismantled by %killer%'s gear",
+    "%killer% processed %victim% with military grade hardware",
+    "%victim% became a footnote in %killer%'s killstreak",
+    "%killer%'s blade corrected %victim%'s existence",
+    "%killer% used their customized hate speech on %victim%",
+    "%victim% was shredded by %killer%'s maxed-out hardware",
+    "%killer% processed %victim% with a tool of mass destruction",
+    "%victim% was signed off by %killer%'s personal signature",
+    "%killer%'s named gear delivered %victim% to the respawn screen"
   ],
   "mob_kill": [
     "%victim% got bullied by wildlife",
@@ -45,7 +75,17 @@
     "%victim% got folded by an NPC",
     "%victim% failed the easiest boss fight: nature",
     "%victim% was turned into mob loot",
-    "%victim% got packed by something that pathfinds into walls"
+    "%victim% got packed by something that pathfinds into walls",
+    "%victim% was demoted by an AI",
+    "%victim% lost the 1v1 to a mindless script",
+    "%victim% was scavenged by the locals",
+    "%victim% made the mobs look competent",
+    "%victim% was processed by the environment",
+    "%victim% was bullied by an entity with no brain",
+    "%victim% lost to a basic AI loop",
+    "%victim% was farmed by a creature of the night",
+    "%victim% failed the mob-avoidance protocol",
+    "%victim% was deleted by a low-level threat"
   ],
   "zombie": [
     "%victim% got hands-on training from a zombie",
@@ -57,7 +97,17 @@
     "%victim% failed against a walking tutorial enemy",
     "%victim% donated flesh to the local zombie union",
     "%victim% was removed by rotten hands",
-    "%victim% got eaten by yesterday's player"
+    "%victim% got eaten by yesterday's player",
+    "%victim% became a zombie's snack break",
+    "%victim% lost to the walking dead's easiest member",
+    "%victim% was recruited into the horde",
+    "%victim% was outrun by a corpse",
+    "%victim% failed the zombie fitness test",
+    "%victim% was chewed out of the server by a zombie",
+    "%victim% let a corpse win the 1v1",
+    "%victim% was converted into zombie lore",
+    "%victim% got folded by a walking skill check",
+    "%victim% donated their brain to a zombie who really needed it"
   ],
   "skeleton": [
     "%victim% got sniped by bones with aim assist",
@@ -69,7 +119,17 @@
     "%victim% got bowed into the respawn menu",
     "%victim% was deleted by a walking x-ray scan",
     "%victim% caught a skeleton subscription arrow",
-    "%victim% got humbled by Minecraft's cheapest aimbot"
+    "%victim% got humbled by Minecraft's cheapest aimbot",
+    "%victim% was used for target practice by a pile of ribs",
+    "%victim% was sniped by calcium-based ballistics",
+    "%victim% lost to a bow that hasn't been serviced in centuries",
+    "%victim% was ventilated by ancient archers",
+    "%victim% got osteo-clapped",
+    "%victim% was sniped by a ribcage with aim-assist",
+    "%victim% was ventilated by calcium ballistics",
+    "%victim% lost to an archer who's been dead since 1.0",
+    "%victim% was archived by a bone-dry headshot",
+    "%victim% got skeletal-clapped from across the chunk"
   ],
   "creeper": [
     "%victim% heard the hiss and still chose denial",
@@ -81,7 +141,17 @@
     "%victim% got turned into terrain damage",
     "%victim% donated their coordinates to a creeper hole",
     "%victim% got express-shipped to spawn by a creeper",
-    "%victim% stood too close to free demolition"
+    "%victim% stood too close to free demolition",
+    "%victim% was edited out of the map by a creeper",
+    "%victim% failed the 'is it behind me?' check",
+    "%victim% became gunpowder lore",
+    "%victim% was redecorated by green explosives",
+    "%victim% got hiss-missed",
+    "%victim% was redecorated by a green suicide bomber",
+    "%victim% failed to outrun a sentient bush",
+    "%victim% was edited by gunpowder and a bad headset",
+    "%victim% became part of the local crater geography",
+    "%victim% stood too close to the server's favorite mistake"
   ],
   "spider": [
     "%victim% got webbed by budget parkour",
@@ -93,7 +163,17 @@
     "%victim% got folded by an eight-legged ambush",
     "%victim% got jumped by the wall crawler",
     "%victim% lost to a mob with zero armor slots",
-    "%victim% got spider-taxed"
+    "%victim% got spider-taxed",
+    "%victim% was tangled in a web of bad choices",
+    "%victim% lost the high ground to an arthropod",
+    "%victim% was wrapped up for later",
+    "%victim% was jumped by a eight-legged mistake",
+    "%victim% got web-crashed",
+    "%victim% was web-taxed into the ground",
+    "%victim% was jumped by a wall-climbing error",
+    "%victim% lost to too many legs and not enough eyes",
+    "%victim% was tangled in a spider's bad mood",
+    "%victim% was folded by an eight-legged movement hack"
   ],
   "enderman": [
     "%victim% made eye contact and paid the invoice",
@@ -105,7 +185,17 @@
     "%victim% discovered tall mobs hit tall numbers",
     "%victim% got packed by purple anger",
     "%victim% violated the eye-contact treaty",
-    "%victim% got teleported into consequences"
+    "%victim% got teleported into consequences",
+    "%victim% looked, and the void looked back",
+    "%victim% was disassembled by a tall purple glitch",
+    "%victim% lost the staring contest permanently",
+    "%victim% was removed for staring",
+    "%victim% got end-zoned",
+    "%victim% stared into the purple void and lost",
+    "%victim% was disassembled by a tall purple glitch",
+    "%victim% violated an enderman's privacy policy",
+    "%victim% was blinked out of existence",
+    "%victim% got long-limbed into the dirt"
   ],
   "warden": [
     "%victim% made noise and the cave filed a complaint",
@@ -117,7 +207,17 @@
     "%victim% was removed by the cave landlord",
     "%victim% got punished for having footsteps",
     "%victim% got folded by blind confidence",
-    "%victim% learned the deep dark has hands"
+    "%victim% learned the deep dark has hands",
+    "%victim% was silenced by the cave's HR department",
+    "%victim% was bass-boosted out of existence",
+    "%victim% made too much vibration for their own good",
+    "%victim% was deleted by a blind god",
+    "%victim% got warden-taxed",
+    "%victim% was sound-gapped by the warden",
+    "%victim% was deleted by a blind god's vibrations",
+    "%victim% made a noise and received a sonic funeral",
+    "%victim% was crushed by deep dark HR",
+    "%victim% lost the quiet game to the cave landlord"
   ],
   "iron_golem": [
     "%victim% got uppercut by village HR",
@@ -129,7 +229,17 @@
     "%victim% got golem-checked",
     "%victim% got punched into zoning violation",
     "%victim% failed diplomacy with iron",
-    "%victim% got deleted by village anti-cheat"
+    "%victim% got deleted by village anti-cheat",
+    "%victim% was launched into the atmosphere by local PD",
+    "%victim% learned that iron hits harder than ego",
+    "%victim% was dismantled by village defense hardware",
+    "%victim% was evicted by a 3-block tall iron tank",
+    "%victim% got metal-humbled",
+    "%victim% was launched into orbit by village security",
+    "%victim% tried to grief the wrong neighborhood",
+    "%victim% was dismantled by iron justice",
+    "%victim% learned that iron hits harder than their ego",
+    "%victim% was uppercut into a new coordinate system"
   ],
   "piglin": [
     "%victim% entered the Nether without paying gold tax",
@@ -141,7 +251,17 @@
     "%victim% got jumped for being underdressed",
     "%victim% angered the Nether economy",
     "%victim% got bartered into a coffin",
-    "%victim% got collected by piglin customs"
+    "%victim% got collected by piglin customs",
+    "%victim% lost to the gold cartel",
+    "%victim% was liquidated by piglin ventures",
+    "%victim% failed the 'wear gold or die' challenge",
+    "%victim% was bartered for their own life",
+    "%victim% got snort-clapped",
+    "%victim% was liquidated by the gold cartel",
+    "%victim% failed the gold-standard audit",
+    "%victim% was jumped for wearing the wrong color",
+    "%victim% was bartered into a one-way trip to spawn",
+    "%victim% learned that piglins don't do credit"
   ],
   "hoglin": [
     "%victim% got boar-rushed into the dirt",
@@ -153,7 +273,17 @@
     "%victim% got bullied by hostile ham",
     "%victim% learned hoglins do not negotiate",
     "%victim% got packed by a walking dinner",
-    "%victim% became Nether barbecue lore"
+    "%victim% became Nether barbecue lore",
+    "%victim% was flipped into a skill issue",
+    "%victim% lost to Nether's angriest meat",
+    "%victim% was tusk-delivered to spawn",
+    "%victim% became hoglin seasoning",
+    "%victim% got pork-shoved",
+    "%victim% was flipped into Nether history",
+    "%victim% was gored by angry bacon",
+    "%victim% lost to the Nether's heaviest livestock",
+    "%victim% was tusk-taxed into the respawn screen",
+    "%victim% was bullied by a walking pork chop"
   ],
   "zoglin": [
     "%victim% got hit by expired pork rage",
@@ -165,7 +295,17 @@
     "%victim% lost to hostile leftovers",
     "%victim% got charged by spoiled pork",
     "%victim% got removed by an angry meat glitch",
-    "%victim% became zoglin collateral"
+    "%victim% became zoglin collateral",
+    "%victim% was deleted by rotten ham",
+    "%victim% lost to an undead pig's identity crisis",
+    "%victim% was processed by spoiled meat",
+    "%victim% was gored by a zombie pig",
+    "%victim% got rot-rushed",
+    "%victim% was gored by a rotten pig with a grudge",
+    "%victim% was deleted by undead Nether rage",
+    "%victim% lost to a pig that's too angry to stay dead",
+    "%victim% was tusked by expired meat",
+    "%victim% was removed by a zombified hog"
   ],
   "guardian": [
     "%victim% got lasered by a fish with Wi-Fi",
@@ -177,7 +317,17 @@
     "%victim% got deleted by aquatic surveillance",
     "%victim% got punished for swimming near property",
     "%victim% was turned into prismarine gossip",
-    "%victim% got laser-tagged to death"
+    "%victim% got laser-tagged to death",
+    "%victim% was audited by the ocean's laser",
+    "%victim% got sniped by a high-tech pufferfish",
+    "%victim% was dissolved by aquatic Wi-Fi",
+    "%victim% failed the monument's security scan",
+    "%victim% got fish-beamed",
+    "%victim% was beamed by aquatic surveillance",
+    "%victim% was lasered into sea salt",
+    "%victim% failed the monument's security scan",
+    "%victim% was zapped by a high-tech fish",
+    "%victim% was dissolved by prismarine Wi-Fi"
   ],
   "bee": [
     "%victim% got ratioed by a bee",
@@ -189,7 +339,17 @@
     "%victim% got pollinated with consequences",
     "%victim% got deleted by tiny aviation",
     "%victim% got buzzed off the server",
-    "%victim% lost to yellow air traffic"
+    "%victim% lost to yellow air traffic",
+    "%victim% was killed by a flying needle and bad timing",
+    "%victim% lost the 1v1 to a bug",
+    "%victim% was stung by the consequences of their actions",
+    "%victim% became bee-side content",
+    "%victim% got buzz-killed",
+    "%victim% was stung by a flying needle with an attitude",
+    "%victim% lost to the honey militia",
+    "%victim% was pollinated with extreme prejudice",
+    "%victim% was buzzed out of the server",
+    "%victim% died to a creature that literally dies after hitting them"
   ],
   "wolf": [
     "%victim% got chewed by someone's dog",
@@ -201,7 +361,17 @@
     "%victim% learned wolves remember",
     "%victim% got bitten off the leaderboard",
     "%victim% got packed by bark-based justice",
-    "%victim% failed the pet diplomacy check"
+    "%victim% failed the pet diplomacy check",
+    "%victim% met the 'good boy' and it was bad for them",
+    "%victim% was disassembled by a pack of puppies",
+    "%victim% lost to the owner's best friend",
+    "%victim% was chewed out of the server",
+    "%victim% got bark-checked",
+    "%victim% was disassembled by a pack of puppies",
+    "%victim% met the owner's best friend and it was bad",
+    "%victim% was chewed out of the leaderboard",
+    "%victim% lost to canine-based security",
+    "%victim% was dogpiled into a skill issue"
   ],
   "goat": [
     "%victim% got rammed into humility",
@@ -213,7 +383,17 @@
     "%victim% got shoved into a highlight reel",
     "%victim% became cliff-side comedy",
     "%victim% got deleted by alpine anger",
-    "%victim% lost to farm physics"
+    "%victim% lost to farm physics",
+    "%victim% was headbutted into a new biome",
+    "%victim% lost the 'who's on the edge?' contest",
+    "%victim% was launched by a mountain sheep",
+    "%victim% became goat-induced roadkill",
+    "%victim% got horn-yeeted",
+    "%victim% was rammed into a highlight reel",
+    "%victim% was yeeted off the mountain by a goat",
+    "%victim% lost the ledge-holding contest to a goat",
+    "%victim% was launched into the void by horns",
+    "%victim% was headbutted into a new life"
   ],
   "breeze": [
     "%victim% got wind-taxed by a breeze",
@@ -225,7 +405,17 @@
     "%victim% got blown off script",
     "%victim% failed the wind resistance test",
     "%victim% got bounced into bad decisions",
-    "%victim% got sent by premium air"
+    "%victim% got sent by premium air",
+    "%victim% was bullied by aggressive atmosphere",
+    "%victim% lost to sentient wind",
+    "%victim% was juggled by trial chamber air",
+    "%victim% was deleted by a breeze with a grudge",
+    "%victim% got wind-clapped",
+    "%victim% was juggled by trial chamber air",
+    "%victim% was bullied by sentient weather",
+    "%victim% was blown off the scoreboard",
+    "%victim% was launched into a bad decision by the breeze",
+    "%victim% was deleted by aggressive atmosphere"
   ],
   "bogged": [
     "%victim% got poisoned by swamp skeleton DLC",
@@ -237,7 +427,17 @@
     "%victim% got greened by a soggy archer",
     "%victim% got deleted by marshland bones",
     "%victim% got arrowed by wet misery",
-    "%victim% failed the bog check"
+    "%victim% failed the bog check",
+    "%victim% was poisoned by a swamp's bad attitude",
+    "%victim% lost to a skeleton with moss and toxins",
+    "%victim% was sniped by the bog's finest",
+    "%victim% was dissolved by swamp arrows",
+    "%victim% got moss-sniped",
+    "%victim% was poisoned by a swamp's bad attitude",
+    "%victim% was sniped by a mossy calcium deposit",
+    "%victim% was ventilated by toxic arrows",
+    "%victim% lost to the bog's finest archer",
+    "%victim% was dissolved by swamp-based ballistics"
   ],
   "projectile": [
     "%victim% caught a projectile with their face",
@@ -249,7 +449,17 @@
     "%victim% tried to parry server physics",
     "%victim% got hit by the consequences of standing still",
     "%victim% got deleted by airborne hate",
-    "%victim% lost the dodge tutorial"
+    "%victim% lost the dodge tutorial",
+    "%victim% caught a high-speed mistake",
+    "%victim% was archived by airborne physics",
+    "%victim% lost the range game",
+    "%victim% was ventilated by incoming mail",
+    "%victim% got fly-by clapped",
+    "%victim% was archived by airborne physics",
+    "%victim% caught a one-way ticket to spawn",
+    "%victim% was sniped by incoming data",
+    "%victim% lost the range duel to velocity",
+    "%victim% was deleted by a fast-moving mistake"
   ],
   "arrow": [
     "%victim% got arrowed into the archive",
@@ -261,7 +471,17 @@
     "%victim% discovered arrows are faster than excuses",
     "%victim% got ranged by bad posture",
     "%victim% ate an arrow and logged the review",
-    "%victim% got removed by pointy mail"
+    "%victim% got removed by pointy mail",
+    "%victim% became an arrow's new home",
+    "%victim% was edited by a bow and arrow",
+    "%victim% lost to a traveling stick",
+    "%victim% was sniped by basic archer logic",
+    "%victim% got shafted",
+    "%victim% was shafted by an archer",
+    "%victim% was edited by a bow and arrow",
+    "%victim% became a pincushion for server arrows",
+    "%victim% was sniped by basic archer logic",
+    "%victim% caught a stick traveling at Mach 1"
   ],
   "trident": [
     "%victim% got forked by ocean privilege",
@@ -273,7 +493,17 @@
     "%victim% got three-pronged into spawn",
     "%victim% was audited by loyalty enchantment",
     "%victim% got skewered by wet violence",
-    "%victim% learned tridents are not decoration"
+    "%victim% learned tridents are not decoration",
+    "%victim% was forked into the afterlife",
+    "%victim% caught a one-way spear to spawn",
+    "%victim% was dismantled by water-based ballistics",
+    "%victim% lost to the trident cartel",
+    "%victim% got prong-clapped",
+    "%victim% was forked into the afterlife",
+    "%victim% was skewered by Poseidon's toothpick",
+    "%victim% caught a trident and didn't keep it",
+    "%victim% was impaled by aquatic Spear tech",
+    "%victim% was prong-clapped"
   ],
   "fireball": [
     "%victim% got fireballed into the patch notes",
@@ -285,7 +515,17 @@
     "%victim% failed to return sender",
     "%victim% got launched by Nether mail",
     "%victim% became smoke with inventory",
-    "%victim% got toasted by projectile cuisine"
+    "%victim% got toasted by projectile cuisine",
+    "%victim% was cooked by airborne ghast rage",
+    "%victim% caught a fireball to the ego",
+    "%victim% was deleted by spicy geometry",
+    "%victim% became Nether ash",
+    "%victim% got fire-yeeted",
+    "%victim% was toasted by Nether ballistics",
+    "%victim% caught a fireball to the ego",
+    "%victim% was roasted by airborne ghast rage",
+    "%victim% was deleted by spicy geometry",
+    "%victim% was cooked by Ghast-based delivery"
   ],
   "wind_charge": [
     "%victim% got bounced by pocket weather",
@@ -297,7 +537,17 @@
     "%victim% ate air and called it combat",
     "%victim% got displaced into consequences",
     "%victim% was moved by force and poor planning",
-    "%victim% got blasted by bottled breeze"
+    "%victim% got blasted by bottled breeze",
+    "%victim% was air-juggled into the respawn menu",
+    "%victim% lost to a gust of wind with intent",
+    "%victim% was launched by portable atmosphere",
+    "%victim% was deleted by a breeze ball",
+    "%victim% got air-bounced",
+    "%victim% was air-bounced into a skill issue",
+    "%victim% was launched by portable atmosphere",
+    "%victim% was deleted by a breeze ball",
+    "%victim% was moved by force and poor planning",
+    "%victim% was blasted by bottled air"
   ],
   "thrown_potion": [
     "%victim% got splashed with consequences",
@@ -309,7 +559,17 @@
     "%victim% failed alchemy class",
     "%victim% got hit by liquid disrespect",
     "%victim% became a lab result",
-    "%victim% got bottled into the respawn menu"
+    "%victim% got bottled into the respawn menu",
+    "%victim% was dissolved by bottled science",
+    "%victim% lost to chemical warfare",
+    "%victim% was splashed out of the game",
+    "%victim% became an alchemy disaster",
+    "%victim% got brew-clapped",
+    "%victim% was dissolved by bottled science",
+    "%victim% was splashed out of the game",
+    "%victim% became an alchemy disaster",
+    "%victim% was liquidated by chemical warfare",
+    "%victim% was brew-clapped"
   ],
   "magic": [
     "%victim% got removed by wizard math",
@@ -321,7 +581,17 @@
     "%victim% failed the arcane audit",
     "%victim% was hexed into chat",
     "%victim% got folded by supernatural paperwork",
-    "%victim% got patched out by magic"
+    "%victim% got patched out by magic",
+    "%victim% was erased by arcane privilege",
+    "%victim% lost to the server's magic department",
+    "%victim% was deleted by particle effects",
+    "%victim% became a wizard's highlight reel",
+    "%victim% got spell-humbled",
+    "%victim% was erased by arcane privilege",
+    "%victim% was deleted by particle effects",
+    "%victim% became a wizard's highlight reel",
+    "%victim% was spell-humbled",
+    "%victim% lost to the magic department"
   ],
   "poison": [
     "%victim% got poisoned and waited for the inevitable",
@@ -333,7 +603,17 @@
     "%victim% got venom-taxed",
     "%victim% watched their health resign",
     "%victim% got poisoned into desperation",
-    "%victim% learned poison is patient"
+    "%victim% learned poison is patient",
+    "%victim% was slowly deleted by toxins",
+    "%victim% watched their health bar turn into a ticking clock",
+    "%victim% was liquidated by green damage",
+    "%victim% became a poison victim archive",
+    "%victim% got rot-timed",
+    "%victim% was slowly deleted by toxins",
+    "%victim% watched their health bar resign",
+    "%victim% was liquidated by green damage",
+    "%victim% became a slow-motion skill issue",
+    "%victim% got rot-timed"
   ],
   "wither": [
     "%victim% got withered into dust",
@@ -345,7 +625,17 @@
     "%victim% got wither-taxed",
     "%victim% was slowly deleted by skull energy",
     "%victim% got drained by dark particles",
-    "%victim% learned wither does not negotiate"
+    "%victim% learned wither does not negotiate",
+    "%victim% was repossessed by the wither effect",
+    "%victim% watched their heart turn black and quit",
+    "%victim% was deleted by dark magic and entropy",
+    "%victim% became wither-dust lore",
+    "%victim% got decay-clapped",
+    "%victim% was repossessed by the wither effect",
+    "%victim% watched their hearts turn black and quit",
+    "%victim% was deleted by dark magic and entropy",
+    "%victim% became wither-dust lore",
+    "%victim% got decay-clapped"
   ],
   "sonic_boom": [
     "%victim% got bass-boosted into the void of dignity",
@@ -357,7 +647,17 @@
     "%victim% discovered volume can kill",
     "%victim% got turned down permanently",
     "%victim% got equalized into the floor",
-    "%victim% failed the silence challenge"
+    "%victim% failed the silence challenge",
+    "%victim% was boomed out of the cave census",
+    "%victim% lost the 1v1 to a frequency",
+    "%victim% was erased by sonic privilege",
+    "%victim% became cave vibration lore",
+    "%victim% got bass-yeeted",
+    "%victim% was boomed out of the cave census",
+    "%victim% lost the 1v1 to a frequency",
+    "%victim% was erased by sonic privilege",
+    "%victim% became cave vibration lore",
+    "%victim% got bass-yeeted"
   ],
   "explosion": [
     "%victim% got converted into blast radius",
@@ -369,7 +669,17 @@
     "%victim% became crater decoration",
     "%victim% got removed by loud math",
     "%victim% stood inside the problem",
-    "%victim% got blast-processed"
+    "%victim% got blast-processed",
+    "%victim% became shrapnel lore",
+    "%victim% was redecorated by rapid expansion",
+    "%victim% failed the blast resistance check",
+    "%victim% was deleted by a loud noise",
+    "%victim% got boom-clapped",
+    "%victim% became shrapnel lore",
+    "%victim% was redecorated by rapid expansion",
+    "%victim% failed the blast resistance check",
+    "%victim% was deleted by a loud noise",
+    "%victim% got boom-clapped"
   ],
   "tnt": [
     "%victim% trusted TNT like it had mercy",
@@ -381,7 +691,17 @@
     "%victim% got sent by a block with a fuse",
     "%victim% became debris with a username",
     "%victim% got blown out of the group chat",
-    "%victim% discovered TNT still works"
+    "%victim% discovered TNT still works",
+    "%victim% was edited by 256 gunpowder and sand",
+    "%victim% lost the 1v1 to a red block",
+    "%victim% was launched by redstone mechanics",
+    "%victim% became a TNT highlight",
+    "%victim% got block-boomed",
+    "%victim% was edited by 256 gunpowder and sand",
+    "%victim% was launched by redstone mechanics",
+    "%victim% became a TNT highlight",
+    "%victim% got block-boomed",
+    "%victim% trusted a fuse and paid for it"
   ],
   "crystal": [
     "%victim% got crystalled into the next dimension",
@@ -393,7 +713,17 @@
     "%victim% got vaporized by shiny violence",
     "%victim% learned why people carry totems",
     "%victim% got crystal-checked",
-    "%victim% was turned into armor durability"
+    "%victim% was turned into armor durability",
+    "%victim% was popped by endgame hardware",
+    "%victim% lost to obsidian and glass",
+    "%victim% was vaporized by crystal-meth-level-damage",
+    "%victim% became a crystal PvP statistic",
+    "%victim% got pop-checked",
+    "%victim% was popped by endgame hardware",
+    "%victim% was vaporized by crystal-meth-level-damage",
+    "%victim% became a crystal PvP statistic",
+    "%victim% got pop-checked",
+    "%victim% was obsidian-gapped"
   ],
   "bed_explosion": [
     "%victim% tried to sleep in hell and got the answer",
@@ -405,7 +735,17 @@
     "%victim% got folded by bedtime mechanics",
     "%victim% discovered comfort is dimension locked",
     "%victim% got respawn-screened by a pillow",
-    "%victim% lost to IKEA PvP"
+    "%victim% lost to IKEA PvP",
+    "%victim% had a nightmare at Mach 1",
+    "%victim% was deleted by a mattress",
+    "%victim% lost to sleep-deprivation and explosives",
+    "%victim% was sent back to spawn by a duvet",
+    "%victim% got nap-clapped",
+    "%victim% had a nightmare at Mach 1",
+    "%victim% was deleted by a mattress",
+    "%victim% lost to sleep-deprivation and explosives",
+    "%victim% was sent back to spawn by a duvet",
+    "%victim% got nap-clapped"
   ],
   "respawn_anchor": [
     "%victim% clicked an anchor in the wrong dimension",
@@ -417,7 +757,17 @@
     "%victim% became purple shrapnel",
     "%victim% got folded by bad respawn tech",
     "%victim% clicked once and became a warning label",
-    "%victim% got anchored to the death screen"
+    "%victim% got anchored to the death screen",
+    "%victim% was repossessed by glowstone",
+    "%victim% lost to a respawn anchor's bad mood",
+    "%victim% was deleted by a charging station",
+    "%victim% became anchor shrapnel",
+    "%victim% got glow-boomed",
+    "%victim% was repossessed by glowstone",
+    "%victim% was deleted by a charging station",
+    "%victim% became anchor shrapnel",
+    "%victim% got glow-boomed",
+    "%victim% tried to set a spawn and got a funeral"
   ],
   "fire": [
     "%victim% got cooked by ambient disrespect",
@@ -429,7 +779,17 @@
     "%victim% failed stop-drop-roll any percent",
     "%victim% became smoke and excuses",
     "%victim% got toasted into particles",
-    "%victim% stood in the orange problem"
+    "%victim% stood in the orange problem",
+    "%victim% was deleted by a low resolution torch",
+    "%victim% lost to the server's heating bill",
+    "%victim% was cooked into lore",
+    "%victim% became fire-side gossip",
+    "%victim% got roast-clapped",
+    "%victim% was deleted by a low resolution torch",
+    "%victim% lost to the server's heating bill",
+    "%victim% was cooked into lore",
+    "%victim% became fire-side gossip",
+    "%victim% got roast-clapped"
   ],
   "lava": [
     "%victim% tried swimming in lava and got premium cooked",
@@ -441,7 +801,17 @@
     "%victim% got hotbar-liquidated",
     "%victim% entered the orange pool of no returns",
     "%victim% became obsidian memories",
-    "%victim% got full-sent into spicy water"
+    "%victim% got full-sent into spicy water",
+    "%victim% was dissolved by Nether juice",
+    "%victim% lost their gear to the orange void",
+    "%victim% was redecorated by liquid fire",
+    "%victim% became lava-level lore",
+    "%victim% got soup-clapped",
+    "%victim% was dissolved by Nether juice",
+    "%victim% lost their gear to the orange void",
+    "%victim% was redecorated by liquid fire",
+    "%victim% became lava-level lore",
+    "%victim% got soup-clapped"
   ],
   "campfire": [
     "%victim% became campsite seasoning",
@@ -453,7 +823,17 @@
     "%victim% got roasted in low resolution",
     "%victim% became outdoor barbecue lore",
     "%victim% got cooked at spawn picnic speed",
-    "%victim% failed camping basics"
+    "%victim% failed camping basics",
+    "%victim% was grilled by interior design",
+    "%victim% lost to a 1x1 fire pit",
+    "%victim% was smoked out of existence",
+    "%victim% became campsite-debris",
+    "%victim% got cozy-yeeted",
+    "%victim% was grilled by interior design",
+    "%victim% was smoked out of existence",
+    "%victim% became campsite-debris",
+    "%victim% got cozy-yeeted",
+    "%victim% lost to a 1x1 fire pit"
   ],
   "hot_floor": [
     "%victim% tap-danced on magma until the server won",
@@ -465,7 +845,17 @@
     "%victim% lost to spicy flooring",
     "%victim% got deleted by interior design",
     "%victim% failed the crouch tutorial",
-    "%victim% got cooked from the ankles up"
+    "%victim% got cooked from the ankles up",
+    "%victim% was humbled by a hot block",
+    "%victim% lost to Nether flooring",
+    "%victim% was sizzled into the afterlife",
+    "%victim% became magma-crust lore",
+    "%victim% got floor-clapped",
+    "%victim% was sizzled into the afterlife",
+    "%victim% was humbled by a hot block",
+    "%victim% became magma-crust lore",
+    "%victim% got floor-clapped",
+    "%victim% lost to Nether flooring"
   ],
   "lightning": [
     "%victim% got chosen by the sky and rejected by life",
@@ -477,7 +867,17 @@
     "%victim% got thunderstruck into chat",
     "%victim% was patched by electricity",
     "%victim% got fried by cloud moderation",
-    "%victim% lost to vertical electricity"
+    "%victim% lost to vertical electricity",
+    "%victim% was smited for existing",
+    "%victim% caught a one-way bolt to spawn",
+    "%victim% was deleted by sky-math",
+    "%victim% became weather-system lore",
+    "%victim% got sky-zapped",
+    "%victim% was smited for existing",
+    "%victim% caught a one-way bolt to spawn",
+    "%victim% was deleted by sky-math",
+    "%victim% became weather-system lore",
+    "%victim% got sky-zapped"
   ],
   "drowning": [
     "%victim% forgot lungs have a timer",
@@ -489,7 +889,17 @@
     "%victim% confused swimming with breathing",
     "%victim% got archived below sea level",
     "%victim% ran out of oxygen and excuses",
-    "%victim% became fish gossip"
+    "%victim% became fish gossip",
+    "%victim% was deleted by H2O",
+    "%victim% lost to the ocean's inability to provide oxygen",
+    "%victim% was bubbled out of existence",
+    "%victim% became aquatic-debris",
+    "%victim% got wet-yeeted",
+    "%victim% was deleted by H2O",
+    "%victim% lost to the ocean's inability to provide oxygen",
+    "%victim% was bubbled out of existence",
+    "%victim% became aquatic-debris",
+    "%victim% got wet-yeeted"
   ],
   "suffocation": [
     "%victim% got hugged by blocks too hard",
@@ -501,7 +911,17 @@
     "%victim% failed to exist in open air",
     "%victim% got compressed into chat",
     "%victim% discovered walls are solid",
-    "%victim% got clipped by reality"
+    "%victim% got clipped by reality",
+    "%victim% was deleted by a solid object",
+    "%victim% lost to a block's hit-box",
+    "%victim% was compressed by architecture",
+    "%victim% became wall-lore",
+    "%victim% got block-clapped",
+    "%victim% was deleted by a solid object",
+    "%victim% was compressed by architecture",
+    "%victim% became wall-lore",
+    "%victim% got block-clapped",
+    "%victim% lost to a block's hit-box"
   ],
   "starvation": [
     "%victim% lost to the food bar",
@@ -513,7 +933,17 @@
     "%victim% let steak win by not existing",
     "%victim% got folded by calorie debt",
     "%victim% became a skeleton preview",
-    "%victim% failed nutrition any percent"
+    "%victim% failed nutrition any percent",
+    "%victim% was deleted by an empty stomach",
+    "%victim% lost to the lack of steak",
+    "%victim% was archived for not eating",
+    "%victim% became hunger-bar lore",
+    "%victim% got bread-taxed",
+    "%victim% was deleted by an empty stomach",
+    "%victim% was archived for not eating",
+    "%victim% became hunger-bar lore",
+    "%victim% got bread-taxed",
+    "%victim% lost to the lack of steak"
   ],
   "freeze": [
     "%victim% got refrigerated by powder snow",
@@ -525,7 +955,17 @@
     "%victim% got chilled into the respawn screen",
     "%victim% became frozen loot",
     "%victim% got snow-taxed",
-    "%victim% failed the temperature check"
+    "%victim% failed the temperature check",
+    "%victim% was deleted by powder snow",
+    "%victim% lost to the mountain's freezer",
+    "%victim% was chilled out of existence",
+    "%victim% became snow-lore",
+    "%victim% got ice-clapped",
+    "%victim% was deleted by powder snow",
+    "%victim% was chilled out of existence",
+    "%victim% became snow-lore",
+    "%victim% got ice-clapped",
+    "%victim% lost to the mountain's freezer"
   ],
   "cactus": [
     "%victim% hugged a cactus and complained",
@@ -537,7 +977,17 @@
     "%victim% got needled by green geometry",
     "%victim% got pricked into shame",
     "%victim% stood too close to natural spikes",
-    "%victim% got deleted by hostile salad"
+    "%victim% got deleted by hostile salad",
+    "%victim% was poked out of the server",
+    "%victim% lost to a prickly block",
+    "%victim% was dismantled by desert plants",
+    "%victim% became cactus-debris",
+    "%victim% got prick-clapped",
+    "%victim% was poked out of the server",
+    "%victim% was dismantled by desert plants",
+    "%victim% became cactus-debris",
+    "%victim% got prick-clapped",
+    "%victim% lost to a prickly block"
   ],
   "berry_bush": [
     "%victim% got murdered by a snack",
@@ -549,7 +999,17 @@
     "%victim% failed berry pathing",
     "%victim% got shredded by fruit",
     "%victim% got farmed by a bush",
-    "%victim% lost to a plant with hands"
+    "%victim% lost to a plant with hands",
+    "%victim% was deleted by a berry bush",
+    "%victim% lost to sweet-berry-rage",
+    "%victim% was shredded by snacks",
+    "%victim% became bush-lore",
+    "%victim% got berry-clapped",
+    "%victim% was shredded by snacks",
+    "%victim% was deleted by a berry bush",
+    "%victim% became bush-lore",
+    "%victim% got berry-clapped",
+    "%victim% lost to sweet-berry-rage"
   ],
   "stalagmite": [
     "%victim% got kebabed by cave spikes",
@@ -561,7 +1021,17 @@
     "%victim% got spiked into chat",
     "%victim% failed downward hazard awareness",
     "%victim% became a warning sign underground",
-    "%victim% got folded by mineral violence"
+    "%victim% got folded by mineral violence",
+    "%victim% was speared by the cave floor",
+    "%victim% lost to a dripstone spike",
+    "%victim% was impaled by geology",
+    "%victim% became stalagmite-lore",
+    "%victim% got spike-clapped",
+    "%victim% was speared by the cave floor",
+    "%victim% was impaled by geology",
+    "%victim% became stalagmite-lore",
+    "%victim% got spike-clapped",
+    "%victim% lost to a dripstone spike"
   ],
   "falling_block": [
     "%victim% got bonked by falling architecture",
@@ -573,7 +1043,17 @@
     "%victim% was flattened by construction",
     "%victim% got block-delivered to death",
     "%victim% got compressed by falling matter",
-    "%victim% lost to delayed physics"
+    "%victim% lost to delayed physics",
+    "%victim% was crushed by falling gravel",
+    "%victim% lost to sand with gravity hacks",
+    "%victim% was flattened by a falling block",
+    "%victim% became pancake-lore",
+    "%victim% got drop-clapped",
+    "%victim% was crushed by falling gravel",
+    "%victim% was flattened by a falling block",
+    "%victim% became pancake-lore",
+    "%victim% got drop-clapped",
+    "%victim% lost to sand with gravity hacks"
   ],
   "anvil": [
     "%victim% got renamed to dead",
@@ -585,7 +1065,17 @@
     "%victim% became two-dimensional",
     "%victim% got dropped by blacksmith artillery",
     "%victim% got crushed by a naming device",
-    "%victim% learned anvils have drop rates"
+    "%victim% learned anvils have drop rates",
+    "%victim% was flattened by a 31-iron block",
+    "%victim% lost to an anvil-drop highlight",
+    "%victim% was deleted by blacksmith physics",
+    "%victim% became anvil-lore",
+    "%victim% got bonk-clapped",
+    "%victim% was flattened by a 31-iron block",
+    "%victim% was deleted by blacksmith physics",
+    "%victim% became anvil-lore",
+    "%victim% got bonk-clapped",
+    "%victim% lost to an anvil-drop highlight"
   ],
   "contact": [
     "%victim% touched the wrong block and paid retail",
@@ -597,7 +1087,17 @@
     "%victim% got damaged by proximity",
     "%victim% discovered personal space exists",
     "%victim% was removed by environmental attitude",
-    "%victim% touched grass and still lost"
+    "%victim% touched grass and still lost",
+    "%victim% was deleted by standing too close to the problem",
+    "%victim% lost to contact-damage-logic",
+    "%victim% was removed by physical-nonsense",
+    "%victim% became contact-lore",
+    "%victim% got touch-clapped",
+    "%victim% was deleted by standing too close to the problem",
+    "%victim% was removed by physical-nonsense",
+    "%victim% became contact-lore",
+    "%victim% got touch-clapped",
+    "%victim% lost to contact-damage-logic"
   ],
   "cramming": [
     "%victim% got crowd-crushed by bad entity management",
@@ -609,7 +1109,17 @@
     "%victim% lost to overpopulation",
     "%victim% got folded by hitbox traffic",
     "%victim% became lag control",
-    "%victim% got packed by density"
+    "%victim% got packed by density",
+    "%victim% was deleted by 24 entities and a wall",
+    "%victim% lost the hitbox-war",
+    "%victim% was compressed by entity-cramming",
+    "%victim% became density-lore",
+    "%victim% got crowd-clapped",
+    "%victim% was deleted by 24 entities and a wall",
+    "%victim% was compressed by entity-cramming",
+    "%victim% became density-lore",
+    "%victim% got crowd-clapped",
+    "%victim% lost the hitbox-war"
   ],
   "thorns": [
     "%victim% punched armor and lost",
@@ -621,7 +1131,17 @@
     "%victim% attacked and filed their own death report",
     "%victim% got prickled by armor",
     "%victim% lost to defensive drip",
-    "%victim% got punished for clicking"
+    "%victim% got punished for clicking",
+    "%victim% was deleted by %killer%'s spiky drip",
+    "%victim% lost to passive-aggressive-armor",
+    "%victim% was shredded by %killer%'s enchantments",
+    "%victim% became thorns-lore",
+    "%victim% got thorn-clapped",
+    "%victim% was deleted by %killer%'s spiky drip",
+    "%victim% was shredded by %killer%'s enchantments",
+    "%victim% became thorns-lore",
+    "%victim% got thorn-clapped",
+    "%victim% lost to passive-aggressive-armor"
   ],
   "fly_into_wall": [
     "%victim% became kinetic art",
@@ -633,7 +1153,17 @@
     "%victim% learned momentum is not a suggestion",
     "%victim% became a crater without TNT",
     "%victim% lost to terminal velocity and masonry",
-    "%victim% got splatted by navigation"
+    "%victim% got splatted by navigation",
+    "%victim% was deleted by a mountain-side and high speed",
+    "%victim% lost the 1v1 to a wall",
+    "%victim% was compressed by kinetic energy",
+    "%victim% became splat-lore",
+    "%victim% got wall-clapped",
+    "%victim% was deleted by a mountain-side and high speed",
+    "%victim% was compressed by kinetic energy",
+    "%victim% became splat-lore",
+    "%victim% got wall-clapped",
+    "%victim% lost the 1v1 to a wall"
   ],
   "fall": [
     "%victim% forgot gravity was enabled",
@@ -645,7 +1175,17 @@
     "%victim% performed a no-water clutch without water",
     "%victim% converted altitude into regret",
     "%victim% got floor-tested",
-    "%victim% landed the wrong way: permanently"
+    "%victim% landed the wrong way: permanently",
+    "%victim% was deleted by Y-axis-logic",
+    "%victim% lost to the floor's hit-box",
+    "%victim% was archived by altitude",
+    "%victim% became gravity-lore",
+    "%victim% got floor-yeeted",
+    "%victim% was deleted by Y-axis-logic",
+    "%victim% was archived by altitude",
+    "%victim% became gravity-lore",
+    "%victim% got floor-yeeted",
+    "%victim% lost to the floor's hit-box"
   ],
   "void": [
     "%victim% got accepted by the void",
@@ -657,7 +1197,17 @@
     "%victim% got removed by absolute emptiness",
     "%victim% became void tax",
     "%victim% discovered bedrock was optional somehow",
-    "%victim% got deleted below the paperwork"
+    "%victim% got deleted below the paperwork",
+    "%victim% was repossessed by the abyss",
+    "%victim% lost to the server's bottom limit",
+    "%victim% was erased by negative coordinates",
+    "%victim% became abyss-lore",
+    "%victim% got void-clapped",
+    "%victim% was repossessed by the abyss",
+    "%victim% was erased by negative coordinates",
+    "%victim% became abyss-lore",
+    "%victim% got void-clapped",
+    "%victim% lost to the server's bottom limit"
   ],
   "world_border": [
     "%victim% argued with the world border and lost",
@@ -669,7 +1219,17 @@
     "%victim% tried to escape 2b2t and failed",
     "%victim% became border warning text",
     "%victim% hit the server's property line",
-    "%victim% got evicted by coordinates"
+    "%victim% got evicted by coordinates",
+    "%victim% was deleted by the server's leash",
+    "%victim% lost to the world's end",
+    "%victim% was archived by the border",
+    "%victim% became limit-lore",
+    "%victim% got edge-clapped",
+    "%victim% was deleted by the server's leash",
+    "%victim% was archived by the border",
+    "%victim% became limit-lore",
+    "%victim% got edge-clapped",
+    "%victim% lost to the world's end"
   ],
   "bad_respawn_point": [
     "%victim% trusted a respawn point with malicious intent",
@@ -681,7 +1241,17 @@
     "%victim% got punished by home planning",
     "%victim% got folded by bad bedding",
     "%victim% turned respawn into a death loop",
-    "%victim% lost to interior design"
+    "%victim% lost to interior design",
+    "%victim% was deleted by their own bed-math",
+    "%victim% lost to a trapped spawn",
+    "%victim% was archived by bad-logistics",
+    "%victim% became spawn-lore",
+    "%victim% got bed-trapped",
+    "%victim% was deleted by their own bed-math",
+    "%victim% was archived by bad-logistics",
+    "%victim% became spawn-lore",
+    "%victim% got bed-trapped",
+    "%victim% lost to a trapped spawn"
   ],
   "command_kill": [
     "%victim% ended their life",
@@ -693,7 +1263,17 @@
     "%victim% opted out of living",
     "%victim% clicked the emergency uninstall button",
     "%victim% filed a manual death report",
-    "%victim% became their own killer"
+    "%victim% became their own killer",
+    "%victim% was removed by /kill",
+    "%victim% lost the 1v1 to the console",
+    "%victim% was deleted by themselves",
+    "%victim% became command-lore",
+    "%victim% got self-clapped",
+    "%victim% was removed by /kill",
+    "%victim% was deleted by themselves",
+    "%victim% became command-lore",
+    "%victim% got self-clapped",
+    "%victim% lost the 1v1 to the console"
   ],
   "suicide": [
     "%victim% made the final bad decision",
@@ -705,7 +1285,17 @@
     "%victim% took themselves out of the fight",
     "%victim% pressed the wrong life button",
     "%victim% ended the duel with nobody",
-    "%victim% deleted their own session"
+    "%victim% deleted their own session",
+    "%victim% was repossessed by bad-choices",
+    "%victim% lost to their own gear",
+    "%victim% was archived by self-damage",
+    "%victim% became suicide-lore",
+    "%victim% got self-clapped",
+    "%victim% was repossessed by bad-choices",
+    "%victim% was archived by self-damage",
+    "%victim% became suicide-lore",
+    "%victim% got self-clapped",
+    "%victim% lost to their own gear"
   ],
   "combat_log": [
     "%victim% tried logging from combat and got written into shame",
@@ -717,7 +1307,17 @@
     "%victim% turned ping into surrender",
     "%victim% tried to alt-F4 reality",
     "%victim% became combat log evidence",
-    "%victim% got saved by nothing"
+    "%victim% got saved by nothing",
+    "%victim% was deleted for a tactical-disconnect",
+    "%victim% lost to the anti-combat-log-system",
+    "%victim% was archived by shame",
+    "%victim% became log-lore",
+    "%victim% got log-clapped",
+    "%victim% was deleted for a tactical-disconnect",
+    "%victim% was archived by shame",
+    "%victim% became log-lore",
+    "%victim% got log-clapped",
+    "%victim% lost to the anti-combat-log-system"
   ],
   "vehicle_crash": [
     "%victim% failed transportation safety",
@@ -729,7 +1329,17 @@
     "%victim% became roadkill with extra steps",
     "%victim% lost to movement tech",
     "%victim% got parked permanently",
-    "%victim% discovered vehicles have consequences"
+    "%victim% discovered vehicles have consequences",
+    "%victim% was deleted by transport-logic",
+    "%victim% lost to a vehicle-bug",
+    "%victim% was archived by speed",
+    "%victim% became crash-lore",
+    "%victim% got drive-clapped",
+    "%victim% was deleted by transport-logic",
+    "%victim% was archived by speed",
+    "%victim% became crash-lore",
+    "%victim% got drive-clapped",
+    "%victim% lost to a vehicle-bug"
   ],
   "minecart": [
     "%victim% got railed by minecart physics",
@@ -741,7 +1351,17 @@
     "%victim% failed minecart OSHA",
     "%victim% got track-checked",
     "%victim% became cargo",
-    "%victim% got delivered to spawn by rail"
+    "%victim% got delivered to spawn by rail",
+    "%victim% was deleted by iron-wheels",
+    "%victim% lost to the rail-system",
+    "%victim% was archived by minecarts",
+    "%victim% became track-lore",
+    "%victim% got rail-clapped",
+    "%victim% was deleted by iron-wheels",
+    "%victim% was archived by minecarts",
+    "%victim% became track-lore",
+    "%victim% got rail-clapped",
+    "%victim% lost to the rail-system"
   ],
   "boat_crash": [
     "%victim% got boated into shame",
@@ -753,7 +1373,17 @@
     "%victim% turned a boat into a coffin",
     "%victim% got shoreline-checked",
     "%victim% lost to oak transportation",
-    "%victim% discovered boats are not armor"
+    "%victim% discovered boats are not armor",
+    "%victim% was deleted by nautical-nonsense",
+    "%victim% lost to boat-physics",
+    "%victim% was archived by water-craft",
+    "%victim% became boat-lore",
+    "%victim% got dock-clapped",
+    "%victim% was deleted by nautical-nonsense",
+    "%victim% was archived by water-craft",
+    "%victim% became boat-lore",
+    "%victim% got dock-clapped",
+    "%victim% lost to boat-physics"
   ],
   "ender_pearl": [
     "%victim% pearled into regret",
@@ -765,7 +1395,17 @@
     "%victim% trusted purple movement too much",
     "%victim% blinked into bad terrain",
     "%victim% got mobility-checked",
-    "%victim% threw their life away literally"
+    "%victim% threw their life away literally",
+    "%victim% was deleted by a pearl-throw",
+    "%victim% lost to teleport-damage",
+    "%victim% was archived by ender-pearls",
+    "%victim% became pearl-lore",
+    "%victim% got teleport-clapped",
+    "%victim% was deleted by a pearl-throw",
+    "%victim% was archived by ender-pearls",
+    "%victim% became pearl-lore",
+    "%victim% got teleport-clapped",
+    "%victim% lost to teleport-damage"
   ],
   "mace_smash": [
     "%victim% got courthouse-slammed by a mace",
@@ -777,7 +1417,17 @@
     "%victim% got gravity-comboed",
     "%victim% got flattened by premium bonk",
     "%victim% was sentenced by a falling mace",
-    "%victim% got sent by trial chamber justice"
+    "%victim% got sent by trial chamber justice",
+    "%victim% was deleted by density-logic",
+    "%victim% lost to a mace-drop",
+    "%victim% was archived by vertical-damage",
+    "%victim% became mace-lore",
+    "%victim% got mace-clapped",
+    "%victim% was deleted by density-logic",
+    "%victim% was archived by vertical-damage",
+    "%victim% became mace-lore",
+    "%victim% got mace-clapped",
+    "%victim% lost to a mace-drop"
   ],
   "trial_chamber": [
     "%victim% failed the trial and the chamber kept the deposit",
@@ -789,7 +1439,17 @@
     "%victim% got vaulted into the respawn screen",
     "%victim% failed procedural humiliation",
     "%victim% got processed by the trial machine",
-    "%victim% became reward room gossip"
+    "%victim% became reward room gossip",
+    "%victim% was deleted by the trial-system",
+    "%victim% lost to a trial-chamber-trap",
+    "%victim% was archived by copper-architecture",
+    "%victim% became trial-lore",
+    "%victim% got chamber-clapped",
+    "%victim% was deleted by the trial-system",
+    "%victim% was archived by copper-architecture",
+    "%victim% became trial-lore",
+    "%victim% got chamber-clapped",
+    "%victim% lost to a trial-chamber-trap"
   ],
   "dragon": [
     "%victim% got ender dragon-certified",
@@ -801,7 +1461,17 @@
     "%victim% got wing-slapped into history",
     "%victim% discovered the dragon owns the sky",
     "%victim% got folded by final boss nostalgia",
-    "%victim% became crystal fight collateral"
+    "%victim% became crystal fight collateral",
+    "%victim% was deleted by the End-monarch",
+    "%victim% lost to the dragon's breath",
+    "%victim% was archived by the End",
+    "%victim% became dragon-lore",
+    "%victim% got wing-clapped",
+    "%victim% was deleted by the End-monarch",
+    "%victim% was archived by the End",
+    "%victim% became dragon-lore",
+    "%victim% got wing-clapped",
+    "%victim% lost to the dragon's breath"
   ],
   "wither_boss": [
     "%victim% got wither-bossed into dust",
@@ -813,7 +1483,17 @@
     "%victim% got exploded by skeletal arrogance",
     "%victim% became Nether star paperwork",
     "%victim% got deleted by flying bone admin",
-    "%victim% learned summoning has consequences"
+    "%victim% learned summoning has consequences",
+    "%victim% was deleted by the Wither-lord",
+    "%victim% lost to triple-head-damage",
+    "%victim% was archived by the Wither",
+    "%victim% became boss-lore",
+    "%victim% got skull-clapped",
+    "%victim% was deleted by the Wither-lord",
+    "%victim% was archived by the Wither",
+    "%victim% became boss-lore",
+    "%victim% got skull-clapped",
+    "%victim% lost to triple-head-damage"
   ],
   "unknown": [
     "%victim% died and even the server is confused",
@@ -825,6 +1505,16 @@
     "%victim% got erased by server folklore",
     "%victim% discovered a new bug with their body",
     "%victim% got killed by reasons",
-    "%victim% entered the undefined behavior zone"
+    "%victim% entered the undefined behavior zone",
+    "%victim% was deleted by a ghost-in-the-machine",
+    "%victim% lost to null-logic",
+    "%victim% was archived by mystery-damage",
+    "%victim% became unknown-lore",
+    "%victim% got null-clapped",
+    "%victim% was deleted by a ghost-in-the-machine",
+    "%victim% was archived by mystery-damage",
+    "%victim% became unknown-lore",
+    "%victim% got null-clapped",
+    "%victim% lost to null-logic"
   ]
 }

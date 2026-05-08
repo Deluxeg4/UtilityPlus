@@ -13,10 +13,6 @@ public class GamemodeCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission("utilityplus.gamemode")) {
-            sender.sendMessage("§cYou don't have permission to use this command.");
-            return true;
-        }
 
         Player target;
         GameMode mode;
@@ -46,10 +42,6 @@ public class GamemodeCommand implements CommandExecutor {
             target = sender.getServer().getPlayer(args[0]);
             if (target == null) {
                 sender.sendMessage("§cPlayer not found: " + args[0]);
-                return true;
-            }
-            if (!sender.hasPermission("utilityplus.gamemode.others")) {
-                sender.sendMessage("§cYou don't have permission to change other players' gamemode.");
                 return true;
             }
         } else {
