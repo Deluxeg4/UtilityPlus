@@ -3,6 +3,7 @@ package zeb.deluxeg4.utilityplus;
 import zeb.deluxeg4.utilityplus.commands.*;
 import zeb.deluxeg4.utilityplus.invsee.InventorySeeMode;
 import zeb.deluxeg4.utilityplus.invsee.InventorySeeSessionManager;
+import zeb.deluxeg4.utilityplus.invsee.PendingInventoryOrderManager;
 import zeb.deluxeg4.utilityplus.listeners.*;
 import zeb.deluxeg4.utilityplus.managers.*;
 import zeb.deluxeg4.utilityplus.tabcomplete.TabCompleterManager;
@@ -27,6 +28,8 @@ public class UtilityPlus extends JavaPlugin {
     private VanishCommand vanishCommand;
     private TickMonitor tickMonitor;
     private CpuMonitor  cpuMonitor;
+    private PerformanceBarManager performanceBarManager;
+    private PendingInventoryOrderManager pendingInventoryOrderManager;
     private InventorySeeSessionManager inventorySeeSessionManager;
     private InventorySeeSessionManager enderChestSeeSessionManager;
 
@@ -46,8 +49,10 @@ public class UtilityPlus extends JavaPlugin {
         announcementManager = new AnnouncementManager(this);
         tickMonitor  = new TickMonitor(this);
         cpuMonitor   = new CpuMonitor(this);
-        inventorySeeSessionManager = new InventorySeeSessionManager(this, InventorySeeMode.INVENTORY);
-        enderChestSeeSessionManager = new InventorySeeSessionManager(this, InventorySeeMode.ENDER_CHEST);
+        performanceBarManager = new PerformanceBarManager(this, tickMonitor);
+        pendingInventoryOrderManager = new PendingInventoryOrderManager(this);
+        inventorySeeSessionManager = new InventorySeeSessionManager(this, InventorySeeMode.INVENTORY, pendingInventoryOrderManager);
+        enderChestSeeSessionManager = new InventorySeeSessionManager(this, InventorySeeMode.ENDER_CHEST, pendingInventoryOrderManager);
 
         // ── Executors ─────────────────────────────────────────────────
         // Spawn
@@ -103,6 +108,9 @@ public class UtilityPlus extends JavaPlugin {
         // TPS More
         TPSMoreCommand tpsMoreCmd = new TPSMoreCommand(tickMonitor, cpuMonitor);
         registerCommands(tpsMoreCmd, "tpsmore", "tps");
+        registerCommand("uptime", new UptimeCommand());
+        PerformanceBarCommand performanceBarCommand = new PerformanceBarCommand(performanceBarManager);
+        registerCommands(performanceBarCommand, "tpsbar", "rambar");
 
         // ── Tab Completers ────────────────────────────────────────────
         TabCompleterManager tab = new TabCompleterManager(homeManager, teamManager);
@@ -113,7 +121,7 @@ public class UtilityPlus extends JavaPlugin {
             "msg","w","whisper","pm","r","reply","l","last",
             "team","upreload","stopnow",
             "v","bc","broadcast","gmc","gms","gmsp","gma","kill","s","help",
-            "tpsmore", "tps", "invsee", "enderchestsee"
+            "tpsmore", "tps", "uptime", "tpsbar", "rambar", "invsee", "enderchestsee"
         );
         registerTabCompleters(tab, allCmds);
         command("overclock").setTabCompleter(overclockCommand);
@@ -130,6 +138,8 @@ public class UtilityPlus extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TabListListener(this, tabListManager), this);
         getServer().getPluginManager().registerEvents(new VanishListener(this, vanishCommand), this);
         getServer().getPluginManager().registerEvents(new InventorySeeListener(this), this);
+        getServer().getPluginManager().registerEvents(new PendingInventoryOrderListener(this), this);
+        getServer().getPluginManager().registerEvents(performanceBarManager, this);
 
         getLogger().info("UtilityPlus enabled!");
     }
@@ -143,6 +153,7 @@ public class UtilityPlus extends JavaPlugin {
         if (statsManager != null) statsManager.saveData();
         if (tabListManager != null) tabListManager.stop();
         if (announcementManager != null) announcementManager.stop();
+        if (performanceBarManager != null) performanceBarManager.closeAll();
         if (vanishCommand != null) vanishCommand.saveData();
         if (inventorySeeSessionManager != null) inventorySeeSessionManager.closeAll();
         if (enderChestSeeSessionManager != null) enderChestSeeSessionManager.closeAll();
@@ -158,6 +169,7 @@ public class UtilityPlus extends JavaPlugin {
     public DeathMessageManager getDeathMessageManager() { return deathMessageManager; }
     public TabListManager getTabListManager() { return tabListManager; }
     public AnnouncementManager getAnnouncementManager() { return announcementManager; }
+    public PendingInventoryOrderManager getPendingInventoryOrderManager() { return pendingInventoryOrderManager; }
     public InventorySeeSessionManager getInventorySeeSessionManager() { return inventorySeeSessionManager; }
     public InventorySeeSessionManager getEnderChestSeeSessionManager() { return enderChestSeeSessionManager; }
 

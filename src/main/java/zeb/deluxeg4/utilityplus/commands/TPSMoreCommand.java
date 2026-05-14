@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -131,6 +132,7 @@ public class TPSMoreCommand implements CommandExecutor {
 
             // ---- System Metrics ----
             out.accept("§6System Info:");
+            out.accept(" §7Uptime: §e" + formatUptime());
 
             CpuMonitor.CpuStats cpu10s  = cpuMonitor.getStats(10);
             CpuMonitor.CpuStats cpu1m   = cpuMonitor.getStats(60);
@@ -276,6 +278,23 @@ public class TPSMoreCommand implements CommandExecutor {
                 used  / 1024 / 1024 / 1024,
                 total / 1024 / 1024 / 1024,
                 percent);
+    }
+
+    private String formatUptime() {
+        long totalSeconds = TimeUnit.MILLISECONDS.toSeconds(
+                ManagementFactory.getRuntimeMXBean().getUptime());
+
+        long days = totalSeconds / 86400L;
+        long hours = (totalSeconds % 86400L) / 3600L;
+        long minutes = (totalSeconds % 3600L) / 60L;
+        long seconds = totalSeconds % 60L;
+
+        StringBuilder uptime = new StringBuilder();
+        if (days > 0) uptime.append(days).append("d ");
+        if (hours > 0) uptime.append(hours).append("h ");
+        if (minutes > 0) uptime.append(minutes).append("m ");
+        uptime.append(seconds).append("s");
+        return uptime.toString();
     }
 //    private long getFolderSize(File folder) {
 //        long size = 0;

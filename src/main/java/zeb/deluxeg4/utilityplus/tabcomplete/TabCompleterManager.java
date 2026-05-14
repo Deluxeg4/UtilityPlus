@@ -26,6 +26,7 @@ public class TabCompleterManager implements TabCompleter {
     private static final List<String> CHAT_SUBS   = Arrays.asList("on","off","teamon","teamoff","pmon","pmoff","team");
     private static final List<String> TEAM_SUBS   = Arrays.asList("invite","accept","deny","leave","disband","kick","promote","demote","list","chat","info");
     private static final List<String> STOPNOW_ARGS = Arrays.asList("10s", "30s", "1m", "5m", "10m", "30m", "1h", "now", "cancel", "time", "status");
+    private static final List<String> RAMBAR_ARGS = Arrays.asList("gb", "mb");
     private static final List<String> TPA_NO_ARGS = Arrays.asList("tpaccept","tpdeny","tpcancel","tpaon","tpaoff");
     private static final int OFFLINE_PLAYER_SUGGESTION_LIMIT = 80;
     // subcommands ที่ไม่ต้องการ player argument
@@ -81,6 +82,15 @@ public class TabCompleterManager implements TabCompleter {
         if (cmd.equals("stopnow")) {
             if (args.length != 1) return Collections.emptyList();
             return filter(STOPNOW_ARGS, args[0]);
+        }
+
+        if (cmd.equals("rambar")) {
+            if (args.length != 1) return Collections.emptyList();
+            return filter(RAMBAR_ARGS, args[0].toLowerCase());
+        }
+
+        if (cmd.equals("tpsbar")) {
+            return Collections.emptyList();
         }
 
         // ── Chat ─────────────────────────────────────────────────────
