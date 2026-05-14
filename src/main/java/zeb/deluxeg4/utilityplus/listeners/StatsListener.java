@@ -37,7 +37,7 @@ public class StatsListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
-        Player killer = victim.getKiller();
+        Player killer = deathMessageManager.resolveKiller(event, victim);
 
         // Count death for victim
         statsManager.addDeath(victim.getUniqueId(), victim.getName());
@@ -90,10 +90,9 @@ public class StatsListener implements Listener {
             message = colorWeaponName(message, killer);
         }
 
-        if (killer != null && !selfKillCommand) {
-            Component itemComponent = createNamedWeaponComponent(killer, messageColor);
+        if (!selfKillCommand) {
+            Component itemComponent = createSourceComponent(event, victim, killer);
             if (itemComponent != null) {
-                // Trim trailing spaces to prevent double spacing before "using"
                 message = message.replaceAll("\\s+$", "");
                 broadcastDeathMessage(event, victim, message, itemComponent);
                 return;
@@ -134,24 +133,46 @@ public class StatsListener implements Listener {
         Bukkit.getConsoleSender().sendMessage(message + connector + LegacyComponentSerializer.legacySection().serialize(itemComponent));
     }
 
-    private Component createNamedWeaponComponent(Player killer, String messageColor) {
-        ItemStack weapon = killer.getInventory().getItemInMainHand();
-        if (weapon.getType() == Material.AIR || !weapon.hasItemMeta()) {
+    private Component createSourceComponent(PlayerDeathEvent event, Player victim, Player killer) {
+        if (killer == null) {
             return null;
         }
 
-        ItemMeta meta = weapon.getItemMeta();
-        if (meta == null || !meta.hasDisplayName()) {
-            return null;
+        ItemStack item = deathMessageManager.getKillerItem(killer);
+        if (item != null) {
+            return createItemComponent(item);
         }
 
-        String displayName = meta.getDisplayName();
-        // Always make weapon name gold (&6)
-        displayName = ChatColor.GOLD + ChatColor.stripColor(displayName);
+        String causeName = deathMessageManager.getSimpleCauseName(event, victim, killer);
+        if (causeName == null || causeName.isBlank()) {
+            return null;
+        }
 
         return LegacyComponentSerializer.legacySection()
-                .deserialize(ChatColor.RESET + displayName)
+                .deserialize(ChatColor.RESET + "" + ChatColor.GOLD + causeName);
+    }
+
+    private Component createItemComponent(ItemStack weapon) {
+        ItemMeta meta = weapon.getItemMeta();
+        String displayName = meta != null && meta.hasDisplayName()
+                ? ChatColor.stripColor(meta.getDisplayName())
+                : friendlyItemName(weapon.getType());
+
+        return LegacyComponentSerializer.legacySection()
+                .deserialize(ChatColor.RESET + "" + ChatColor.GOLD + displayName)
                 .hoverEvent(weapon.asHoverEvent());
+    }
+
+    private String friendlyItemName(Material material) {
+        String[] parts = material.name().toLowerCase().split("_");
+        StringBuilder result = new StringBuilder();
+        for (String part : parts) {
+            if (result.length() > 0) {
+                result.append(' ');
+            }
+            result.append(part);
+        }
+        return result.toString();
     }
 
     private String colorName(String message, String name) {

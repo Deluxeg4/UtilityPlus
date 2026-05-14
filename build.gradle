@@ -65,7 +65,7 @@ task downloadLeaf(type: Download) {
     overwrite false
 }
 
-task setupServer(dependsOn: [downloadLeaf, ":bukkit:shadowJar"]) {
+task setupServer(dependsOn: [downloadLeaf, shadowJar]) {
     doLast {
         if (!serverDir.exists()) serverDir.mkdirs()
         
@@ -74,7 +74,7 @@ task setupServer(dependsOn: [downloadLeaf, ":bukkit:shadowJar"]) {
         if (!pluginsDir.exists()) pluginsDir.mkdirs()
         
         copy {
-            from project(":bukkit").tasks.named("shadowJar").flatMap { it.archiveFile }
+            from tasks.named("shadowJar").flatMap { it.archiveFile }
             into pluginsDir
             rename { "${project.name}-${project.version}.jar" }
         }
@@ -118,13 +118,13 @@ runPaper {
 
 gradle.projectsEvaluated {
     tasks.named("runServer") {
-        pluginJars.setFrom(project(":bukkit").tasks.named("shadowJar").flatMap { it.archiveFile })
-        dependsOn project(":bukkit").tasks.named("shadowJar")
+        pluginJars.setFrom(tasks.named("shadowJar").flatMap { it.archiveFile })
+        dependsOn tasks.named("shadowJar")
     }
     tasks.named("runFolia") {
-        pluginJars.setFrom(project(":folia").tasks.named("shadowJar").flatMap { it.archiveFile })
-        dependsOn project(":folia").tasks.named("shadowJar")
+        pluginJars.setFrom(tasks.named("shadowJar").flatMap { it.archiveFile })
+        dependsOn tasks.named("shadowJar")
     }
 }
 
-build.dependsOn ":bukkit:shadowJar", ":folia:shadowJar"
+build.dependsOn shadowJar

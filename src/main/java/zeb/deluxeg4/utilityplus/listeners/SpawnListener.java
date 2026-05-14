@@ -79,6 +79,10 @@ public class SpawnListener implements Listener {
             return;
         }
 
+        if (!shouldHandleRandomRespawn(event)) {
+            return;
+        }
+
         if (spawnManager.isRtpEnabled()) {
             if (isFolia) {
                 handleFoliaRespawn(event, player);
@@ -118,7 +122,7 @@ public class SpawnListener implements Listener {
         if (!spawnManager.isRtpEnabled()) return;
 
         Player player = event.getEntity();
-        if (player.getBedSpawnLocation() != null || hasValidRespawnAnchor(player)) return;
+        if (player.getRespawnLocation() != null) return;
 
         pendingRtp.add(player.getUniqueId());
         scheduleFoliaAliveCheck(player, 0);
@@ -184,14 +188,9 @@ public class SpawnListener implements Listener {
     // ---------------------------------------------------------------
     // Helper
     // ---------------------------------------------------------------
-    private boolean hasValidRespawnAnchor(Player player) {
-        try {
-            return player.getRespawnLocation() != null
-                    && player.getRespawnLocation().getBlock().getType()
-                    == org.bukkit.Material.RESPAWN_ANCHOR;
-        } catch (Exception e) {
-            return false;
-        }
+    private boolean shouldHandleRandomRespawn(PlayerRespawnEvent event) {
+        return event.getRespawnReason() == PlayerRespawnEvent.RespawnReason.DEATH
+                || event.getRespawnReason() == PlayerRespawnEvent.RespawnReason.END_PORTAL;
     }
 
 }

@@ -168,6 +168,18 @@ commands:
     description: Show detailed TPS and performance info (Async)
     usage: /tps [show]
     permission: utilityplus.tpsmore
+  uptime:
+    description: Show server uptime
+    usage: /uptime
+    permission: utilityplus.uptime
+  tpsbar:
+    description: Toggle a realtime TPS/MSPT boss bar
+    usage: /tpsbar
+    permission: utilityplus.performancebar
+  rambar:
+    description: Toggle a realtime RAM boss bar
+    usage: /rambar [gb|mb]
+    permission: utilityplus.performancebar
 
 permissions:
   utilityplus.helps:
@@ -229,4 +241,10 @@ permissions:
     default: op
   utilityplus.tpsmore:
     description: View detailed TPS and performance info
+    default: op
+  utilityplus.uptime:
+    description: View server uptime
+    default: true
+  utilityplus.performancebar:
+    description: Toggle TPS and RAM boss bars
     default: op
