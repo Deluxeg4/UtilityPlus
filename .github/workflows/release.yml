@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -28,10 +32,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            build/libs/UtilityPlus-Paper-*.jar
-            build/libs/UtilityPlus-Folia-*.jar
+            build/libs/UtilityPlus-*.jar
           draft: false
           prerelease: false
-          generate_release_notes: true
+          generate_release_notes: false
+          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
