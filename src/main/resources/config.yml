@@ -9,15 +9,15 @@ spawn:
   tp-spawn-on-death: false
   # Teleport to spawn on respawn ONLY if they have no bed/respawn anchor
   tp-spawn-no-respawn-point: false
-  # Cooldown (seconds) between /spawn uses. 0 = disabled. OP bypasses.
+  # Cooldown (seconds) between spawn uses. 0 = disabled. OP bypasses.
   tp-spawn-cooldown: 30
-  # Warmup (seconds) before teleporting — player must stand still. 0 = instant.
+  # Warmup (seconds) before teleporting. Player must stand still. 0 = instant.
   tp-spawn-warmup: 5
 
 # -----------------------------------------------
 # Random Respawn Settings
 # (When enabled, players respawn at a random location on death)
-# Completely independent from the /setspawn system above.
+# Completely independent from the saved spawn point above.
 # -----------------------------------------------
 random-respawn:
   enabled: true
@@ -37,36 +37,6 @@ unsafe-blocks:
   - MAGMA_BLOCK
   - SWEET_BERRY_BUSH
   - POWDER_SNOW
-
-# -----------------------------------------------
-# TPA Settings
-# -----------------------------------------------
-tpa:
-  # How long (seconds) a TPA request stays active before expiring
-  timeout: 60
-  # How long (seconds) to wait before teleporting after /tpaccept
-  # Player must not move during this time or the teleport is cancelled
-  warmup: 3
-
-# -----------------------------------------------
-# Home Settings
-# -----------------------------------------------
-home:
-  # Warmup (seconds) before teleporting — player must stand still. 0 = instant.
-  warmup: 3
-  # Maximum number of home slots per player (1–4).
-  max-homes: 4
-
-# -----------------------------------------------
-# Team Settings
-# -----------------------------------------------
-team:
-  # Maximum number of players per team
-  max-members: 10
-  # How long (seconds) an invite stays valid before expiring
-  invite-timeout: 60
-  # Auto-kick members offline for longer than this many minutes (0 = disabled, owner is never kicked)
-  offline-kick-minutes: 5
 
 # -----------------------------------------------
 # Custom Join/Leave Message Settings
@@ -163,35 +133,3 @@ queue:
     - "&7Regular: &f0"
     - "&7Priority: &f0"
     - "&7Online: &f{online}/{max}"
-
-# -----------------------------------------------
-# Help Messages Settings
-# -----------------------------------------------
-# Use & for color codes. Each page supports up to 5 lines.
-# Add more pages by creating '2:', '3:', etc.
-#helps:
-#  normal:
-#    1:
-#      - "&b&lCommands &7(Messaging)"
-#      - "&e/msg <player> <message> &7- Send a private message"
-#      - "&e/whisper <player> <message> &7- Alias for /msg"
-#      - "&e/w <player> <message> &7- Alias for /msg"
-#      - "&e/r <message> &7- Reply to last message"
-#    2:
-#      - "&b&lCommands &7(Messaging cont.)"
-#      - "&e/reply <message> &7- Alias for /r"
-#      - "&e/l &7- View last player who messaged you"
-#      - "&e/last &7- Alias for /l"
-#      - "&e/ignore <player> &7- Ignore a player"
-#      - "&e/ignorehard <player> &7- Completely hide a player"
-#    3:
-#      - "&b&lCommands &7(Toggles)"
-#      - "&e/ignorelist &7- View ignored players"
-#      - "&e/togglechat &7- Toggle your public chat"
-#      - "&e/toggleprivatemsgs &7- Toggle private messages"
-#      - "&e/toggledeathmsgs &7- Toggle death messages"
-#      - "&e/toggledeathmsgshard &7- Hide all death messages"
-#    4:
-#      - "&b&lCommands &7(Misc)"
-#      - "&e/kill &7- Kill yourself"
-#      - "&e/help [page] &7- Show this help menu"

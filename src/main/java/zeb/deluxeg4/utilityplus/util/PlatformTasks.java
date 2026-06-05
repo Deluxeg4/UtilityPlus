@@ -11,9 +11,19 @@ import java.util.function.Consumer;
 interface PlatformTasks {
     ScheduledTask runAsync(Plugin plugin, Consumer<ScheduledTask> task);
 
-    ScheduledTask runAsyncTimer(Plugin plugin, Consumer<ScheduledTask> task, long initialDelayTicks, long periodTicks);
+    ScheduledTask runAsyncTimer(
+            Plugin plugin,
+            Consumer<ScheduledTask> task,
+            long initialDelayTicks,
+            long periodTicks
+    );
 
-    ScheduledTask runGlobalTimer(Plugin plugin, Consumer<ScheduledTask> task, long initialDelayTicks, long periodTicks);
+    ScheduledTask runGlobalTimer(
+            Plugin plugin,
+            Consumer<ScheduledTask> task,
+            long initialDelayTicks,
+            long periodTicks
+    );
 
     ScheduledTask runGlobalDelayed(Plugin plugin, Consumer<ScheduledTask> task, long delayTicks);
 
@@ -21,9 +31,20 @@ interface PlatformTasks {
 
     boolean runForPlayer(Plugin plugin, Player player, Runnable task);
 
-    ScheduledTask runForPlayerDelayed(Plugin plugin, Player player, Consumer<ScheduledTask> task, long delayTicks);
+    ScheduledTask runForPlayerDelayed(
+            Plugin plugin,
+            Player player,
+            Consumer<ScheduledTask> task,
+            long delayTicks
+    );
 
-    ScheduledTask runForPlayerTimer(Plugin plugin, Player player, Consumer<ScheduledTask> task, long initialDelayTicks, long periodTicks);
+    ScheduledTask runForPlayerTimer(
+            Plugin plugin,
+            Player player,
+            Consumer<ScheduledTask> task,
+            long initialDelayTicks,
+            long periodTicks
+    );
 
     void runAtLocation(Plugin plugin, World world, int blockX, int blockZ, Runnable task);
 

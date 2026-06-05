@@ -2,6 +2,7 @@ package zeb.deluxeg4.utilityplus.commands;
 
 import zeb.deluxeg4.utilityplus.UtilityPlus;
 import zeb.deluxeg4.utilityplus.managers.ChatManager;
+import zeb.deluxeg4.utilityplus.util.Messages;
 import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,7 +23,7 @@ public class PMCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player from)) {
-            sender.sendMessage("§cThis command can only be used by players!");
+            Messages.send(sender, "&cThis command can only be used by players!");
             return true;
         }
 
@@ -34,17 +35,17 @@ public class PMCommand implements CommandExecutor {
         }
 
         if (args.length < 2) {
-            from.sendMessage("§cUsage: /" + label + " <player> <message>");
+            Messages.send(from, "&cUsage: /" + label + " <player> <message>");
             return true;
         }
 
         Player to = from.getServer().getPlayer(args[0]);
         if (to == null || !to.isOnline()) {
-            from.sendMessage("§cPlayer §e" + args[0] + " §cis not online!");
+            Messages.send(from, "&cPlayer &e" + args[0] + " &cis not online!");
             return true;
         }
         if (to.equals(from)) {
-            from.sendMessage("§cYou cannot message yourself!");
+            Messages.send(from, "&cYou cannot message yourself!");
             return true;
         }
 
@@ -54,19 +55,19 @@ public class PMCommand implements CommandExecutor {
 
     private boolean handleReply(Player from, String[] args) {
         if (args.length < 1) {
-            from.sendMessage("§cUsage: /r <message>");
+            Messages.send(from, "&cUsage: /r <message>");
             return true;
         }
 
         UUID lastSenderUUID = chatManager.getLastPmSender(from.getUniqueId());
         if (lastSenderUUID == null) {
-            from.sendMessage("§cYou have no one to reply to!");
+            Messages.send(from, "&cYou have no one to reply to!");
             return true;
         }
 
         Player to = from.getServer().getPlayer(lastSenderUUID);
         if (to == null || !to.isOnline()) {
-            from.sendMessage("§cThat player is no longer online.");
+            Messages.send(from, "&cThat player is no longer online.");
             return true;
         }
 
@@ -76,19 +77,19 @@ public class PMCommand implements CommandExecutor {
 
     private boolean handleLast(Player from, String[] args) {
         if (args.length < 1) {
-            from.sendMessage("§cUsage: /last <message>");
+            Messages.send(from, "&cUsage: /last <message>");
             return true;
         }
 
         UUID lastTargetUUID = chatManager.getLastPmTarget(from.getUniqueId());
         if (lastTargetUUID == null) {
-            from.sendMessage("§cYou have no last messaged player!");
+            Messages.send(from, "&cYou have no last messaged player!");
             return true;
         }
 
         Player to = from.getServer().getPlayer(lastTargetUUID);
         if (to == null || !to.isOnline()) {
-            from.sendMessage("§cThat player is no longer online.");
+            Messages.send(from, "&cThat player is no longer online.");
             return true;
         }
 
@@ -98,20 +99,20 @@ public class PMCommand implements CommandExecutor {
 
     private void sendPM(Player from, Player to, String message) {
         if (chatManager.isPmMuted(to.getUniqueId())) {
-            from.sendMessage("§e" + to.getName() + " §7is not accepting private messages.");
+            Messages.send(from, "&e" + to.getName() + " &7is not accepting private messages.");
             return;
         }
 
         if (chatManager.isIgnoring(to.getUniqueId(), from.getName())) {
-            from.sendMessage("§e" + to.getName() + " §7is ignoring you.");
+            Messages.send(from, "&e" + to.getName() + " &7is ignoring you.");
             return;
         }
 
-        String toSender = "§7[§fYou §8-> §f" + to.getName() + "§7] §f" + message;
-        String toTarget = "§7[§f" + from.getName() + " §8-> §fYou§7] §f" + message;
+        String toSender = "&dto " + to.getName() + ": " + message;
+        String toTarget = "&d" + from.getName() + " whispers: " + message;
         UtilityPlus plugin = JavaPlugin.getPlugin(UtilityPlus.class);
 
-        from.sendMessage(toSender);
+        Messages.send(from, toSender);
         PaperFoliaTasks.send(plugin, to, toTarget);
 
         chatManager.setLastPmSender(to.getUniqueId(), from.getUniqueId());

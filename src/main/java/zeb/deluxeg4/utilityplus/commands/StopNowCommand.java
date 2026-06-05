@@ -1,12 +1,12 @@
 package zeb.deluxeg4.utilityplus.commands;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import zeb.deluxeg4.utilityplus.util.Messages;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -32,7 +32,7 @@ public class StopNowCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("server.stop")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission.");
+            Messages.send(sender, "&cYou don't have permission.");
             return true;
         }
 
@@ -42,7 +42,7 @@ public class StopNowCommand implements CommandExecutor {
         }
 
         if (args.length > 1) {
-            sender.sendMessage(ChatColor.RED + "Too many arguments.");
+            Messages.send(sender, "&cToo many arguments.");
             sendUsage(sender, label);
             return true;
         }
@@ -63,11 +63,8 @@ public class StopNowCommand implements CommandExecutor {
             }
             shutdownBy = sender.getName();
             shutdownAtMillis = System.currentTimeMillis();
-            broadcast(ChatColor.RED + "Server shutdown started now by "
-                    + ChatColor.WHITE + shutdownBy
-                    + ChatColor.RED + " at "
-                    + ChatColor.WHITE + formatShutdownAt()
-                    + ChatColor.RED + ".");
+            broadcast("&cServer shutdown started now by &f" + shutdownBy
+                    + "&c at &f" + formatShutdownAt() + "&c.");
             shutdownServer();
             return true;
         }
@@ -75,7 +72,7 @@ public class StopNowCommand implements CommandExecutor {
         try {
             startCountdown(parseTime(sub), sender);
         } catch (IllegalArgumentException ex) {
-            sender.sendMessage(ChatColor.RED + ex.getMessage());
+            Messages.send(sender, "&c" + ex.getMessage());
             sendUsage(sender, label);
         }
         return true;
@@ -83,53 +80,42 @@ public class StopNowCommand implements CommandExecutor {
 
     private void cancelCountdown(CommandSender sender) {
         if (countdownTask == null) {
-            sender.sendMessage(ChatColor.YELLOW + "There is no active shutdown countdown.");
+            Messages.send(sender, "&eThere is no active shutdown countdown.");
             return;
         }
 
         countdownTask.cancel();
         countdownTask = null;
         secondsLeft = 0;
-        broadcast(ChatColor.GREEN + "Server shutdown scheduled for "
-                + ChatColor.WHITE + formatShutdownAt()
-                + ChatColor.GREEN + " by "
-                + ChatColor.WHITE + shutdownBy
-                + ChatColor.GREEN + " has been cancelled by "
-                + ChatColor.WHITE + sender.getName()
-                + ChatColor.GREEN + ".");
+        broadcast("&aServer shutdown scheduled for &f" + formatShutdownAt()
+                + "&a by &f" + shutdownBy
+                + "&a has been cancelled by &f" + sender.getName() + "&a.");
         shutdownAtMillis = 0L;
         shutdownBy = null;
     }
 
     private void sendStatus(CommandSender sender) {
         if (countdownTask == null) {
-            sender.sendMessage(ChatColor.YELLOW + "There is no active shutdown countdown.");
+            Messages.send(sender, "&eThere is no active shutdown countdown.");
             return;
         }
 
-        sender.sendMessage(ChatColor.YELLOW + "Server shutting down in "
-                + ChatColor.WHITE + formatTime(secondsLeft)
-                + ChatColor.YELLOW + " at "
-                + ChatColor.WHITE + formatShutdownAt()
-                + ChatColor.YELLOW + ". Requested by "
-                + ChatColor.WHITE + shutdownBy
-                + ChatColor.YELLOW + ".");
+        Messages.send(sender, "&eServer shutting down in &f" + formatTime(secondsLeft)
+                + "&e at &f" + formatShutdownAt()
+                + "&e. Requested by &f" + shutdownBy + "&e.");
     }
 
     private void startCountdown(int seconds, CommandSender sender) {
         if (countdownTask != null) {
             countdownTask.cancel();
-            broadcast(ChatColor.YELLOW + "Shutdown countdown reset by " + sender.getName() + ".");
+            broadcast("&eShutdown countdown reset by " + sender.getName() + ".");
         }
 
         secondsLeft = seconds;
         shutdownBy = sender.getName();
         shutdownAtMillis = System.currentTimeMillis() + seconds * 1000L;
-        broadcast(ChatColor.RED + "Server shutdown countdown started by "
-                + ChatColor.WHITE + shutdownBy
-                + ChatColor.RED + ". Server will close at "
-                + ChatColor.WHITE + formatShutdownAt()
-                + ChatColor.RED + ".");
+        broadcast("&cServer shutdown countdown started by &f" + shutdownBy
+                + "&c. Server will close at &f" + formatShutdownAt() + "&c.");
         broadcastCountdown(secondsLeft);
 
         countdownTask = plugin.getServer().getGlobalRegionScheduler().runAtFixedRate(
@@ -138,9 +124,7 @@ public class StopNowCommand implements CommandExecutor {
                     secondsLeft--;
 
                     if (secondsLeft <= 0) {
-                        broadcast(ChatColor.RED + "Server is closing now. Requested by "
-                                + ChatColor.WHITE + shutdownBy
-                                + ChatColor.RED + ".");
+                        broadcast("&cServer is closing now. Requested by &f" + shutdownBy + "&c.");
                         task.cancel();
                         countdownTask = null;
                         shutdownServer();
@@ -165,13 +149,9 @@ public class StopNowCommand implements CommandExecutor {
     }
 
     private void broadcastCountdown(int seconds) {
-        broadcast(ChatColor.RED + "Server is shutting down in "
-                + ChatColor.WHITE + formatTime(seconds)
-                + ChatColor.RED + " at "
-                + ChatColor.WHITE + formatShutdownAt()
-                + ChatColor.RED + ". Requested by "
-                + ChatColor.WHITE + shutdownBy
-                + ChatColor.RED + ".");
+        broadcast("&cServer is shutting down in &f" + formatTime(seconds)
+                + "&c at &f" + formatShutdownAt()
+                + "&c. Requested by &f" + shutdownBy + "&c.");
     }
 
     private int parseTime(String input) {
@@ -257,7 +237,7 @@ public class StopNowCommand implements CommandExecutor {
     }
 
     private void broadcast(String message) {
-        plugin.getServer().broadcastMessage(message);
+        plugin.getServer().broadcast(Messages.legacy(message));
     }
 
     private void shutdownServer() {
@@ -265,10 +245,10 @@ public class StopNowCommand implements CommandExecutor {
     }
 
     private void sendUsage(CommandSender sender, String label) {
-        sender.sendMessage(ChatColor.RED + "Usage:");
-        sender.sendMessage(ChatColor.RED + "  /" + label + " <time>   " + ChatColor.GRAY + "Start countdown. Examples: 30s, 5m, 1h, 1h30m");
-        sender.sendMessage(ChatColor.RED + "  /" + label + " now      " + ChatColor.GRAY + "Shutdown immediately");
-        sender.sendMessage(ChatColor.RED + "  /" + label + " cancel   " + ChatColor.GRAY + "Cancel active countdown");
-        sender.sendMessage(ChatColor.RED + "  /" + label + " time     " + ChatColor.GRAY + "Show time remaining");
+        Messages.send(sender, "&cUsage:");
+        Messages.send(sender, "&c  /" + label + " <time>   &7Start countdown. Examples: 30s, 5m, 1h, 1h30m");
+        Messages.send(sender, "&c  /" + label + " now      &7Shutdown immediately");
+        Messages.send(sender, "&c  /" + label + " cancel   &7Cancel active countdown");
+        Messages.send(sender, "&c  /" + label + " time     &7Show time remaining");
     }
 }

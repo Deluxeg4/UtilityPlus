@@ -2,6 +2,7 @@ package zeb.deluxeg4.utilityplus.listeners;
 
 import zeb.deluxeg4.utilityplus.UtilityPlus;
 import zeb.deluxeg4.utilityplus.commands.VanishCommand;
+import zeb.deluxeg4.utilityplus.util.Messages;
 import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,7 +35,7 @@ public class VanishListener implements Listener {
         if (vanishCommand.isVanished(joiningPlayer.getUniqueId())) {
             vanishCommand.applyPersistentVanish(joiningPlayer);
             if (notify) {
-                joiningPlayer.sendMessage("§7You are still vanished.");
+                Messages.send(joiningPlayer, "&7You are still vanished.");
             }
         }
     }

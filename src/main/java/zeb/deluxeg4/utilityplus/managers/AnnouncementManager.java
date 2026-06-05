@@ -1,11 +1,12 @@
 package zeb.deluxeg4.utilityplus.managers;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import zeb.deluxeg4.utilityplus.UtilityPlus;
+import zeb.deluxeg4.utilityplus.util.Messages;
 import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
 
 public class AnnouncementManager {
@@ -27,7 +28,7 @@ public class AnnouncementManager {
             return;
         }
 
-        String text = ChatColor.translateAlternateColorCodes('&', config.getString("text", ""));
+        Component text = Messages.legacy(config.getString("text", ""));
         long showDurationTicks = config.getLong("show-duration", 15) * 20L;
         long hideDurationTicks = config.getLong("hide-duration", 300) * 20L;
 

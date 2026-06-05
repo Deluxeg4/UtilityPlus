@@ -1,6 +1,7 @@
 package zeb.deluxeg4.utilityplus.commands;
 
 import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
+import zeb.deluxeg4.utilityplus.util.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,18 +34,18 @@ public class VanishCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cThis command can only be used by players.");
+            Messages.send(sender, "&cThis command can only be used by players.");
             return true;
         }
 
         if (!player.hasPermission("utilityplus.vanish")) {
-            player.sendMessage("§cYou don't have permission to use this command.");
+            Messages.send(player, "&cYou don't have permission to use this command.");
             return true;
         }
 
         boolean vanished = !isVanished(player.getUniqueId());
         setVanished(player, vanished);
-        player.sendMessage(vanished ? "§aYou are now §7vanished§a!" : "§aYou are now §evisible§a!");
+        Messages.send(player, vanished ? "&aYou are now &7vanished&a!" : "&aYou are now &evisible&a!");
         return true;
     }
 

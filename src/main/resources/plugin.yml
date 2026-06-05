@@ -3,15 +3,10 @@ version: ${version}
 main: zeb.deluxeg4.utilityplus.UtilityPlus
 api-version: '1.21'
 folia-supported: true
-description: Chat controls, teams, death messages, and admin utilities
+description: Chat controls, death messages, and admin utilities
 author: CADS
 
 commands:
-  # --- Spawn ---
-  setspawn:
-    description: Set the server spawn point
-    usage: /setspawn
-    permission: utilityplus.setspawn
   # --- 2b2t-style chat controls ---
   ignore:
     description: Temporarily ignore a player
@@ -80,12 +75,6 @@ commands:
     usage: /last <message>
     permission: utilityplus.pm
 
-  # --- Team ---
-  team:
-    description: UtilityPlus — Team system
-    usage: /team <create|invite|accept|deny|leave|disband|kick|promote|demote|list|chat|info>
-    permission: utilityplus.team
-
   upreload:
     description: Reload UtilityPlus config and data
     usage: /upreload
@@ -107,24 +96,6 @@ commands:
     usage: /broadcast <message>
     permission: utilityplus.broadcast
 
-  # --- Gamemode ---
-  gmc:
-    description: Set gamemode to Creative
-    usage: /gmc [player]
-    permission: utilityplus.gamemode
-  gms:
-    description: Set gamemode to Survival
-    usage: /gms [player]
-    permission: utilityplus.gamemode
-  gmsp:
-    description: Set gamemode to Spectator
-    usage: /gmsp [player]
-    permission: utilityplus.gamemode
-  gma:
-    description: Set gamemode to Adventure
-    usage: /gma [player]
-    permission: utilityplus.gamemode
-
   kill:
     description: Kill yourself with confirmation
     usage: /kill
@@ -134,26 +105,6 @@ commands:
     description: Starts a shutdown countdown
     usage: /stopnow <time|now|cancel|time>
     permission: server.stop
-
-  overclock:
-    description: Overclock the item in your hand
-    usage: /overclock <enchant> <level> | /overclock 32k | /overclock name <name>
-    permission: utilityplus.overclock
-
-  invsee:
-    description: Open another player's inventory
-    usage: /invsee <player>
-    permission: utilityplus.invsee
-  enderchestsee:
-    description: Open another player's ender chest
-    usage: /enderchestsee <player>
-    permission: utilityplus.enderchestsee
-    aliases: [endersee]
-
-  s:
-    description: Summon a player to your location
-    usage: /s <player>
-    permission: utilityplus.summon
 
   help:
     description: Show UtilityPlus help menu
@@ -168,34 +119,28 @@ commands:
     description: Show detailed TPS and performance info (Async)
     usage: /tps [show]
     permission: utilityplus.tpsmore
+  ping:
+    description: Show your ping or another player's ping
+    usage: /ping [player]
+    permission: utilityplus.ping
+  pingall:
+    description: Show all online player pings
+    usage: /pingall
+    permission: utilityplus.ping.others
   uptime:
     description: Show server uptime
     usage: /uptime
     permission: utilityplus.uptime
-  tpsbar:
-    description: Toggle a realtime TPS/MSPT boss bar
-    usage: /tpsbar
-    permission: utilityplus.performancebar
-  rambar:
-    description: Toggle a realtime RAM boss bar
-    usage: /rambar [gb|mb]
-    permission: utilityplus.performancebar
 
 permissions:
   utilityplus.helps:
     description: Access the plugin help menu
     default: true
-  utilityplus.setspawn:
-    description: Set the server spawn point
-    default: op
   utilityplus.chat:
     description: Manage chat preferences
     default: true
   utilityplus.pm:
     description: Send private messages
-    default: true
-  utilityplus.team:
-    description: Use the team system
     default: true
   utilityplus.anvil.color:
     description: Use color codes in anvil item names
@@ -212,39 +157,21 @@ permissions:
   utilityplus.broadcast:
     description: Broadcast messages
     default: op
-  utilityplus.gamemode:
-    description: Change own gamemode
-    default: op
-  utilityplus.gamemode.others:
-    description: Change other players' gamemode
-    default: op
-  utilityplus.summon:
-    description: Summon other players to your location
-    default: op
   utilityplus.kill:
     description: Kill yourself with confirmation
     default: true
   server.stop:
     description: Allows starting the server shutdown countdown
     default: op
-  utilityplus.overclock:
-    description: Overclock items and apply unsafe enchantments
-    default: op
-  utilityplus.invsee:
-    description: View another player's inventory
-    default: op
-  utilityplus.enderchestsee:
-    description: View another player's ender chest
-    default: op
-  utilityplus.invsee.unseen:
-    description: View data for players that have never joined this server
-    default: op
   utilityplus.tpsmore:
     description: View detailed TPS and performance info
+    default: op
+  utilityplus.ping:
+    description: View your own ping
+    default: true
+  utilityplus.ping.others:
+    description: View other players' pings
     default: op
   utilityplus.uptime:
     description: View server uptime
     default: true
-  utilityplus.performancebar:
-    description: Toggle TPS and RAM boss bars
-    default: op

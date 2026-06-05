@@ -11,6 +11,9 @@ version = '1.0.0'
 description = 'UtilityPlus - spawn, homes, TPA, chat, teams, stats, and admin utilities'
 
 java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
 }

@@ -1,6 +1,7 @@
 package zeb.deluxeg4.utilityplus.listeners;
 
-import org.bukkit.ChatColor;
+import zeb.deluxeg4.utilityplus.util.Messages;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,106 +12,83 @@ import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-/**
- * Allows players to use & color codes and special symbols when renaming
- * items on an Anvil.
- *
- * How it works:
- *   1. PrepareAnvilEvent  — translate & codes in the result item's display name
- *                           so the player sees the colored preview live.
- *   2. InventoryClickEvent — when the player takes the result (slot 2),
- *                            apply the translated name to the final item.
- *
- * Special character shortcuts (type the alias, get the symbol):
- *   {heart}  → ❤   {star}   → ★   {arrow}  → ➤
- *   {skull}  → ☠   {music}  → ♪   {check}  → ✔
- *   {cross}  → ✘   {dot}    → •   {diamond} → ◆
- *   {sword}  → ⚔   {shield} → 🛡  {fire}   → 🔥
- *
- * Permission: utilityplus.anvil.color (default: true)
- */
 public class AnvilListener implements Listener {
 
-    // Result slot index in an anvil inventory
-    private static final int RESULT_SLOT = 2;
+    private static final int ANVIL_RESULT_SLOT = 2;
+    private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPrepareAnvil(PrepareAnvilEvent event) {
-        if (!(event.getView().getPlayer() instanceof Player)) return;
-        Player player = (Player) event.getView().getPlayer();
+    /** Applies formatted anvil rename previews. */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPrepareAnvil(final PrepareAnvilEvent event) {
+        if (!(event.getView().getPlayer() instanceof final Player player)
+                || !player.hasPermission("utilityplus.anvil.color")) {
+            return;
+        }
 
-        if (!player.hasPermission("utilityplus.anvil.color")) return;
+        final ItemStack result = event.getResult();
+        if (result == null || !result.hasItemMeta()) {
+            return;
+        }
 
-        ItemStack result = event.getResult();
-        if (result == null || !result.hasItemMeta()) return;
+        final ItemMeta meta = result.getItemMeta();
+        if (!meta.hasDisplayName() || meta.displayName() == null) {
+            return;
+        }
 
-        ItemMeta meta = result.getItemMeta();
-        if (!meta.hasDisplayName()) return;
+        final String rawName = PLAIN_TEXT.serialize(meta.displayName());
+        final String translatedName = translate(rawName);
+        if (translatedName.equals(rawName)) {
+            return;
+        }
 
-        // Translate & codes + special symbols
-        String raw         = meta.getDisplayName();
-        String translated  = translate(raw);
-
-        if (translated.equals(raw)) return; // nothing changed, skip
-
-        meta.setDisplayName(translated);
+        meta.displayName(Messages.legacy(translatedName));
         result.setItemMeta(meta);
         event.setResult(result);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onAnvilClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) return;
-        if (!(event.getInventory() instanceof AnvilInventory)) return;
+    /** Applies formatted anvil rename results. */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onAnvilClick(final InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof final Player player)
+                || !(event.getInventory() instanceof AnvilInventory)
+                || !player.hasPermission("utilityplus.anvil.color")
+                || event.getRawSlot() != ANVIL_RESULT_SLOT) {
+            return;
+        }
 
-        Player player = (Player) event.getWhoClicked();
-        if (!player.hasPermission("utilityplus.anvil.color")) return;
-        if (event.getRawSlot() != RESULT_SLOT) return;
+        final ItemStack result = event.getCurrentItem();
+        if (result == null || !result.hasItemMeta()) {
+            return;
+        }
 
-        ItemStack result = event.getCurrentItem();
-        if (result == null || !result.hasItemMeta()) return;
+        final ItemMeta meta = result.getItemMeta();
+        if (!meta.hasDisplayName() || meta.displayName() == null) {
+            return;
+        }
 
-        ItemMeta meta = result.getItemMeta();
-        if (!meta.hasDisplayName()) return;
-
-        String translated = translate(meta.getDisplayName());
-        meta.setDisplayName(translated);
+        meta.displayName(Messages.legacy(translate(PLAIN_TEXT.serialize(meta.displayName()))));
         result.setItemMeta(meta);
     }
 
-    // ── Translation ──────────────────────────────────────────────────
-
-    /**
-     * Translates & color codes (e.g. &c → red) and {symbol} shortcuts.
-     */
-    private String translate(String input) {
-        String s = replaceSymbols(input);
-        s = ChatColor.translateAlternateColorCodes('&', s);
-        return s;
-    }
-
-    /**
-     * Replaces {keyword} aliases with Unicode symbols.
-     */
-    private String replaceSymbols(String input) {
+    private String translate(final String input) {
         return input
-                .replace("{heart}",   "❤")
-                .replace("{star}",    "★")
-                .replace("{arrow}",   "➤")
-                .replace("{skull}",   "☠")
-                .replace("{music}",   "♪")
-                .replace("{check}",   "✔")
-                .replace("{cross}",   "✘")
-                .replace("{dot}",     "•")
-                .replace("{diamond}", "◆")
-                .replace("{sword}",   "⚔")
-                .replace("{shield}",  "🛡")
-                .replace("{fire}",    "🔥")
-                .replace("{crown}",   "♛")
-                .replace("{lightning}","⚡")
-                .replace("{infinity}", "∞")
-                .replace("{flower}",  "✿")
-                .replace("{moon}",    "☽")
-                .replace("{sun}",     "☀");
+                .replace("{heart}", "\u2764")
+                .replace("{star}", "\u2605")
+                .replace("{arrow}", "\u27A4")
+                .replace("{skull}", "\u2620")
+                .replace("{music}", "\u266A")
+                .replace("{check}", "\u2714")
+                .replace("{cross}", "\u2718")
+                .replace("{dot}", "\u2022")
+                .replace("{diamond}", "\u25C6")
+                .replace("{sword}", "\u2694")
+                .replace("{shield}", "\uD83D\uDEE1")
+                .replace("{fire}", "\uD83D\uDD25")
+                .replace("{crown}", "\u265B")
+                .replace("{lightning}", "\u26A1")
+                .replace("{infinity}", "\u221E")
+                .replace("{flower}", "\u273F")
+                .replace("{moon}", "\u263D")
+                .replace("{sun}", "\u2600");
     }
 }

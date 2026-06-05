@@ -1,5 +1,6 @@
 package zeb.deluxeg4.utilityplus.commands;
 
+import zeb.deluxeg4.utilityplus.util.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,11 +14,11 @@ public class UptimeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("utilityplus.uptime")) {
-            sender.sendMessage("§cYou don't have permission to use this command.");
+            Messages.send(sender, "&cYou don't have permission to use this command.");
             return true;
         }
 
-        sender.sendMessage("§3Server uptime: §e" + formatUptime());
+        Messages.send(sender, "&3Server uptime: &e" + formatUptime());
         return true;
     }
 

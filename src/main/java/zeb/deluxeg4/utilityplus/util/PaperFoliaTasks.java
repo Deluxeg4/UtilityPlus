@@ -1,6 +1,7 @@
 package zeb.deluxeg4.utilityplus.util;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -73,10 +74,18 @@ public final class PaperFoliaTasks {
     }
 
     public static void send(Plugin plugin, Player player, String message) {
+        send(plugin, player, Messages.legacy(message));
+    }
+
+    public static void send(Plugin plugin, Player player, Component message) {
         runForPlayer(plugin, player, () -> player.sendMessage(message));
     }
 
     public static void broadcast(Plugin plugin, String message) {
+        broadcast(plugin, Messages.legacy(message));
+    }
+
+    public static void broadcast(Plugin plugin, Component message) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             send(plugin, player, message);
         }

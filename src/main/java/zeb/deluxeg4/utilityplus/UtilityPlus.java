@@ -1,196 +1,185 @@
 package zeb.deluxeg4.utilityplus;
 
-import zeb.deluxeg4.utilityplus.commands.*;
-import zeb.deluxeg4.utilityplus.invsee.InventorySeeMode;
-import zeb.deluxeg4.utilityplus.invsee.InventorySeeSessionManager;
-import zeb.deluxeg4.utilityplus.invsee.PendingInventoryOrderManager;
-import zeb.deluxeg4.utilityplus.listeners.*;
-import zeb.deluxeg4.utilityplus.managers.*;
-import zeb.deluxeg4.utilityplus.tabcomplete.TabCompleterManager;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
+import zeb.deluxeg4.utilityplus.commands.BroadcastCommand;
+import zeb.deluxeg4.utilityplus.commands.HelpCommand;
+import zeb.deluxeg4.utilityplus.commands.IgnoreCommand;
+import zeb.deluxeg4.utilityplus.commands.IgnoreListCommand;
+import zeb.deluxeg4.utilityplus.commands.KillCommand;
+import zeb.deluxeg4.utilityplus.commands.PMCommand;
+import zeb.deluxeg4.utilityplus.commands.PingCommand;
+import zeb.deluxeg4.utilityplus.commands.ReloadCommand;
+import zeb.deluxeg4.utilityplus.commands.StopNowCommand;
+import zeb.deluxeg4.utilityplus.commands.TPSMoreCommand;
+import zeb.deluxeg4.utilityplus.commands.ToggleChatCommand;
+import zeb.deluxeg4.utilityplus.commands.ToggleDeathMessagesCommand;
+import zeb.deluxeg4.utilityplus.commands.TogglePrivateMessagesCommand;
+import zeb.deluxeg4.utilityplus.commands.UptimeCommand;
+import zeb.deluxeg4.utilityplus.commands.VanishCommand;
+import zeb.deluxeg4.utilityplus.listeners.AnvilListener;
+import zeb.deluxeg4.utilityplus.listeners.ChatListener;
+import zeb.deluxeg4.utilityplus.listeners.DeathMessageListener;
+import zeb.deluxeg4.utilityplus.listeners.JoinMessageListener;
+import zeb.deluxeg4.utilityplus.listeners.SpawnListener;
+import zeb.deluxeg4.utilityplus.listeners.TabListListener;
+import zeb.deluxeg4.utilityplus.listeners.VanishListener;
+import zeb.deluxeg4.utilityplus.managers.AnnouncementManager;
+import zeb.deluxeg4.utilityplus.managers.ChatManager;
+import zeb.deluxeg4.utilityplus.managers.CpuMonitor;
+import zeb.deluxeg4.utilityplus.managers.DeathMessageManager;
+import zeb.deluxeg4.utilityplus.managers.SpawnManager;
+import zeb.deluxeg4.utilityplus.managers.TabListManager;
+import zeb.deluxeg4.utilityplus.managers.TickMonitor;
+import zeb.deluxeg4.utilityplus.tabcomplete.TabCompleterManager;
 
 import java.util.List;
 
 public class UtilityPlus extends JavaPlugin {
 
     private SpawnManager spawnManager;
-    private HomeManager  homeManager;
-    private TPAManager   tpaManager;
-    private ChatManager  chatManager;
-    private TeamManager  teamManager;
-    private StatsManager statsManager;
+    private ChatManager chatManager;
     private DeathMessageManager deathMessageManager;
     private TabListManager tabListManager;
     private AnnouncementManager announcementManager;
     private VanishCommand vanishCommand;
     private TickMonitor tickMonitor;
-    private CpuMonitor  cpuMonitor;
-    private PerformanceBarManager performanceBarManager;
-    private PendingInventoryOrderManager pendingInventoryOrderManager;
-    private InventorySeeSessionManager inventorySeeSessionManager;
-    private InventorySeeSessionManager enderChestSeeSessionManager;
+    private CpuMonitor cpuMonitor;
 
+    /** Enables UtilityPlus and registers commands, listeners, and managers. */
     @Override
     public void onEnable() {
         saveDefaultConfig();
 
-        // ── Managers ─────────────────────────────────────────────────
         spawnManager = new SpawnManager(this);
-        homeManager  = new HomeManager(this);
-        tpaManager   = new TPAManager(this);
-        chatManager  = new ChatManager(this);
-        teamManager  = new TeamManager(this);
-        statsManager = new StatsManager(this);
+        chatManager = new ChatManager(this);
         deathMessageManager = new DeathMessageManager(this);
         tabListManager = new TabListManager(this);
         announcementManager = new AnnouncementManager(this);
-        tickMonitor  = new TickMonitor(this);
-        cpuMonitor   = new CpuMonitor(this);
-        performanceBarManager = new PerformanceBarManager(this, tickMonitor);
-        pendingInventoryOrderManager = new PendingInventoryOrderManager(this);
-        inventorySeeSessionManager = new InventorySeeSessionManager(this, InventorySeeMode.INVENTORY, pendingInventoryOrderManager);
-        enderChestSeeSessionManager = new InventorySeeSessionManager(this, InventorySeeMode.ENDER_CHEST, pendingInventoryOrderManager);
+        tickMonitor = new TickMonitor(this);
+        cpuMonitor = new CpuMonitor(this);
 
-        // ── Executors ─────────────────────────────────────────────────
-        // Spawn
-        SpawnCommand spawnCmd = new SpawnCommand(spawnManager);
-        registerCommand("setspawn", spawnCmd);
+        registerCommand("ignore", new IgnoreCommand(chatManager, false, false));
+        registerCommand("ignorehard", new IgnoreCommand(chatManager, true, false));
+        registerCommand("ignoredeathmsgs", new IgnoreCommand(chatManager, true, true));
+        registerCommand("ignorelist", new IgnoreListCommand(chatManager));
+        registerCommand("togglechat", new ToggleChatCommand(chatManager));
+        registerCommand("toggleprivatemsgs", new TogglePrivateMessagesCommand(chatManager));
+        registerCommand("toggledeathmsgs", new ToggleDeathMessagesCommand(chatManager, false));
+        registerCommand("toggledeathmsgshard", new ToggleDeathMessagesCommand(chatManager, true));
 
-        TwoBTwoTCommand twoBTwoTCommand = new TwoBTwoTCommand(this, chatManager);
-        registerCommands(twoBTwoTCommand,
-                "ignore", "ignorehard", "ignorelist", "ignoredeathmsgs",
-                "togglechat", "toggleprivatemsgs", "toggledeathmsgs", "toggledeathmsgshard");
+        final PMCommand privateMessageCommand = new PMCommand(chatManager);
+        registerCommands(privateMessageCommand, "msg", "w", "whisper", "pm", "r", "reply", "l", "last");
 
-        PMCommand pmCmd = new PMCommand(chatManager);
-        registerCommands(pmCmd, "msg", "w", "whisper", "pm", "r", "reply", "l", "last");
-
-        // Team
-        registerCommand("team", new TeamCommand(teamManager, chatManager));
-
-        // Reload
         registerCommand("upreload", new ReloadCommand(this));
 
-        // Vanish
         vanishCommand = new VanishCommand(this);
         registerCommand("v", vanishCommand);
 
-        // Broadcast
-        BroadcastCommand bcCmd = new BroadcastCommand(this);
-        registerCommands(bcCmd, "bc", "broadcast");
+        final BroadcastCommand broadcastCommand = new BroadcastCommand(this);
+        registerCommands(broadcastCommand, "bc", "broadcast");
 
-        // Gamemode
-        GamemodeCommand gmCmd = new GamemodeCommand();
-        registerCommands(gmCmd, "gmc", "gms", "gmsp", "gma");
-
-        // Kill
         registerCommand("kill", new KillCommand(this));
-
-        // Shutdown countdown
         registerCommand("stopnow", new StopNowCommand(this));
 
-        // Overclock
-        OverclockCommand overclockCommand = new OverclockCommand(this);
-        registerCommand("overclock", overclockCommand);
-
-        // Inventory GUIs
-        InventorySeeCommand inventorySeeCommand = new InventorySeeCommand(this);
-        registerCommands(inventorySeeCommand, "invsee", "enderchestsee");
-
-        // Summon
-        registerCommand("s", new STapwarp());
-
-        // Help
         registerCommand("help", new HelpCommand(this));
 
-        // TPS More
-        TPSMoreCommand tpsMoreCmd = new TPSMoreCommand(tickMonitor, cpuMonitor);
-        registerCommands(tpsMoreCmd, "tpsmore", "tps");
+        final TPSMoreCommand tpsMoreCommand = new TPSMoreCommand(tickMonitor, cpuMonitor);
+        registerCommands(tpsMoreCommand, "tpsmore", "tps");
+
+        final PingCommand pingCommand = new PingCommand();
+        registerCommands(pingCommand, "ping", "pingall");
         registerCommand("uptime", new UptimeCommand());
-        PerformanceBarCommand performanceBarCommand = new PerformanceBarCommand(performanceBarManager);
-        registerCommands(performanceBarCommand, "tpsbar", "rambar");
 
-        // ── Tab Completers ────────────────────────────────────────────
-        TabCompleterManager tab = new TabCompleterManager(homeManager, teamManager);
-        List<String> allCmds = List.of(
-            "setspawn",
-            "ignore","ignorehard","ignorelist","ignoredeathmsgs",
-            "togglechat","toggleprivatemsgs","toggledeathmsgs","toggledeathmsgshard",
-            "msg","w","whisper","pm","r","reply","l","last",
-            "team","upreload","stopnow",
-            "v","bc","broadcast","gmc","gms","gmsp","gma","kill","s","help",
-            "tpsmore", "tps", "uptime", "tpsbar", "rambar", "invsee", "enderchestsee"
+        final TabCompleterManager tabCompleter = new TabCompleterManager();
+        final List<String> commandNames = List.of(
+                "ignore", "ignorehard", "ignorelist", "ignoredeathmsgs",
+                "togglechat", "toggleprivatemsgs", "toggledeathmsgs", "toggledeathmsgshard",
+                "msg", "w", "whisper", "pm", "r", "reply", "l", "last",
+                "upreload", "stopnow",
+                "v", "bc", "broadcast", "kill", "help",
+                "tpsmore", "tps", "ping", "pingall",
+                "uptime"
         );
-        registerTabCompleters(tab, allCmds);
-        command("overclock").setTabCompleter(overclockCommand);
+        registerTabCompleters(tabCompleter, commandNames);
 
-        // ── Listeners ─────────────────────────────────────────────────
         getServer().getPluginManager().registerEvents(new SpawnListener(spawnManager), this);
-        getServer().getPluginManager().registerEvents(new TPAListener(tpaManager), this);
-        getServer().getPluginManager().registerEvents(new ChatListener(chatManager, teamManager), this);
+        getServer().getPluginManager().registerEvents(new ChatListener(chatManager), this);
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);
-        getServer().getPluginManager().registerEvents(new TeamListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new JoinMessageListener(this), this);
-        getServer().getPluginManager().registerEvents(new StatsListener(statsManager, chatManager, deathMessageManager, this), this);
-        getServer().getPluginManager().registerEvents(new StatsGUIListener(), this);
+        getServer().getPluginManager().registerEvents(new DeathMessageListener(chatManager, deathMessageManager, this), this);
         getServer().getPluginManager().registerEvents(new TabListListener(this, tabListManager), this);
         getServer().getPluginManager().registerEvents(new VanishListener(this, vanishCommand), this);
-        getServer().getPluginManager().registerEvents(new InventorySeeListener(this), this);
-        getServer().getPluginManager().registerEvents(new PendingInventoryOrderListener(this), this);
-        getServer().getPluginManager().registerEvents(performanceBarManager, this);
 
         getLogger().info("UtilityPlus enabled!");
     }
 
+    /** Disables UtilityPlus and flushes persistent manager state. */
     @Override
     public void onDisable() {
-        if (spawnManager != null) spawnManager.saveData();
-        if (homeManager  != null) homeManager.saveData();
-        if (chatManager != null) chatManager.saveData();
-        if (teamManager  != null) teamManager.saveData();
-        if (statsManager != null) statsManager.saveData();
-        if (tabListManager != null) tabListManager.stop();
-        if (announcementManager != null) announcementManager.stop();
-        if (performanceBarManager != null) performanceBarManager.closeAll();
-        if (vanishCommand != null) vanishCommand.saveData();
-        if (inventorySeeSessionManager != null) inventorySeeSessionManager.closeAll();
-        if (enderChestSeeSessionManager != null) enderChestSeeSessionManager.closeAll();
+        if (spawnManager != null) {
+            spawnManager.saveData();
+        }
+        if (chatManager != null) {
+            chatManager.saveData();
+        }
+        if (tabListManager != null) {
+            tabListManager.stop();
+        }
+        if (announcementManager != null) {
+            announcementManager.stop();
+        }
+        if (vanishCommand != null) {
+            vanishCommand.saveData();
+        }
         getLogger().info("UtilityPlus disabled!");
     }
 
-    public SpawnManager getSpawnManager() { return spawnManager; }
-    public HomeManager  getHomeManager()  { return homeManager; }
-    public TPAManager   getTpaManager()   { return tpaManager; }
-    public ChatManager  getChatManager()  { return chatManager; }
-    public TeamManager  getTeamManager()  { return teamManager; }
-    public StatsManager getStatsManager() { return statsManager; }
-    public DeathMessageManager getDeathMessageManager() { return deathMessageManager; }
-    public TabListManager getTabListManager() { return tabListManager; }
-    public AnnouncementManager getAnnouncementManager() { return announcementManager; }
-    public PendingInventoryOrderManager getPendingInventoryOrderManager() { return pendingInventoryOrderManager; }
-    public InventorySeeSessionManager getInventorySeeSessionManager() { return inventorySeeSessionManager; }
-    public InventorySeeSessionManager getEnderChestSeeSessionManager() { return enderChestSeeSessionManager; }
+    /** Returns the spawn manager. */
+    public SpawnManager getSpawnManager() {
+        return spawnManager;
+    }
 
-    private void registerCommands(CommandExecutor executor, String... names) {
-        for (String name : names) {
+    /** Returns the chat manager. */
+    public ChatManager getChatManager() {
+        return chatManager;
+    }
+
+    /** Returns the death-message manager. */
+    public DeathMessageManager getDeathMessageManager() {
+        return deathMessageManager;
+    }
+
+    /** Returns the tab-list manager. */
+    public TabListManager getTabListManager() {
+        return tabListManager;
+    }
+
+    /** Returns the announcement manager. */
+    public AnnouncementManager getAnnouncementManager() {
+        return announcementManager;
+    }
+
+    private void registerCommands(final CommandExecutor executor, final String... names) {
+        for (final String name : names) {
             registerCommand(name, executor);
         }
     }
 
-    private void registerCommand(String name, CommandExecutor executor) {
+    private void registerCommand(final String name, final CommandExecutor executor) {
         command(name).setExecutor(executor);
     }
 
-    private void registerTabCompleters(TabCompleter completer, List<String> names) {
-        for (String name : names) {
+    private void registerTabCompleters(final TabCompleter completer, final List<String> names) {
+        for (final String name : names) {
             command(name).setTabCompleter(completer);
         }
     }
 
-    private PluginCommand command(String name) {
-        PluginCommand command = getCommand(name);
+    private PluginCommand command(final String name) {
+        final PluginCommand command = getCommand(name);
         if (command == null) {
             throw new IllegalStateException("Command '/" + name + "' is missing from plugin.yml");
         }

@@ -1,6 +1,5 @@
 package zeb.deluxeg4.utilityplus.listeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -8,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import zeb.deluxeg4.utilityplus.util.Messages;
 
 import java.lang.reflect.Method;
 
@@ -32,10 +32,9 @@ public class JoinMessageListener implements Listener {
         }
 
         String message = plugin.getConfig().getString("join-message.message", "&3{player} joined the game");
-        message = formatMessage(message, player);
 
         if (plugin.getConfig().getBoolean("join-message.broadcast", true)) {
-            event.setJoinMessage(message);
+            event.joinMessage(Messages.legacy(formatMessage(message, player)));
         }
     }
 
@@ -46,7 +45,7 @@ public class JoinMessageListener implements Listener {
 
         if (serverStopping) {
             String message = plugin.getConfig().getString("leave-message.message", "&3{player} left the game");
-            event.setQuitMessage(formatMessage(message, player));
+            event.quitMessage(Messages.legacy(formatMessage(message, player)));
             return;
         }
 
@@ -59,10 +58,9 @@ public class JoinMessageListener implements Listener {
         }
 
         String message = plugin.getConfig().getString("leave-message.message", "&e{player} left the game");
-        message = formatMessage(message, player);
 
         if (plugin.getConfig().getBoolean("leave-message.broadcast", true)) {
-            event.setQuitMessage(message);
+            event.quitMessage(Messages.legacy(formatMessage(message, player)));
         }
     }
 
@@ -74,7 +72,7 @@ public class JoinMessageListener implements Listener {
                 .replace("{online}", String.valueOf(plugin.getServer().getOnlinePlayers().size()))
                 .replace("{max}", String.valueOf(plugin.getServer().getMaxPlayers()));
 
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return message;
     }
 
     private boolean isServerStopping() {

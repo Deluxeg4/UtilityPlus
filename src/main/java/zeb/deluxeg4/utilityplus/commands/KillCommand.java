@@ -1,6 +1,7 @@
 package zeb.deluxeg4.utilityplus.commands;
 
 import zeb.deluxeg4.utilityplus.UtilityPlus;
+import zeb.deluxeg4.utilityplus.util.Messages;
 import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,12 +28,12 @@ public class KillCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("utilityplus.kill")) {
-            sender.sendMessage("§cYou don't have permission!");
+            Messages.send(sender, "&cYou don't have permission!");
             return true;
         }
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cOnly players can use this command.");
+            Messages.send(sender, "&cOnly players can use this command.");
             return true;
         }
 
@@ -44,7 +45,7 @@ public class KillCommand implements CommandExecutor {
         }
 
         pendingConfirmation.add(uuid);
-        player.sendMessage("§eType /kill again to confirm.");
+        Messages.send(player, "&eType /kill again to confirm.");
         PaperFoliaTasks.runForPlayerDelayed(plugin, player, task -> pendingConfirmation.remove(uuid), 200L);
         return true;
     }

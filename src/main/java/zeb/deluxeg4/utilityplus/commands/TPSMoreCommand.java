@@ -3,6 +3,7 @@ package zeb.deluxeg4.utilityplus.commands;
 import zeb.deluxeg4.utilityplus.UtilityPlus;
 import zeb.deluxeg4.utilityplus.managers.CpuMonitor;
 import zeb.deluxeg4.utilityplus.managers.TickMonitor;
+import zeb.deluxeg4.utilityplus.util.Messages;
 import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -29,295 +31,315 @@ import java.util.logging.Level;
 
 public class TPSMoreCommand implements CommandExecutor {
 
-    // Named constants แทนการใช้ magic numbers
-    private static final int TICKS_10S = 200;   // 200 ticks = 10 วินาที
-    private static final int TICKS_1M  = 1200;  // 1200 ticks = 1 นาที
-    private static final double TPS_MIN = 0.0;
-    private static final double TPS_MAX = 20.0;
+    private static final int TEN_SECOND_TICKS = 200;
+    private static final int ONE_MINUTE_TICKS = 1_200;
+    private static final int MAX_REGION_SAMPLE_SIZE = 512;
+    private static final double MIN_TPS = 0.0D;
+    private static final double MAX_TPS = 20.0D;
 
-    private final boolean isFolia;
+    private final boolean folia;
     private final UtilityPlus plugin;
     private final TickMonitor tickMonitor;
     private final CpuMonitor cpuMonitor;
 
-    public TPSMoreCommand(TickMonitor tickMonitor, CpuMonitor cpuMonitor) {
-        this.plugin      = JavaPlugin.getPlugin(UtilityPlus.class);
+    public TPSMoreCommand(final TickMonitor tickMonitor, final CpuMonitor cpuMonitor) {
+        this.plugin = JavaPlugin.getPlugin(UtilityPlus.class);
         this.tickMonitor = tickMonitor;
-        this.cpuMonitor  = cpuMonitor;
-        this.isFolia     = PaperFoliaTasks.isFolia();
+        this.cpuMonitor = cpuMonitor;
+        this.folia = PaperFoliaTasks.isFolia();
     }
 
+    /** Shows detailed server performance information. */
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(
+            final CommandSender sender,
+            final Command command,
+            final String label,
+            final String[] args
+    ) {
         if (!sender.hasPermission("utilityplus.tpsmore")) {
-            sender.sendMessage("§cYou don't have permission to use this command.");
+            Messages.send(sender, "&cYou don't have permission to use this command.");
             return true;
         }
 
-        // ---- ดึงข้อมูลที่ต้องใช้ main/region thread ก่อน ----
-        // snapshot ทุก world ทันทีบน calling thread (main thread)
-        List<WorldSnapshot> worldSnapshots = new ArrayList<>();
-        for (World world : Bukkit.getWorlds()) {
-            Chunk[] chunks   = world.getLoadedChunks();   // cache ไว้ ไม่ต้องเรียกซ้ำ
-            int entities     = world.getEntityCount();
-            int playerCount  = world.getPlayers().size();
-            worldSnapshots.add(new WorldSnapshot(world, chunks, entities, playerCount));
-        }
+        final List<WorldSnapshot> worldSnapshots = snapshotWorlds();
+        final int totalPlayers = Bukkit.getOnlinePlayers().size();
+        final int maxPlayers = Bukkit.getMaxPlayers();
 
-        int totalPlayers = Bukkit.getOnlinePlayers().size();
-        int maxPlayers   = Bukkit.getMaxPlayers();
-
-        // ---- ต่อจากนี้ทำงานบน global/async thread ----
-        PaperFoliaTasks.runGlobal(plugin, () -> {
-            Consumer<String> out = message ->
-                    PaperFoliaTasks.runForSender(plugin, sender, () -> sender.sendMessage(message));
-
-            out.accept("§8§l--- §b§lTPS More Info §8§l---");
-
-            // แสดง Server Implementation จากค่าจริง ไม่ hardcode
-            String implName = Bukkit.getServer().getName();
-            String implVersion = Bukkit.getServer().getVersion();
-            if (isFolia) {
-                out.accept("§7Server Implementation: §eFolia (Regionalized) §7- " + implVersion);
-            } else {
-                out.accept("§7Server Implementation: §e" + implName + " §7- " + implVersion);
-                double[] tps = Bukkit.getTPS();
-                out.accept("§7Global TPS (1m, 5m, 15m): "
-                        + formatTPS(tps[0]) + "§7, "
-                        + formatTPS(tps[1]) + "§7, "
-                        + formatTPS(tps[2]));
-            }
-
-            // ---- Per-World Breakdown ----
-            out.accept("§6Worlds Info:");
-            int totalEntities = 0;
-            int totalChunks   = 0;
-
-            for (WorldSnapshot snap : worldSnapshots) {
-                out.accept(" §b§n" + snap.world.getName());
-
-                if (isFolia) {
-                    // ส่ง chunks ที่ cache แล้วเข้าไป ไม่ต้องเรียก getLoadedChunks() ซ้ำ
-                    List<Double> worldTPS = getRegionTPSForWorld(snap.world, snap.chunks);
-                    if (!worldTPS.isEmpty()) {
-                        Collections.sort(worldTPS);
-                        double lowest  = worldTPS.get(0);
-                        double median  = worldTPS.get(worldTPS.size() / 2);
-                        double highest = worldTPS.get(worldTPS.size() - 1);
-                        out.accept("  §7Regional TPS (low/med/high): "
-                                + formatTPS(lowest) + " §7/ "
-                                + formatTPS(median) + " §7/ "
-                                + formatTPS(highest));
-                        out.accept("  §7Active Regions: §e" + worldTPS.size());
-                    } else {
-                        out.accept("  §7Regional TPS: §cNo active regions");
-                    }
-                }
-
-                out.accept("  §7Entities: §e" + snap.entityCount
-                        + " §7| Chunks: §e" + snap.chunks.length
-                        + " §7| Players: §e" + snap.playerCount);
-
-                totalEntities += snap.entityCount;
-                totalChunks   += snap.chunks.length;
-            }
-
-            // ---- Tick Durations (Spark Style) ----
-            TickMonitor.Stats stats10s = tickMonitor.getStats(TICKS_10S);
-            TickMonitor.Stats stats1m  = tickMonitor.getStats(TICKS_1M);
-
-            out.accept("§6Tick Durations (min/med/95%ile/max ms)");
-            out.accept(" §7last 10s: " + formatStatsSpark(stats10s));
-            out.accept(" §7last 1m:  " + formatStatsSpark(stats1m));
-
-            // ---- System Metrics ----
-            out.accept("§6System Info:");
-            out.accept(" §7Uptime: §e" + formatUptime());
-
-            CpuMonitor.CpuStats cpu10s  = cpuMonitor.getStats(10);
-            CpuMonitor.CpuStats cpu1m   = cpuMonitor.getStats(60);
-            CpuMonitor.CpuStats cpu15m  = cpuMonitor.getStats(900);
-
-            out.accept(" §7CPU Usage (10s, 1m, 15m):");
-            out.accept("  §7System:  §e" + formatCpu(cpu10s.system())
-                    + "%§7, §e" + formatCpu(cpu1m.system())
-                    + "%§7, §e" + formatCpu(cpu15m.system()) + "%");
-            out.accept("  §7Process: §e" + formatCpu(cpu10s.process())
-                    + "%§7, §e" + formatCpu(cpu1m.process())
-                    + "%§7, §e" + formatCpu(cpu15m.process()) + "%");
-
-            out.accept(" §7Disk Usage: " + getDiskUsage());
-
-            MemoryMXBean memoryBean  = ManagementFactory.getMemoryMXBean();
-            MemoryUsage  heapUsage   = memoryBean.getHeapMemoryUsage();
-            long usedMB = heapUsage.getUsed()  / 1024 / 1024;
-            long maxMB  = heapUsage.getMax()   / 1024 / 1024;
-            out.accept(" §7Memory: §e" + usedMB + " MB §7/ §e" + maxMB + " MB");
-
-            // ---- Summary ----
-            out.accept("§6Summary:");
-            out.accept(" §7Total Players: §e" + totalPlayers + "§7 / §e" + maxPlayers);
-            out.accept(" §7Total Resources: §e" + totalEntities
-                    + " §7Entities | §e" + totalChunks + " §7Chunks");
-
-            out.accept("§8§l-------------------------");
-        });
-
+        PaperFoliaTasks.runGlobal(plugin, () -> sendReport(sender, worldSnapshots, totalPlayers, maxPlayers));
         return true;
     }
 
-    // ---- Helper: WorldSnapshot ----
-    // เก็บข้อมูลที่ต้องดึงจาก main thread ไว้ใน record เดียว
-    private static final class WorldSnapshot {
-        final World   world;
-        final Chunk[] chunks;
-        final int     entityCount;
-        final int     playerCount;
+    private List<WorldSnapshot> snapshotWorlds() {
+        final List<WorldSnapshot> snapshots = new ArrayList<>();
+        for (final World world : Bukkit.getWorlds()) {
+            final Chunk[] chunks = world.getLoadedChunks();
+            snapshots.add(new WorldSnapshot(world, chunks, world.getEntityCount(), world.getPlayers().size()));
+        }
+        return snapshots;
+    }
 
-        WorldSnapshot(World world, Chunk[] chunks, int entityCount, int playerCount) {
-            this.world       = world;
-            this.chunks      = chunks;
-            this.entityCount = entityCount;
-            this.playerCount = playerCount;
+    private void sendReport(
+            final CommandSender sender,
+            final List<WorldSnapshot> worldSnapshots,
+            final int totalPlayers,
+            final int maxPlayers
+    ) {
+        final Consumer<String> output = message ->
+                PaperFoliaTasks.runForSender(plugin, sender, () -> Messages.send(sender, message));
+
+        output.accept("&8&l--- &b&lTPS More Info &8&l---");
+        sendServerImplementation(output);
+        sendWorldBreakdown(output, worldSnapshots);
+        sendTickDurations(output);
+        sendSystemInfo(output);
+        output.accept("&6Summary:");
+        output.accept(" &7Total Players: &e" + totalPlayers + "&7 / &e" + maxPlayers);
+        output.accept(" &7Total Resources: &e" + totalEntities(worldSnapshots)
+                + " &7Entities | &e" + totalChunks(worldSnapshots) + " &7Chunks");
+        output.accept("&8&l-------------------------");
+    }
+
+    private void sendServerImplementation(final Consumer<String> output) {
+        final String implementationName = Bukkit.getServer().getName();
+        final String implementationVersion = Bukkit.getServer().getVersion();
+
+        if (folia) {
+            output.accept("&7Server Implementation: &eFolia (Regionalized) &7- " + implementationVersion);
+            return;
+        }
+
+        final double[] tps = Bukkit.getTPS();
+        output.accept("&7Server Implementation: &e" + implementationName + " &7- " + implementationVersion);
+        output.accept("&7Global TPS (1m, 5m, 15m): "
+                + formatTps(tps[0]) + "&7, "
+                + formatTps(tps[1]) + "&7, "
+                + formatTps(tps[2]));
+    }
+
+    private void sendWorldBreakdown(final Consumer<String> output, final List<WorldSnapshot> worldSnapshots) {
+        output.accept("&6Worlds Info:");
+        for (final WorldSnapshot snapshot : worldSnapshots) {
+            output.accept(" &b&n" + snapshot.world.getName());
+            if (folia) {
+                sendFoliaRegionStats(output, snapshot);
+            }
+            output.accept("  &7Entities: &e" + snapshot.entityCount
+                    + " &7| Chunks: &e" + snapshot.chunks.length
+                    + " &7| Players: &e" + snapshot.playerCount);
         }
     }
 
-    // ---- Folia Region TPS ----
-    private List<Double> getRegionTPSForWorld(World world, Chunk[] cachedChunks) {
-        List<Double> tpsList = new ArrayList<>();
-
-        // ลองใช้ API สาธารณะก่อน
-        if (addRegionTPSFromApi(world, cachedChunks, tpsList)) {
-            return tpsList;
+    private void sendFoliaRegionStats(final Consumer<String> output, final WorldSnapshot snapshot) {
+        final List<Double> worldTps = getRegionTpsForWorld(snapshot.world, snapshot.chunks);
+        if (worldTps.isEmpty()) {
+            output.accept("  &7Regional TPS: &cNo active regions");
+            return;
         }
 
-        // fallback: reflection
+        Collections.sort(worldTps);
+        final double lowest = worldTps.get(0);
+        final double median = worldTps.get(worldTps.size() / 2);
+        final double highest = worldTps.get(worldTps.size() - 1);
+
+        output.accept("  &7Regional TPS (low/med/high): "
+                + formatTps(lowest) + " &7/ "
+                + formatTps(median) + " &7/ "
+                + formatTps(highest));
+        output.accept("  &7Active Regions: &e" + worldTps.size());
+    }
+
+    private void sendTickDurations(final Consumer<String> output) {
+        final TickMonitor.Stats tenSecondStats = tickMonitor.getStats(TEN_SECOND_TICKS);
+        final TickMonitor.Stats oneMinuteStats = tickMonitor.getStats(ONE_MINUTE_TICKS);
+
+        output.accept("&6Tick Durations (min/med/95%ile/max ms)");
+        output.accept(" &7last 10s: " + formatStats(tenSecondStats));
+        output.accept(" &7last 1m:  " + formatStats(oneMinuteStats));
+    }
+
+    private void sendSystemInfo(final Consumer<String> output) {
+        final CpuMonitor.CpuStats tenSecondCpu = cpuMonitor.getStats(10);
+        final CpuMonitor.CpuStats oneMinuteCpu = cpuMonitor.getStats(60);
+        final CpuMonitor.CpuStats fifteenMinuteCpu = cpuMonitor.getStats(900);
+        final MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+        final MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+        final long usedMemoryMb = heapUsage.getUsed() / 1024L / 1024L;
+        final long maxMemoryMb = heapUsage.getMax() / 1024L / 1024L;
+
+        output.accept("&6System Info:");
+        output.accept(" &7Uptime: &e" + formatUptime());
+        output.accept(" &7CPU Usage (10s, 1m, 15m):");
+        output.accept("  &7System:  &e" + formatCpu(tenSecondCpu.system())
+                + "%&7, &e" + formatCpu(oneMinuteCpu.system())
+                + "%&7, &e" + formatCpu(fifteenMinuteCpu.system()) + "%");
+        output.accept("  &7Process: &e" + formatCpu(tenSecondCpu.process())
+                + "%&7, &e" + formatCpu(oneMinuteCpu.process())
+                + "%&7, &e" + formatCpu(fifteenMinuteCpu.process()) + "%");
+        output.accept(" &7Disk Usage: " + getDiskUsage());
+        output.accept(" &7Memory: &e" + usedMemoryMb + " MB &7/ &e" + maxMemoryMb + " MB");
+    }
+
+    private List<Double> getRegionTpsForWorld(final World world, final Chunk[] chunks) {
+        final List<Double> tpsValues = new ArrayList<>();
+        if (addRegionTpsFromApi(world, chunks, tpsValues)) {
+            return tpsValues;
+        }
+
         try {
-            Method getHandle      = world.getClass().getMethod("getHandle");
-            Object worldServer    = getHandle.invoke(world);
-            Field  regioniserField = worldServer.getClass().getField("regioniser");
-            Object regioniser     = regioniserField.get(worldServer);
-            Method computeMethod  = regioniser.getClass()
+            final Method getHandle = world.getClass().getMethod("getHandle");
+            final Object worldServer = getHandle.invoke(world);
+            final Field regioniserField = worldServer.getClass().getField("regioniser");
+            final Object regioniser = regioniserField.get(worldServer);
+            final Method computeMethod = regioniser.getClass()
                     .getDeclaredMethod("computeForAllRegionsUnsynchronised", Consumer.class);
-            computeMethod.invoke(regioniser, (Consumer<Object>) region -> {
-                try {
-                    Method getTickData = region.getClass().getMethod("getTickData");
-                    Object tickData    = getTickData.invoke(region);
-                    Method getTPS      = tickData.getClass().getMethod("getTPS");
-                    double[] tpsArr    = (double[]) getTPS.invoke(tickData);
-                    if (tpsArr != null && tpsArr.length > 0) {
-                        tpsList.add(tpsArr[0]);
-                    }
-                } catch (Exception e) {
-                    plugin.getLogger().log(Level.FINE, "Failed to read region tick data via reflection", e);
-                }
-            });
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.FINE, "Failed to access regioniser via reflection", e);
+
+            computeMethod.invoke(regioniser, (Consumer<Object>) region -> addRegionTpsViaReflection(tpsValues, region));
+        } catch (final Exception exception) {
+            plugin.getLogger().log(Level.FINE, "Failed to access regioniser via reflection", exception);
         }
 
-        return tpsList;
+        return tpsValues;
     }
 
-    // รับ cachedChunks เพื่อไม่ต้องเรียก getLoadedChunks() อีกครั้ง
-    // ใช้ Set เพื่อ deduplicate region — หลายก้อน chunk อาจอยู่ใน region เดียวกัน
-    private boolean addRegionTPSFromApi(World world, Chunk[] cachedChunks, List<Double> tpsList) {
-        if (cachedChunks.length == 0) {
+    private void addRegionTpsViaReflection(final List<Double> tpsValues, final Object region) {
+        try {
+            final Method getTickData = region.getClass().getMethod("getTickData");
+            final Object tickData = getTickData.invoke(region);
+            final Method getTps = tickData.getClass().getMethod("getTPS");
+            final double[] tpsArray = (double[]) getTps.invoke(tickData);
+            if (tpsArray != null && tpsArray.length > 0) {
+                tpsValues.add(tpsArray[0]);
+            }
+        } catch (final Exception exception) {
+            plugin.getLogger().log(Level.FINE, "Failed to read region tick data via reflection", exception);
+        }
+    }
+
+    private boolean addRegionTpsFromApi(
+            final World world,
+            final Chunk[] chunks,
+            final List<Double> tpsValues
+    ) {
+        if (chunks.length == 0) {
             return true;
         }
 
         try {
-            Method getRegionTPS = Bukkit.getServer().getClass()
+            final Method getRegionTps = Bukkit.getServer().getClass()
                     .getMethod("getRegionTPS", World.class, int.class, int.class);
+            final Set<String> seenRegions = new HashSet<>();
+            final int step = Math.max(1, chunks.length / MAX_REGION_SAMPLE_SIZE);
 
-            // ใช้ Set<String> เพื่อกัน region เดิมซ้ำ (key = "regionX,regionZ")
-            Set<String> seenRegions = new HashSet<>();
-            int step = Math.max(1, cachedChunks.length / 512);
-
-            for (int i = 0; i < cachedChunks.length; i += step) {
-                Chunk  chunk     = cachedChunks[i];
-                // Folia region granularity คือ 8x8 chunks
-                String regionKey = (chunk.getX() >> 3) + "," + (chunk.getZ() >> 3);
+            for (int index = 0; index < chunks.length; index += step) {
+                final Chunk chunk = chunks[index];
+                final String regionKey = (chunk.getX() >> 3) + "," + (chunk.getZ() >> 3);
                 if (!seenRegions.add(regionKey)) {
-                    continue; // region นี้เคยนับแล้ว
+                    continue;
                 }
 
-                double[] tps = (double[]) getRegionTPS.invoke(
-                        Bukkit.getServer(), world, chunk.getX(), chunk.getZ());
+                final double[] tps = (double[]) getRegionTps.invoke(
+                        Bukkit.getServer(),
+                        world,
+                        chunk.getX(),
+                        chunk.getZ()
+                );
                 if (tps != null && tps.length > 0) {
-                    tpsList.add(tps[0]);
+                    tpsValues.add(tps[0]);
                 }
             }
             return true;
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.FINE, "getRegionTPS API not available, falling back to reflection", e);
+        } catch (final Exception exception) {
+            plugin.getLogger().log(Level.FINE, "getRegionTPS API not available, falling back to reflection", exception);
             return false;
         }
     }
 
-    // ---- Formatters ----
-
-    private String formatStatsSpark(TickMonitor.Stats s) {
-        return String.format("%s §7/ %s §7/ %s §7/ %s",
-                formatMSPT(s.min()), formatMSPT(s.median()), formatMSPT(s.p95()), formatMSPT(s.max()));
+    private int totalEntities(final List<WorldSnapshot> snapshots) {
+        int total = 0;
+        for (final WorldSnapshot snapshot : snapshots) {
+            total += snapshot.entityCount;
+        }
+        return total;
     }
 
-    private String formatCpu(double cpu) {
-        if (cpu < 0) return "§cN/A";
-        return String.format("%.1f", cpu);
+    private int totalChunks(final List<WorldSnapshot> snapshots) {
+        int total = 0;
+        for (final WorldSnapshot snapshot : snapshots) {
+            total += snapshot.chunks.length;
+        }
+        return total;
+    }
+
+    private String formatStats(final TickMonitor.Stats stats) {
+        return String.format(
+                Locale.US,
+                "%s &7/ %s &7/ %s &7/ %s",
+                formatMspt(stats.min()),
+                formatMspt(stats.median()),
+                formatMspt(stats.p95()),
+                formatMspt(stats.max())
+        );
+    }
+
+    private String formatCpu(final double cpu) {
+        if (cpu < 0.0D) {
+            return "&cN/A";
+        }
+        return String.format(Locale.US, "%.1f", cpu);
     }
 
     private String getDiskUsage() {
-        File root  = new File(".").getAbsoluteFile();
-        long total = root.getTotalSpace();
-        long free  = root.getFreeSpace();
-        if (total == 0) return "§cN/A";
-        long   used    = total - free;
-        double percent = (used * 100.0) / total;
-        return String.format("§e%d GB §7/ §e%d GB §7(%.1f%%)",
-                used  / 1024 / 1024 / 1024,
-                total / 1024 / 1024 / 1024,
-                percent);
+        final File root = new File(".").getAbsoluteFile();
+        final long total = root.getTotalSpace();
+        final long free = root.getFreeSpace();
+        if (total == 0L) {
+            return "&cN/A";
+        }
+
+        final long used = total - free;
+        final double percent = (used * 100.0D) / total;
+        return String.format(
+                Locale.US,
+                "&e%d GB &7/ &e%d GB &7(%.1f%%)",
+                used / 1024L / 1024L / 1024L,
+                total / 1024L / 1024L / 1024L,
+                percent
+        );
     }
 
     private String formatUptime() {
-        long totalSeconds = TimeUnit.MILLISECONDS.toSeconds(
-                ManagementFactory.getRuntimeMXBean().getUptime());
+        final long totalSeconds = TimeUnit.MILLISECONDS.toSeconds(ManagementFactory.getRuntimeMXBean().getUptime());
+        final long days = totalSeconds / 86_400L;
+        final long hours = (totalSeconds % 86_400L) / 3_600L;
+        final long minutes = (totalSeconds % 3_600L) / 60L;
+        final long seconds = totalSeconds % 60L;
+        final StringBuilder uptime = new StringBuilder();
 
-        long days = totalSeconds / 86400L;
-        long hours = (totalSeconds % 86400L) / 3600L;
-        long minutes = (totalSeconds % 3600L) / 60L;
-        long seconds = totalSeconds % 60L;
-
-        StringBuilder uptime = new StringBuilder();
-        if (days > 0) uptime.append(days).append("d ");
-        if (hours > 0) uptime.append(hours).append("h ");
-        if (minutes > 0) uptime.append(minutes).append("m ");
+        if (days > 0L) {
+            uptime.append(days).append("d ");
+        }
+        if (hours > 0L) {
+            uptime.append(hours).append("h ");
+        }
+        if (minutes > 0L) {
+            uptime.append(minutes).append("m ");
+        }
         uptime.append(seconds).append("s");
         return uptime.toString();
     }
-//    private long getFolderSize(File folder) {
-//        long size = 0;
-//        File[] files = folder.listFiles();
-//        if (files == null) return 0;
-//        for (File file : files) {
-//            if (file.isFile()) {
-//                size += file.length();
-//            } else if (file.isDirectory()) {
-//                size += getFolderSize(file);
-//            }
-//        }
-//        return size;
-//    }
-    private String formatTPS(double tps) {
-        // clamp ทั้ง 2 ด้าน: ไม่ให้ติดลบ และไม่เกิน 20
-        double clamped = Math.max(TPS_MIN, Math.min(TPS_MAX, tps));
-        String color   = (clamped >= 18.0) ? "§a" : (clamped >= 15.0) ? "§e" : "§c";
-        return color + String.format("%.2f", clamped);
+
+    private String formatTps(final double tps) {
+        final double clamped = Math.max(MIN_TPS, Math.min(MAX_TPS, tps));
+        final String color = clamped >= 18.0D ? "&a" : clamped >= 15.0D ? "&e" : "&c";
+        return color + String.format(Locale.US, "%.2f", clamped);
     }
 
-    private String formatMSPT(double mspt) {
-        String color = (mspt <= 40.0) ? "§a" : (mspt <= 50.0) ? "§e" : "§c";
-        return color + String.format("%.1f", mspt);
+    private String formatMspt(final double mspt) {
+        final String color = mspt <= 40.0D ? "&a" : mspt <= 50.0D ? "&e" : "&c";
+        return color + String.format(Locale.US, "%.1f", mspt);
+    }
+
+    private record WorldSnapshot(World world, Chunk[] chunks, int entityCount, int playerCount) {
     }
 }

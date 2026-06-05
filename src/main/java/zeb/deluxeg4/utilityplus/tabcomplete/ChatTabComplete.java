@@ -10,13 +10,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * /chat <on|off|teamon|teamoff|pmon|pmoff|team>
+ * /chat <on|off|pmon|pmoff>
  * /chatsettings — no args
  */
 public class ChatTabComplete implements TabCompleter {
 
     private static final List<String> SUBCOMMANDS =
-            Arrays.asList("on", "off", "teamon", "teamoff", "pmon", "pmoff", "team");
+            Arrays.asList("on", "off", "pmon", "pmoff");
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
