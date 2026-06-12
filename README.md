@@ -93,4 +93,4 @@ cd UtilityPlus
 ```
 
 ## License
-MIT — © 2025 deluxeg4
+GPL-3.0 — © 2025 deluxeg4
