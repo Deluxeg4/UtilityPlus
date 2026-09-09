@@ -71,7 +71,7 @@ public class UtilityPlus extends JavaPlugin {
         registerCommand("toggledeathmsgshard", new ToggleDeathMessagesCommand(chatManager, true));
 
         final PMCommand privateMessageCommand = new PMCommand(chatManager);
-        registerCommands(privateMessageCommand, "msg", "w", "whisper", "pm", "r", "reply", "l", "last");
+        registerCommands(privateMessageCommand, "tell", "msg", "w", "whisper", "pm", "r", "reply", "l", "last");
 
         registerCommand("upreload", new ReloadCommand(this));
 
@@ -97,7 +97,7 @@ public class UtilityPlus extends JavaPlugin {
         final List<String> commandNames = List.of(
                 "ignore", "ignorehard", "ignorelist", "ignoredeathmsgs",
                 "togglechat", "toggleprivatemsgs", "toggledeathmsgs", "toggledeathmsgshard",
-                "msg", "w", "whisper", "pm", "r", "reply", "l", "last",
+                "tell", "msg", "w", "whisper", "pm", "r", "reply", "l", "last",
                 "upreload", "stopnow",
                 "v", "bc", "broadcast", "kill", "help",
                 "tpsmore", "tps", "ping", "pingall",

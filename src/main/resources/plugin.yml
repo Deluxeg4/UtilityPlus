@@ -42,6 +42,10 @@ commands:
     permission: utilityplus.chat
 
   # --- PM ---
+  tell:
+    description: Send a private message
+    usage: /tell <player> <message>
+    permission: utilityplus.tell
   msg:
     description: Send a private message
     usage: /msg <player> <message>
@@ -141,6 +145,9 @@ permissions:
     default: true
   utilityplus.pm:
     description: Send private messages
+    default: true
+  utilityplus.tell:
+    description: Send private messages with /tell
     default: true
   utilityplus.anvil.color:
     description: Use color codes in anvil item names

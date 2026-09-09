@@ -121,8 +121,11 @@ announcement:
     show-duration: 15
     # Duration to stay hidden (seconds, 300 = 5 minutes)
     hide-duration: 300
-    # The text to show in the Action Bar
-    text: "&62b2t-th.org"
+    # Texts to show in the Action Bar. Each entry is shown in sequence.
+    text:
+      - "&62b2t-th.org"
+      - "&eDiscord: &fdsc.gg/2b2t-th"
+      - "&bอย่าลืมอ่านกฎเซิร์ฟเวอร์ก่อนเล่น"
 
 # -----------------------------------------------
 # Queue Command Settings

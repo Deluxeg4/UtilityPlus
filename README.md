@@ -79,7 +79,7 @@
 - `death-message`: controls custom death-message formatting and colors.
 - `tab-list`: configures header/footer lines and refresh interval.
 - `broadcast`: sets the prefix used by `/bc` and `/broadcast`.
-- `announcement.action-bar`: controls the repeating action-bar announcement.
+- `announcement.action-bar`: controls the repeating action-bar announcement. `text` can be a string or a list of texts shown in sequence.
 - `queue.message`: stores queue text used by queue-style output.
 
 Color formatting uses `&` codes and is rendered through Adventure components.
