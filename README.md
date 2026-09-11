@@ -31,6 +31,7 @@
 | `/toggledeathmsgs` | Toggle death message visibility until restart. | `utilityplus.chat` |
 | `/toggledeathmsgshard` | Toggle death message visibility permanently. | `utilityplus.chat` |
 | `/msg <player> <message>` | Send a private message. | `utilityplus.pm` |
+| `/tell <player> <message>` (`/t`) | Send a private message. | `utilityplus.pm` |
 | `/w <player> <message>` | Send a private message. | `utilityplus.pm` |
 | `/whisper <player> <message>` | Send a private message. | `utilityplus.pm` |
 | `/pm <player> <message>` | Send a private message. | `utilityplus.pm` |

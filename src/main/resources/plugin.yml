@@ -45,7 +45,8 @@ commands:
   tell:
     description: Send a private message
     usage: /tell <player> <message>
-    permission: utilityplus.tell
+    aliases: [t]
+    permission: utilityplus.pm
   msg:
     description: Send a private message
     usage: /msg <player> <message>
@@ -100,6 +101,23 @@ commands:
     usage: /broadcast <message>
     permission: utilityplus.broadcast
 
+  gmc:
+    description: Set gamemode to Creative
+    usage: /gmc [player]
+    permission: utilityplus.gamemode
+  gms:
+    description: Set gamemode to Survival
+    usage: /gms [player]
+    permission: utilityplus.gamemode
+  gmsp:
+    description: Set gamemode to Spectator
+    usage: /gmsp [player]
+    permission: utilityplus.gamemode
+  gma:
+    description: Set gamemode to Adventure
+    usage: /gma [player]
+    permission: utilityplus.gamemode
+
   kill:
     description: Kill yourself with confirmation
     usage: /kill
@@ -109,6 +127,24 @@ commands:
     description: Starts a shutdown countdown
     usage: /stopnow <time|now|cancel|time>
     permission: server.stop
+
+  overclock:
+    description: Apply unsafe enchantments or rename the held item
+    usage: /overclock <enchant> <level> | /overclock 32k | /overclock name <name>
+    permission: utilityplus.overclock
+  invsee:
+    description: Open another player's inventory
+    usage: /invsee <player>
+    permission: utilityplus.invsee
+  enderchestsee:
+    description: Open another player's ender chest
+    usage: /enderchestsee <player>
+    aliases: [endersee]
+    permission: utilityplus.enderchestsee
+  s:
+    description: Summon a player to your location
+    usage: /s <player>
+    permission: utilityplus.summon
 
   help:
     description: Show UtilityPlus help menu
@@ -146,9 +182,6 @@ permissions:
   utilityplus.pm:
     description: Send private messages
     default: true
-  utilityplus.tell:
-    description: Send private messages with /tell
-    default: true
   utilityplus.anvil.color:
     description: Use color codes in anvil item names
     default: true
@@ -164,11 +197,32 @@ permissions:
   utilityplus.broadcast:
     description: Broadcast messages
     default: op
+  utilityplus.gamemode:
+    description: Change own gamemode
+    default: op
+  utilityplus.gamemode.others:
+    description: Change another player's gamemode
+    default: op
   utilityplus.kill:
     description: Kill yourself with confirmation
     default: true
   server.stop:
     description: Allows starting the server shutdown countdown
+    default: op
+  utilityplus.overclock:
+    description: Apply unsafe enchantments and names to items
+    default: op
+  utilityplus.invsee:
+    description: View and edit another player's inventory
+    default: op
+  utilityplus.enderchestsee:
+    description: View and edit another player's ender chest
+    default: op
+  utilityplus.invsee.unseen:
+    description: Open stored data for players that have never joined
+    default: op
+  utilityplus.summon:
+    description: Summon another player
     default: op
   utilityplus.tpsmore:
     description: View detailed TPS and performance info

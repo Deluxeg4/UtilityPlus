@@ -66,7 +66,7 @@ public class TabCompleterManager implements TabCompleter {
                 || commandName.equals("kill")) {
             return Collections.emptyList();
         }
-        if (Arrays.asList("msg", "w", "whisper", "pm").contains(commandName)) {
+        if (Arrays.asList("tell", "t", "msg", "w", "whisper", "pm").contains(commandName)) {
             if (args.length != 1) return Collections.emptyList();
             return onlinePlayers(sender, args[0]);
         }
