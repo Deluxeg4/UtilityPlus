@@ -5,6 +5,7 @@ api-version: '1.21'
 folia-supported: true
 description: Chat controls, death messages, and admin utilities
 author: CADS
+softdepend: [floodgate]
 
 commands:
   # --- 2b2t-style chat controls ---

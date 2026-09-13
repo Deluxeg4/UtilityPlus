@@ -10,6 +10,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import zeb.deluxeg4.utilityplus.util.Messages;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.UUID;
 
 public class JoinMessageListener implements Listener {
 
@@ -26,6 +28,8 @@ public class JoinMessageListener implements Listener {
         if (plugin.getConfig().getBoolean("join-message.hide-vanilla", true)) {
             event.setJoinMessage(null);
         }
+
+        sendBedrockWarning(player);
 
         if (!plugin.getConfig().getBoolean("join-message.enabled", true)) {
             return;
@@ -80,6 +84,43 @@ public class JoinMessageListener implements Listener {
             Method method = plugin.getServer().getClass().getMethod("isStopping");
             Object result = method.invoke(plugin.getServer());
             return result instanceof Boolean && (Boolean) result;
+        } catch (ReflectiveOperationException ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * Floodgate is optional, so its API is accessed reflectively. This keeps the
+     * plugin loadable on servers that do not use Geyser/Floodgate.
+     */
+    private void sendBedrockWarning(Player player) {
+        if (!plugin.getConfig().getBoolean("bedrock-warning.enabled", true) || !isFloodgatePlayer(player.getUniqueId())) {
+            return;
+        }
+
+        List<String> messages = plugin.getConfig().getStringList("bedrock-warning.message");
+        if (messages.isEmpty()) {
+            messages = List.of(
+                    "&62b2t-th is best played on Java Edition. The Bedrock Edition",
+                    "&6experience may not be optimal - 2b2t-th.org/bedrock"
+            );
+        }
+
+        for (String message : messages) {
+            Messages.send(player, formatMessage(message, player));
+        }
+    }
+
+    private boolean isFloodgatePlayer(UUID playerId) {
+        if (!plugin.getServer().getPluginManager().isPluginEnabled("floodgate")) {
+            return false;
+        }
+
+        try {
+            Class<?> apiClass = Class.forName("org.geysermc.floodgate.api.FloodgateApi");
+            Object api = apiClass.getMethod("getInstance").invoke(null);
+            Object result = apiClass.getMethod("isFloodgatePlayer", UUID.class).invoke(api, playerId);
+            return result instanceof Boolean isFloodgatePlayer && isFloodgatePlayer;
         } catch (ReflectiveOperationException ignored) {
             return false;
         }

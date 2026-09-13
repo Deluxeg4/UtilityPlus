@@ -64,6 +64,17 @@ leave-message:
   message: "&e{player} left the game"
 
 # -----------------------------------------------
+# Bedrock / Floodgate Join Warning
+# -----------------------------------------------
+# This is sent only to players identified by Floodgate, on every login.
+# Floodgate remains optional; no warning is sent if it is not installed.
+bedrock-warning:
+  enabled: true
+  message:
+    - "&62b2t-th is best played on Java Edition. The Bedrock Edition"
+    - "&6experience may not be optimal - 2b2t-th.org/bedrock"
+
+# -----------------------------------------------
 # Custom Death Message Settings
 # -----------------------------------------------
 # Placeholders: {message} = original Minecraft death message,
