@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import zeb.deluxeg4.utilityplus.util.Messages;
+import zeb.deluxeg4.utilityplus.util.PaperFoliaTasks;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -30,6 +31,7 @@ public class JoinMessageListener implements Listener {
         }
 
         sendBedrockWarning(player);
+        enableBedrockCoordinateHud(player);
 
         if (!plugin.getConfig().getBoolean("join-message.enabled", true)) {
             return;
@@ -124,5 +126,39 @@ public class JoinMessageListener implements Listener {
         } catch (ReflectiveOperationException ignored) {
             return false;
         }
+    }
+
+    /**
+     * Enables Bedrock's native coordinate HUD (the upper-left display) for this
+     * Floodgate player. Geyser is optional and is accessed reflectively so that
+     * UtilityPlus still works normally when it is installed on a proxy instead.
+     */
+    private void enableBedrockCoordinateHud(Player player) {
+        if (!plugin.getConfig().getBoolean("bedrock-coordinates.enabled", true) || !isFloodgatePlayer(player.getUniqueId())) {
+            return;
+        }
+
+        // Let Geyser finish its initial client setup before overriding this rule.
+        PaperFoliaTasks.runForPlayerDelayed(plugin, player, task -> {
+            if (!player.isOnline() || !isFloodgatePlayer(player.getUniqueId())) {
+                return;
+            }
+
+            try {
+                Class<?> geyserApiClass = Class.forName("org.geysermc.geyser.api.GeyserApi");
+                Object geyserApi = geyserApiClass.getMethod("api").invoke(null);
+                Object connection = geyserApiClass
+                        .getMethod("connectionByUuid", UUID.class)
+                        .invoke(geyserApi, player.getUniqueId());
+
+                if (connection != null) {
+                    connection.getClass()
+                            .getMethod("sendGameRule", String.class, Object.class)
+                            .invoke(connection, "showcoordinates", true);
+                }
+            } catch (ReflectiveOperationException ignored) {
+                // Geyser is not installed locally, or uses an incompatible API.
+            }
+        }, 20L);
     }
 }

@@ -74,6 +74,12 @@ bedrock-warning:
     - "&62b2t-th is best played on Java Edition. The Bedrock Edition"
     - "&6experience may not be optimal - 2b2t-th.org/bedrock"
 
+# Enables Bedrock's native upper-left coordinate display for Floodgate players.
+# Geyser must be installed on this server. If Geyser runs on a proxy, set
+# `show-coordinates: true` in that proxy's Geyser config instead.
+bedrock-coordinates:
+  enabled: true
+
 # -----------------------------------------------
 # Custom Death Message Settings
 # -----------------------------------------------
