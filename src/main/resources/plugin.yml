@@ -142,6 +142,10 @@ commands:
     usage: /enderchestsee <player>
     aliases: [endersee]
     permission: utilityplus.enderchestsee
+  offlinetp:
+    description: Teleport to a player's last saved location
+    usage: /offlinetp <player>
+    permission: utilityplus.offlinetp
   s:
     description: Summon a player to your location
     usage: /s <player>
@@ -218,6 +222,9 @@ permissions:
     default: op
   utilityplus.enderchestsee:
     description: View and edit another player's ender chest
+    default: op
+  utilityplus.offlinetp:
+    description: Teleport to a player's last saved location
     default: op
   utilityplus.invsee.unseen:
     description: Open stored data for players that have never joined

@@ -167,6 +167,7 @@ public class TabListManager {
     ) {
         return String.join("\n", lines)
                 .replace("%server_tps_1_colored%", formatTps(tps))
+                .replace("%tps%", String.format(Locale.ROOT, "%.2f", Math.max(0.0D, Math.min(20.0D, tps))))
                 .replace("%server_online%", onlineCount)
                 .replace("%player_ping%", String.valueOf(player.getPing()))
                 .replace("%server_uptime%", uptime);

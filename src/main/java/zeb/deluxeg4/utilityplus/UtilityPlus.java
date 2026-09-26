@@ -12,6 +12,7 @@ import zeb.deluxeg4.utilityplus.commands.IgnoreCommand;
 import zeb.deluxeg4.utilityplus.commands.IgnoreListCommand;
 import zeb.deluxeg4.utilityplus.commands.KillCommand;
 import zeb.deluxeg4.utilityplus.commands.OverclockCommand;
+import zeb.deluxeg4.utilityplus.commands.OfflineTpCommand;
 import zeb.deluxeg4.utilityplus.commands.PMCommand;
 import zeb.deluxeg4.utilityplus.commands.PingCommand;
 import zeb.deluxeg4.utilityplus.commands.ReloadCommand;
@@ -106,6 +107,7 @@ public class UtilityPlus extends JavaPlugin {
 
         final InventorySeeCommand inventorySeeCommand = new InventorySeeCommand(this);
         registerCommands(inventorySeeCommand, "invsee", "enderchestsee");
+        registerCommand("offlinetp", new OfflineTpCommand(this));
         registerCommand("s", new STapwarp());
 
         registerCommand("help", new HelpCommand(this));
@@ -124,7 +126,7 @@ public class UtilityPlus extends JavaPlugin {
                 "tell", "msg", "w", "whisper", "pm", "r", "reply", "l", "last",
                 "upreload", "stopnow",
                 "v", "bc", "broadcast", "gmc", "gms", "gmsp", "gma",
-                "kill", "overclock", "invsee", "enderchestsee", "s", "help",
+                "kill", "overclock", "invsee", "enderchestsee", "offlinetp", "s", "help",
                 "tpsmore", "tps", "ping", "pingall",
                 "uptime"
         );

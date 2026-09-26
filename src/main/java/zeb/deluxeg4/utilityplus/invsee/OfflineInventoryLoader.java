@@ -1,6 +1,7 @@
 package zeb.deluxeg4.utilityplus.invsee;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +25,7 @@ import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-final class OfflineInventoryLoader {
+public final class OfflineInventoryLoader {
     private OfflineInventoryLoader() {
     }
 
@@ -46,6 +47,83 @@ final class OfflineInventoryLoader {
         return mode == InventorySeeMode.INVENTORY
                 ? readInventory(rootMap)
                 : readEnderChest(rootMap);
+    }
+
+    public static Location loadLastLocation(UUID uuid) throws IOException {
+        File file = playerDataFile(uuid);
+        if (file == null || !file.isFile()) {
+            return null;
+        }
+
+        Object root;
+        try (DataInputStream input = new DataInputStream(new GZIPInputStream(new FileInputStream(file)))) {
+            root = readNamedTag(input);
+        }
+        if (!(root instanceof Map<?, ?> rootMap)) {
+            return null;
+        }
+
+        Object positionValue = rootMap.get("Pos");
+        if (!(positionValue instanceof List<?> position) || position.size() < 3
+                || !(position.get(0) instanceof Number x)
+                || !(position.get(1) instanceof Number y)
+                || !(position.get(2) instanceof Number z)) {
+            return null;
+        }
+
+        World world = worldForDimension(rootMap.get("Dimension"));
+        if (world == null) {
+            return null;
+        }
+
+        float yaw = 0.0F;
+        float pitch = 0.0F;
+        Object rotationValue = rootMap.get("Rotation");
+        if (rotationValue instanceof List<?> rotation && rotation.size() >= 2
+                && rotation.get(0) instanceof Number yawValue
+                && rotation.get(1) instanceof Number pitchValue) {
+            yaw = yawValue.floatValue();
+            pitch = pitchValue.floatValue();
+        }
+        return new Location(world, x.doubleValue(), y.doubleValue(), z.doubleValue(), yaw, pitch);
+    }
+
+    private static World worldForDimension(Object dimension) {
+        String dimensionName = dimension instanceof String name ? name.toLowerCase(Locale.ROOT) : null;
+        if (dimensionName != null) {
+            for (World world : Bukkit.getWorlds()) {
+                if (world.getKey().asString().equalsIgnoreCase(dimensionName)) {
+                    return world;
+                }
+            }
+            if (dimensionName.endsWith(":overworld")) {
+                return worldByEnvironment(World.Environment.NORMAL);
+            }
+            if (dimensionName.endsWith(":the_nether")) {
+                return worldByEnvironment(World.Environment.NETHER);
+            }
+            if (dimensionName.endsWith(":the_end")) {
+                return worldByEnvironment(World.Environment.THE_END);
+            }
+            return null;
+        }
+
+        if (dimension instanceof Number number) {
+            return switch (number.intValue()) {
+                case -1 -> worldByEnvironment(World.Environment.NETHER);
+                case 0 -> worldByEnvironment(World.Environment.NORMAL);
+                case 1 -> worldByEnvironment(World.Environment.THE_END);
+                default -> null;
+            };
+        }
+        return worldByEnvironment(World.Environment.NORMAL);
+    }
+
+    private static World worldByEnvironment(World.Environment environment) {
+        return Bukkit.getWorlds().stream()
+                .filter(world -> world.getEnvironment() == environment)
+                .findFirst()
+                .orElse(null);
     }
 
     static void save(UUID uuid, InventorySeeMode mode, ItemStack[] contents) throws IOException {

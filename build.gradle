@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'zeb.deluxeg4'
-version = '1.0.2'
+version = '1.0.3'
 description = 'UtilityPlus - spawn, homes, TPA, chat, teams, stats, and admin utilities'
 
 java {
