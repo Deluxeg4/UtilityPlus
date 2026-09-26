@@ -9,15 +9,15 @@ spawn:
   tp-spawn-on-death: false
   # Teleport to spawn on respawn ONLY if they have no bed/respawn anchor
   tp-spawn-no-respawn-point: false
-  # Cooldown (seconds) between spawn uses. 0 = disabled. OP bypasses.
+  # Cooldown (seconds) between /spawn uses. 0 = disabled. OP bypasses.
   tp-spawn-cooldown: 30
-  # Warmup (seconds) before teleporting. Player must stand still. 0 = instant.
+  # Warmup (seconds) before teleporting — player must stand still. 0 = instant.
   tp-spawn-warmup: 5
 
 # -----------------------------------------------
 # Random Respawn Settings
 # (When enabled, players respawn at a random location on death)
-# Completely independent from the saved spawn point above.
+# Completely independent from the /setspawn system above.
 # -----------------------------------------------
 random-respawn:
   enabled: true
@@ -37,6 +37,36 @@ unsafe-blocks:
   - MAGMA_BLOCK
   - SWEET_BERRY_BUSH
   - POWDER_SNOW
+
+# -----------------------------------------------
+# TPA Settings
+# -----------------------------------------------
+tpa:
+  # How long (seconds) a TPA request stays active before expiring
+  timeout: 60
+  # How long (seconds) to wait before teleporting after /tpaccept
+  # Player must not move during this time or the teleport is cancelled
+  warmup: 3
+
+# -----------------------------------------------
+# Home Settings
+# -----------------------------------------------
+home:
+  # Warmup (seconds) before teleporting — player must stand still. 0 = instant.
+  warmup: 3
+  # Maximum number of home slots per player (1–4).
+  max-homes: 4
+
+# -----------------------------------------------
+# Team Settings
+# -----------------------------------------------
+team:
+  # Maximum number of players per team
+  max-members: 10
+  # How long (seconds) an invite stays valid before expiring
+  invite-timeout: 60
+  # Auto-kick members offline for longer than this many minutes (0 = disabled, owner is never kicked)
+  offline-kick-minutes: 5
 
 # -----------------------------------------------
 # Custom Join/Leave Message Settings
@@ -74,8 +104,9 @@ bedrock-warning:
     - "&62b2t-th is best played on Java Edition. The Bedrock Edition"
     - "&6experience may not be optimal - 2b2t-th.org/bedrock"
 
-# Shows Bukkit block coordinates in the action bar for Bedrock players whose
-# Floodgate username starts with a dot. The values are whole block coordinates.
+# Enables Bedrock native upper-left coordinate display for Floodgate players.
+# Geyser must be installed on this server. If Geyser runs on a proxy, set
+# show-coordinates: true in the proxy Geyser config instead.
 bedrock-coordinates:
   enabled: true
   # Placeholders: {x}, {y}, {z}
@@ -100,27 +131,29 @@ death-message:
 # -----------------------------------------------
 # Tab List Header/Footer Settings
 # -----------------------------------------------
-# Placeholders: %server_tps%, %tps%, %server_online%,
+# Placeholders: %server_tps_1_colored%, %server_online%,
 # %player_ping%, %server_uptime%
 
 tab-list:
   enabled: true
   # How often to refresh dynamic placeholders, in seconds
-  update-interval: 5
+  update-interval: 1
   header:
+    # - ""
+    - "&7&l2BUILDERS&7&l2TOOLS"
+    #- "&6&oThailand"
+    - "&4&oT&f&oh&1&oa&f&oi&4&ol&4&oa&4&ond"
     - ""
-    - "&7&o&l  2BUILDERS      "
-    - "&7&o&l  2TOOLS &6&o- Thailand"
+    - "&6Server updated to 26.3"
     - ""
   footer:
+    # - ""
+    #- "  %server_tps_1_colored% &3tps - %server_online% players online - %player_ping% ping - &3%server_uptime% uptime "
+    - "  &8%tps%&8 tps — %server_online% players online — %player_ping% ping "
     - ""
-    - "%server_tps% &3tps - %server_online% players - %player_ping% ping - %server_uptime% uptime"
-    - ""
-    - "&7contact: @ dsc.gg/2b2t-th"
-    - "&7discord: dsc.gg/2b2t-th"
-    - "&7website: 2b2t-th.org"
-    - "  &7If you need to contact us or found a bug, please contact us on discord  "
-    - ""
+    #- "&7&odiscord: dsc.gg/2b2t-th"
+    #- "&8&owebsite: 2b2t-th.org"
+    #- ""
 
 # -----------------------------------------------
 # Broadcast Settings
@@ -139,11 +172,10 @@ announcement:
     show-duration: 15
     # Duration to stay hidden (seconds, 300 = 5 minutes)
     hide-duration: 300
-    # Texts to show in the Action Bar. Each entry is shown in sequence.
+    # The text to show in the Action Bar
     text:
       - "&62b2t-th.org"
-      - "&eDiscord: &fdsc.gg/2b2t-th"
-      - "&bอย่าลืมอ่านกฎเซิร์ฟเวอร์ก่อนเล่น"
+      - "&6dsc.gg/2b2t-th"
 
 # -----------------------------------------------
 # Queue Command Settings
@@ -154,3 +186,5 @@ queue:
     - "&7Regular: &f0"
     - "&7Priority: &f0"
     - "&7Online: &f{online}/{max}"
+
+# -----------------------------------------------

@@ -1,5 +1,8 @@
 package zeb.deluxeg4.utilityplus.commands;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import zeb.deluxeg4.utilityplus.util.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,7 +23,11 @@ public class HelpCommand implements CommandExecutor {
             return true;
         }
         sender.sendMessage("");
-        Messages.send(sender, "&62b2t-th.org/commands");
+        Component link = Component.text("2b2t-th.org/commands")
+                .color(NamedTextColor.GOLD)
+                .clickEvent(ClickEvent.openUrl("https://2b2t-th.org/commands"));
+
+        sender.sendMessage(link);
         return true;
     }
 }
