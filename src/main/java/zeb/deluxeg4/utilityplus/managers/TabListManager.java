@@ -166,7 +166,7 @@ public class TabListManager {
             final String onlineCount
     ) {
         return String.join("\n", lines)
-                .replace("%server_tps_1_colored%", formatTps(tps))
+                .replace("%server_tps%", formatTps(tps))
                 .replace("%tps%", String.format(Locale.ROOT, "%.2f", Math.max(0.0D, Math.min(20.0D, tps))))
                 .replace("%server_online%", onlineCount)
                 .replace("%player_ping%", String.valueOf(player.getPing()))
@@ -230,7 +230,7 @@ public class TabListManager {
     }
 
     private String formatTps(final double tps) {
-        final String color = tps > 18.0D ? "&a" : tps > 16.0D ? "&e" : "&c";
+        final String color = tps < 10.0D ? "&c" : "";
         return color + String.format(Locale.US, "%.2f", Math.min(tps, DEFAULT_TPS));
     }
 

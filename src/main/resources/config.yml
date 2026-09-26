@@ -100,7 +100,7 @@ death-message:
 # -----------------------------------------------
 # Tab List Header/Footer Settings
 # -----------------------------------------------
-# Placeholders: %server_tps_1_colored%, %tps%, %server_online%,
+# Placeholders: %server_tps%, %tps%, %server_online%,
 # %player_ping%, %server_uptime%
 
 tab-list:
@@ -114,7 +114,7 @@ tab-list:
     - ""
   footer:
     - ""
-    - "%server_tps_1_colored% &3tps - %server_online% players - %player_ping% ping - %server_uptime% uptime"
+    - "%server_tps% &3tps - %server_online% players - %player_ping% ping - %server_uptime% uptime"
     - ""
     - "&7contact: @ dsc.gg/2b2t-th"
     - "&7discord: dsc.gg/2b2t-th"
