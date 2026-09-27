@@ -2,15 +2,23 @@ package zeb.deluxeg4.utilityplus.commands;
 
 import zeb.deluxeg4.utilityplus.managers.ChatManager;
 import zeb.deluxeg4.utilityplus.util.Messages;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Set;
 
 public class IgnoreListCommand implements CommandExecutor {
+
+    private static final int PAGE_SIZE = 9;
+    private static final LegacyComponentSerializer AMPERSAND = LegacyComponentSerializer.legacyAmpersand();
 
     private final ChatManager chatManager;
 
@@ -27,14 +35,61 @@ public class IgnoreListCommand implements CommandExecutor {
 
         Set<String> ignored = chatManager.getHardIgnoredPlayers(player.getUniqueId());
         if (ignored.isEmpty()) {
-            Messages.send(player, "&eYou have no permanently ignored players.");
+            Messages.send(player, "&6No players ignored.");
             return true;
         }
 
-        Messages.send(player, "&6Permanently ignored players:");
-        for (String name : ignored.stream().sorted().toList()) {
-            Messages.send(player, "&7- &f" + name);
+        List<String> names = ignored.stream().sorted(String.CASE_INSENSITIVE_ORDER).toList();
+        int totalPages = (names.size() + PAGE_SIZE - 1) / PAGE_SIZE;
+        int page = parsePage(args, totalPages);
+        if (page < 1) {
+            Messages.send(player, "&cInvalid page argument, there are only " + totalPages
+                    + (totalPages == 1 ? " page." : " pages."));
+            return true;
+        }
+        sendHeader(player, page, totalPages);
+
+        int start = (page - 1) * PAGE_SIZE;
+        int end = Math.min(start + PAGE_SIZE, names.size());
+        for (String name : names.subList(start, end)) {
+            Component row = AMPERSAND.deserialize("&3" + name + " &7[")
+                    .append(AMPERSAND.deserialize("&6hard")
+                            .hoverEvent(HoverEvent.showText(AMPERSAND.deserialize("&6Click to remove the permanent ignore")))
+                            .clickEvent(ClickEvent.runCommand("/ignorehard " + name)))
+                    .append(AMPERSAND.deserialize("&7]"));
+            player.sendMessage(row);
         }
         return true;
+    }
+
+    private int parsePage(String[] args, int totalPages) {
+        if (args.length == 0) return 1;
+        if (args.length != 1) return -1;
+        try {
+            int page = Integer.parseInt(args[0]);
+            return page >= 1 && page <= totalPages ? page : -1;
+        } catch (NumberFormatException ignored) {
+            return -1;
+        }
+    }
+
+    private void sendHeader(Player player, int page, int totalPages) {
+        Component previous = page > 1
+                ? pageButton("&b[<]", "&6Click to go to the previous page", page - 1)
+                : AMPERSAND.deserialize("&7[<]");
+        Component next = page < totalPages
+                ? pageButton("&b[>]", "&6Click to go to the next page", page + 1)
+                : AMPERSAND.deserialize("&7[>]");
+
+        player.sendMessage(AMPERSAND.deserialize("&6Ignored players &7")
+                .append(previous)
+                .append(AMPERSAND.deserialize(" &7" + page + "/" + totalPages + " &7]"))
+                .append(next));
+    }
+
+    private Component pageButton(String label, String hover, int page) {
+        return AMPERSAND.deserialize(label)
+                .hoverEvent(HoverEvent.showText(AMPERSAND.deserialize(hover)))
+                .clickEvent(ClickEvent.runCommand("/ignorelist " + page));
     }
 }

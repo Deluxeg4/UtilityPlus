@@ -12,7 +12,7 @@ public final class Messages {
     }
 
     public static Component legacy(String message) {
-        return LEGACY_AMPERSAND.deserialize(message);
+        return PlayerChatNames.decorate(LEGACY_AMPERSAND.deserialize(message));
     }
 
     public static void send(CommandSender sender, String message) {

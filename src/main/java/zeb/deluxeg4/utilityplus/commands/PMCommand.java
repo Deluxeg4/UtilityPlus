@@ -35,17 +35,13 @@ public class PMCommand implements CommandExecutor {
         }
 
         if (args.length < 2) {
-            Messages.send(from, "&cUsage: /" + label + " <player> <message>");
+            sendBadCommand(from);
             return true;
         }
 
         Player to = from.getServer().getPlayer(args[0]);
         if (to == null || !to.isOnline()) {
             Messages.send(from, "&cPlayer &e" + args[0] + " &cis not online!");
-            return true;
-        }
-        if (to.equals(from)) {
-            Messages.send(from, "&cYou cannot message yourself!");
             return true;
         }
 
@@ -55,13 +51,13 @@ public class PMCommand implements CommandExecutor {
 
     private boolean handleReply(Player from, String[] args) {
         if (args.length < 1) {
-            Messages.send(from, "&cUsage: /r <message>");
+            sendBadCommand(from);
             return true;
         }
 
         UUID lastSenderUUID = chatManager.getLastPmSender(from.getUniqueId());
         if (lastSenderUUID == null) {
-            Messages.send(from, "&cYou have no one to reply to!");
+            Messages.send(from, "&4Bad command. Type /help for all commands.");
             return true;
         }
 
@@ -77,24 +73,28 @@ public class PMCommand implements CommandExecutor {
 
     private boolean handleLast(Player from, String[] args) {
         if (args.length < 1) {
-            Messages.send(from, "&cUsage: /last <message>");
+            sendBadCommand(from);
             return true;
         }
 
         UUID lastTargetUUID = chatManager.getLastPmTarget(from.getUniqueId());
         if (lastTargetUUID == null) {
-            Messages.send(from, "&cYou have no last messaged player!");
+            Messages.send(from, "&4Bad command. Type /help for all commands.");
             return true;
         }
 
         Player to = from.getServer().getPlayer(lastTargetUUID);
         if (to == null || !to.isOnline()) {
-            Messages.send(from, "&cThat player is no longer online.");
+            Messages.send(from, "&4Bad command. Type /help for all commands.");
             return true;
         }
 
         sendPM(from, to, buildMessage(args, 0));
         return true;
+    }
+
+    private void sendBadCommand(Player player) {
+        Messages.send(player, "&4Bad command. Type /help for all commands.");
     }
 
     private void sendPM(Player from, Player to, String message) {

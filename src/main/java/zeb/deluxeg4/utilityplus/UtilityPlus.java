@@ -44,6 +44,7 @@ import zeb.deluxeg4.utilityplus.invsee.InventorySeeMode;
 import zeb.deluxeg4.utilityplus.invsee.InventorySeeSessionManager;
 import zeb.deluxeg4.utilityplus.invsee.PendingInventoryOrderManager;
 import zeb.deluxeg4.utilityplus.tabcomplete.TabCompleterManager;
+import zeb.deluxeg4.utilityplus.util.PlayerChatNames;
 
 import java.util.List;
 
@@ -133,6 +134,7 @@ public class UtilityPlus extends JavaPlugin {
         registerTabCompleters(tabCompleter, commandNames);
         command("overclock").setTabCompleter(overclockCommand);
 
+        getServer().getPluginManager().registerEvents(new PlayerChatNames(), this);
         getServer().getPluginManager().registerEvents(new SpawnListener(spawnManager), this);
         getServer().getPluginManager().registerEvents(new ChatListener(chatManager), this);
         getServer().getPluginManager().registerEvents(new AnvilListener(), this);

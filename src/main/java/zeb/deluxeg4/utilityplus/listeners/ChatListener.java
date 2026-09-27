@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import zeb.deluxeg4.utilityplus.managers.ChatManager;
+import zeb.deluxeg4.utilityplus.util.PlayerChatNames;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,10 +29,13 @@ public class ChatListener implements Listener {
     public void onPlayerChat(AsyncChatEvent event) {
         Player sender = event.getPlayer();
         event.message(highlightMessage(event.message()));
+        event.renderer((source, sourceDisplayName, message, viewer) -> PlayerChatNames.decorate(sourceDisplayName)
+                .append(Component.text(": "))
+                .append(PlayerChatNames.decorate(message)));
 
         if (chatManager.isGlobalMuted(sender.getUniqueId())) {
             event.setCancelled(true);
-            Messages.send(sender, "&cGlobal chat is disabled. Use &e/chat on&c to re-enable.");
+            Messages.send(sender, "&6You have toggled off chat");
             return;
         }
 

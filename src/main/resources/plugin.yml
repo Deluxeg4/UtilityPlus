@@ -19,7 +19,7 @@ commands:
     permission: utilityplus.chat
   ignorelist:
     description: List permanently ignored players
-    usage: /ignorelist
+    usage: /ignorelist [page]
     permission: utilityplus.chat
   ignoredeathmsgs:
     description: Hide death messages from a player

@@ -101,9 +101,6 @@ public class TabCompleterManager implements TabCompleter {
         final String lowerInput = input.toLowerCase();
         final List<String> names = new ArrayList<>();
         for (final Player player : Bukkit.getOnlinePlayers()) {
-            if (sender instanceof Player && player.equals(sender)) {
-                continue;
-            }
             if (player.getName().toLowerCase().startsWith(lowerInput)) {
                 names.add(player.getName());
             }
@@ -115,15 +112,13 @@ public class TabCompleterManager implements TabCompleter {
         final String lowerInput = input.toLowerCase(Locale.ROOT);
         final Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         for (final Player player : Bukkit.getOnlinePlayers()) {
-            if ((!(sender instanceof Player) || !player.equals(sender))
-                    && player.getName().toLowerCase(Locale.ROOT).startsWith(lowerInput)) {
+            if (player.getName().toLowerCase(Locale.ROOT).startsWith(lowerInput)) {
                 names.add(player.getName());
             }
         }
         for (final OfflinePlayer player : Bukkit.getOfflinePlayers()) {
             final String name = player.getName();
             if (name != null && player.hasPlayedBefore()
-                    && (!(sender instanceof Player) || !player.getUniqueId().equals(((Player) sender).getUniqueId()))
                     && name.toLowerCase(Locale.ROOT).startsWith(lowerInput)) {
                 names.add(name);
             }
