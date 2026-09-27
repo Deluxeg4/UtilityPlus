@@ -83,8 +83,9 @@ public class IgnoreListCommand implements CommandExecutor {
 
         player.sendMessage(AMPERSAND.deserialize("&6Ignored players &7")
                 .append(previous)
-                .append(AMPERSAND.deserialize(" &7" + page + "/" + totalPages + " &7]"))
-                .append(next));
+                .append(AMPERSAND.deserialize(" &7" + page + "/" + totalPages + " "))
+                .append(next)
+                .append(AMPERSAND.deserialize("&7]")));
     }
 
     private Component pageButton(String label, String hover, int page) {

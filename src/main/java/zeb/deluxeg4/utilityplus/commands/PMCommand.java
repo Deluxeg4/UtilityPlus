@@ -41,7 +41,7 @@ public class PMCommand implements CommandExecutor {
 
         Player to = from.getServer().getPlayer(args[0]);
         if (to == null || !to.isOnline()) {
-            Messages.send(from, "&cPlayer &e" + args[0] + " &cis not online!");
+            Messages.send(from, "&6This player is not online.");
             return true;
         }
 
@@ -98,15 +98,6 @@ public class PMCommand implements CommandExecutor {
     }
 
     private void sendPM(Player from, Player to, String message) {
-        if (chatManager.isPmMuted(to.getUniqueId())) {
-            Messages.send(from, "&e" + to.getName() + " &7is not accepting private messages.");
-            return;
-        }
-
-        if (chatManager.isIgnoring(to.getUniqueId(), from.getName())) {
-            Messages.send(from, "&e" + to.getName() + " &7is ignoring you.");
-            return;
-        }
 
         String toSender = "&dto " + to.getName() + ": " + message;
         String toTarget = "&d" + from.getName() + " whispers: " + message;

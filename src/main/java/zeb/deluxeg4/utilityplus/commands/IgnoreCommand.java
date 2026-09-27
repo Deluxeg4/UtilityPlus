@@ -57,7 +57,7 @@ public class IgnoreCommand implements CommandExecutor {
                     : "&6You will now see this players death messages.");
         } else if (hard) {
             Messages.send(player, enabled
-                    ? "&6Permanently ignoring " + targetName + ". This is saved in /ignorelist."
+                    ? "&6Permanently ignoring " + "&3" + targetName + "." + "&6 This is saved in &8/ignorelist."
                     : "&6No longer permanently ignoring " + targetName + ".");
         } else {
             Messages.send(player, enabled

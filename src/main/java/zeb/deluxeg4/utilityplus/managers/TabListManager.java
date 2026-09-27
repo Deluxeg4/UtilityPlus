@@ -230,7 +230,7 @@ public class TabListManager {
     }
 
     private String formatTps(final double tps) {
-        final String color = tps < 10.0D ? "&c" : "";
+        final String color = tps < 12.0D ? "&c" : "";
         return color + String.format(Locale.US, "%.2f", Math.min(tps, DEFAULT_TPS));
     }
 

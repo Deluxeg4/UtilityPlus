@@ -28,10 +28,7 @@ public class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerChat(AsyncChatEvent event) {
         Player sender = event.getPlayer();
-        event.message(highlightMessage(event.message()));
-        event.renderer((source, sourceDisplayName, message, viewer) -> PlayerChatNames.decorate(sourceDisplayName)
-                .append(Component.text(": "))
-                .append(PlayerChatNames.decorate(message)));
+        event.message(PlayerChatNames.decorate(highlightMessage(event.message())));
 
         if (chatManager.isGlobalMuted(sender.getUniqueId())) {
             event.setCancelled(true);
