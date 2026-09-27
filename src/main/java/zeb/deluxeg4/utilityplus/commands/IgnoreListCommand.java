@@ -35,7 +35,7 @@ public class IgnoreListCommand implements CommandExecutor {
 
         Set<String> ignored = chatManager.getHardIgnoredPlayers(player.getUniqueId());
         if (ignored.isEmpty()) {
-            Messages.send(player, "&6No players ignored.");
+            Messages.send(player, Messages.config("ignore-list.empty", "&6No players ignored."));
             return true;
         }
 
@@ -43,8 +43,13 @@ public class IgnoreListCommand implements CommandExecutor {
         int totalPages = (names.size() + PAGE_SIZE - 1) / PAGE_SIZE;
         int page = parsePage(args, totalPages);
         if (page < 1) {
-            Messages.send(player, "&cInvalid page argument, there are only " + totalPages
-                    + (totalPages == 1 ? " page." : " pages."));
+            String path = totalPages == 1
+                    ? "ignore-list.invalid-page-singular"
+                    : "ignore-list.invalid-page-plural";
+            String fallback = totalPages == 1
+                    ? "&cInvalid page argument, there are only {pages} page."
+                    : "&cInvalid page argument, there are only {pages} pages.";
+            Messages.send(player, Messages.config(path, fallback).replace("{pages}", String.valueOf(totalPages)));
             return true;
         }
         sendHeader(player, page, totalPages);
@@ -52,11 +57,14 @@ public class IgnoreListCommand implements CommandExecutor {
         int start = (page - 1) * PAGE_SIZE;
         int end = Math.min(start + PAGE_SIZE, names.size());
         for (String name : names.subList(start, end)) {
-            Component row = AMPERSAND.deserialize("&3" + name + " &7[")
-                    .append(AMPERSAND.deserialize("&6hard")
-                            .hoverEvent(HoverEvent.showText(AMPERSAND.deserialize("&6Click to remove the permanent ignore")))
+            String rowPrefix = Messages.config("ignore-list.player-row-prefix", "&3{player} &7[")
+                    .replace("{player}", name);
+            Component row = AMPERSAND.deserialize(rowPrefix)
+                    .append(configured("ignore-list.hard-label", "&6hard")
+                            .hoverEvent(HoverEvent.showText(AMPERSAND.deserialize(Messages.config(
+                                    "ignore-list.hard-hover", "&6Click to remove the permanent ignore"))))
                             .clickEvent(ClickEvent.runCommand("/ignorehard " + name)))
-                    .append(AMPERSAND.deserialize("&7]"));
+                    .append(configured("ignore-list.player-row-suffix", "&7]"));
             player.sendMessage(row);
         }
         return true;
@@ -75,22 +83,32 @@ public class IgnoreListCommand implements CommandExecutor {
 
     private void sendHeader(Player player, int page, int totalPages) {
         Component previous = page > 1
-                ? pageButton("&b[<]", "&6Click to go to the previous page", page - 1)
-                : AMPERSAND.deserialize("&7[<]");
+                ? pageButton("ignore-list.previous-active", "&b[<]", "ignore-list.previous-hover",
+                        "&6Click to go to the previous page", page - 1)
+                : configured("ignore-list.previous-inactive", "&7[<]");
         Component next = page < totalPages
-                ? pageButton("&b[>]", "&6Click to go to the next page", page + 1)
-                : AMPERSAND.deserialize("&7[>]");
+                ? pageButton("ignore-list.next-active", "&b[>]", "ignore-list.next-hover",
+                        "&6Click to go to the next page", page + 1)
+                : configured("ignore-list.next-inactive", "&7[>]");
 
-        player.sendMessage(AMPERSAND.deserialize("&6Ignored players &7")
+        String pageCounter = Messages.config("ignore-list.page-counter", " &7{page}/{pages} ")
+                .replace("{page}", String.valueOf(page))
+                .replace("{pages}", String.valueOf(totalPages));
+        player.sendMessage(configured("ignore-list.title", "&6Ignored players &7")
                 .append(previous)
-                .append(AMPERSAND.deserialize(" &7" + page + "/" + totalPages + " "))
+                .append(AMPERSAND.deserialize(pageCounter))
                 .append(next)
-                .append(AMPERSAND.deserialize("&7]")));
+                .append(configured("ignore-list.suffix", "&7]")));
     }
 
-    private Component pageButton(String label, String hover, int page) {
-        return AMPERSAND.deserialize(label)
-                .hoverEvent(HoverEvent.showText(AMPERSAND.deserialize(hover)))
+    private Component pageButton(String labelPath, String labelFallback, String hoverPath,
+                                 String hoverFallback, int page) {
+        return configured(labelPath, labelFallback)
+                .hoverEvent(HoverEvent.showText(configured(hoverPath, hoverFallback)))
                 .clickEvent(ClickEvent.runCommand("/ignorelist " + page));
+    }
+
+    private Component configured(String path, String fallback) {
+        return AMPERSAND.deserialize(Messages.config(path, fallback));
     }
 }

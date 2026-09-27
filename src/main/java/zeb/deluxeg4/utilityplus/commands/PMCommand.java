@@ -41,7 +41,7 @@ public class PMCommand implements CommandExecutor {
 
         Player to = from.getServer().getPlayer(args[0]);
         if (to == null || !to.isOnline()) {
-            Messages.send(from, "&6This player is not online.");
+            Messages.send(from, Messages.config("player-not-online", "&6This player is not online."));
             return true;
         }
 
@@ -57,7 +57,7 @@ public class PMCommand implements CommandExecutor {
 
         UUID lastSenderUUID = chatManager.getLastPmSender(from.getUniqueId());
         if (lastSenderUUID == null) {
-            Messages.send(from, "&4Bad command. Type /help for all commands.");
+            sendBadCommand(from);
             return true;
         }
 
@@ -79,13 +79,13 @@ public class PMCommand implements CommandExecutor {
 
         UUID lastTargetUUID = chatManager.getLastPmTarget(from.getUniqueId());
         if (lastTargetUUID == null) {
-            Messages.send(from, "&4Bad command. Type /help for all commands.");
+            sendBadCommand(from);
             return true;
         }
 
         Player to = from.getServer().getPlayer(lastTargetUUID);
         if (to == null || !to.isOnline()) {
-            Messages.send(from, "&4Bad command. Type /help for all commands.");
+            sendBadCommand(from);
             return true;
         }
 
@@ -94,7 +94,7 @@ public class PMCommand implements CommandExecutor {
     }
 
     private void sendBadCommand(Player player) {
-        Messages.send(player, "&4Bad command. Type /help for all commands.");
+        Messages.send(player, Messages.config("bad-command", "&4Bad command. Type /help for all commands."));
     }
 
     private void sendPM(Player from, Player to, String message) {

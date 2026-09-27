@@ -44,6 +44,7 @@ import zeb.deluxeg4.utilityplus.invsee.InventorySeeMode;
 import zeb.deluxeg4.utilityplus.invsee.InventorySeeSessionManager;
 import zeb.deluxeg4.utilityplus.invsee.PendingInventoryOrderManager;
 import zeb.deluxeg4.utilityplus.tabcomplete.TabCompleterManager;
+import zeb.deluxeg4.utilityplus.util.Messages;
 import zeb.deluxeg4.utilityplus.util.PlayerChatNames;
 
 import java.util.List;
@@ -66,6 +67,7 @@ public class UtilityPlus extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        Messages.initialize(this);
 
         spawnManager = new SpawnManager(this);
         chatManager = new ChatManager(this);

@@ -29,7 +29,7 @@ public class IgnoreCommand implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            Messages.send(player, "&4Bad command. Type /help for all commands.");
+            Messages.send(player, Messages.config("bad-command", "&4Bad command. Type /help for all commands."));
             return true;
         }
 
@@ -37,11 +37,11 @@ public class IgnoreCommand implements CommandExecutor {
         boolean online = Bukkit.getOnlinePlayers().stream()
                 .anyMatch(onlinePlayer -> onlinePlayer.getName().equalsIgnoreCase(targetName));
         if (!online) {
-            Messages.send(player, "&6This player is not online.");
+            Messages.send(player, Messages.config("player-not-online", "&6This player is not online."));
             return true;
         }
         if (targetName.equalsIgnoreCase(player.getName())) {
-            Messages.send(player, "&6You can not ignore yourself.");
+            Messages.send(player, Messages.config("ignore.self", "&6You can not ignore yourself."));
             return true;
         }
 
@@ -52,18 +52,21 @@ public class IgnoreCommand implements CommandExecutor {
                 : chatManager.toggleIgnore(player.getUniqueId(), targetName);
 
         if (deathMessages) {
-            Messages.send(player, enabled
-                    ? "&6You will no longer see this players death messages."
-                    : "&6You will now see this players death messages.");
+            sendConfigured(player, enabled ? "ignore.death-enabled" : "ignore.death-disabled",
+                    enabled ? "&6You will no longer see this players death messages."
+                            : "&6You will now see this players death messages.", targetName);
         } else if (hard) {
-            Messages.send(player, enabled
-                    ? "&6Permanently ignoring " + "&3" + targetName + "." + "&6 This is saved in &8/ignorelist."
-                    : "&6No longer permanently ignoring " + targetName + ".");
+            sendConfigured(player, enabled ? "ignore.hard-enabled" : "ignore.hard-disabled",
+                    enabled ? "&6Permanently ignoring &3{player}.&6 This is saved in &8/ignorelist."
+                            : "&6No longer permanently ignoring &3{player}.", targetName);
         } else {
-            Messages.send(player, enabled
-                    ? "&6Now ignoring &3" + targetName
-                    : "&6No longer ignoring &3" + targetName + ".");
+            sendConfigured(player, enabled ? "ignore.normal-enabled" : "ignore.normal-disabled",
+                    enabled ? "&6Now ignoring &3{player}" : "&6No longer ignoring &3{player}.", targetName);
         }
         return true;
+    }
+
+    private void sendConfigured(Player player, String path, String fallback, String targetName) {
+        Messages.send(player, Messages.config(path, fallback).replace("{player}", targetName));
     }
 }

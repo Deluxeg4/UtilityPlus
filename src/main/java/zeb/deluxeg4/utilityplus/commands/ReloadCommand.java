@@ -26,6 +26,7 @@ public class ReloadCommand implements CommandExecutor {
         plugin.getSpawnManager().saveData();
 
         plugin.reloadConfig();
+        Messages.copyMessageDefaults();
 
         plugin.getSpawnManager().reload();
         plugin.getChatManager().reload();

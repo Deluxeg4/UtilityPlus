@@ -188,3 +188,39 @@ queue:
     - "&7Online: &f{online}/{max}"
 
 # -----------------------------------------------
+# Command and chat messages
+# Placeholders: {player}, {page}, {pages}
+# -----------------------------------------------
+messages:
+  bad-command: "&4Bad command. Type /help for all commands."
+  player-not-online: "&6This player is not online."
+  ignore:
+    self: "&6You can not ignore yourself."
+    normal-enabled: "&6Now ignoring &3{player}"
+    normal-disabled: "&6No longer ignoring &3{player}."
+    hard-enabled: "&6Permanently ignoring &3{player}.&6 This is saved in &8/ignorelist."
+    hard-disabled: "&6No longer permanently ignoring &3{player}."
+    death-enabled: "&6You will no longer see this players death messages."
+    death-disabled: "&6You will now see this players death messages."
+  ignore-list:
+    empty: "&6No players ignored."
+    invalid-page-singular: "&cInvalid page argument, there are only {pages} page."
+    invalid-page-plural: "&cInvalid page argument, there are only {pages} pages."
+    title: "&6Ignored players &7"
+    previous-active: "&b[<]"
+    previous-inactive: "&7[<]"
+    previous-hover: "&6Click to go to the previous page"
+    page-counter: " &7{page}/{pages} "
+    next-active: "&b[>]"
+    next-inactive: "&7[>]"
+    next-hover: "&6Click to go to the next page"
+    suffix: "&7]"
+    player-row-prefix: "&3{player} &7["
+    hard-label: "&6hard"
+    player-row-suffix: "&7]"
+    hard-hover: "&6Click to remove the permanent ignore"
+  player-name:
+    hover: "&6Message &3{player}"
+    suggest-command: "/w {player}"
+
+# -----------------------------------------------

@@ -3,8 +3,8 @@ package zeb.deluxeg4.utilityplus.util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 public final class PlayerChatNames implements Listener {
 
     private static final Set<String> ONLINE_NAMES = ConcurrentHashMap.newKeySet();
+    private static final LegacyComponentSerializer AMPERSAND = LegacyComponentSerializer.legacyAmpersand();
 
     public PlayerChatNames() {
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -38,10 +39,13 @@ public final class PlayerChatNames implements Listener {
 
         for (String name : names) {
             Pattern pattern = Pattern.compile("(?i)(?<![\\p{L}\\p{N}_])" + Pattern.quote(name) + "(?![\\p{L}\\p{N}_])");
+            Component hover = AMPERSAND.deserialize(Messages.config("player-name.hover", "&6Message &3{player}")
+                    .replace("{player}", name));
+            String command = Messages.config("player-name.suggest-command", "/w {player}")
+                    .replace("{player}", name);
             Component replacement = Component.text(name)
-                    .hoverEvent(HoverEvent.showText(Component.text("Message ", NamedTextColor.GOLD)
-                            .append(Component.text(name, NamedTextColor.DARK_AQUA))))
-                    .clickEvent(ClickEvent.suggestCommand("/w " + name));
+                    .hoverEvent(HoverEvent.showText(hover))
+                    .clickEvent(ClickEvent.suggestCommand(command));
             decorated = decorated.replaceText(TextReplacementConfig.builder()
                     .match(pattern)
                     .replacement(replacement)
