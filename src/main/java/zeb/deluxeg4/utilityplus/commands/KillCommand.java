@@ -45,7 +45,7 @@ public class KillCommand implements CommandExecutor {
         }
 
         pendingConfirmation.add(uuid);
-        Messages.send(player, "&eType /kill again to confirm.");
+        Messages.send(player, "&6Type /kill again to confirm.");
         PaperFoliaTasks.runForPlayerDelayed(plugin, player, task -> pendingConfirmation.remove(uuid), 200L);
         return true;
     }

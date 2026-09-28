@@ -1,7 +1,6 @@
 package zeb.deluxeg4.utilityplus.managers;
 
 import zeb.deluxeg4.utilityplus.UtilityPlus;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -121,7 +120,6 @@ public class DeathMessageManager {
     }
 
     private void load(JsonObject root) {
-        Gson gson = new Gson();
         for (Map.Entry<String, JsonElement> entry : root.entrySet()) {
             if (!entry.getValue().isJsonArray()) {
                 continue;
@@ -262,16 +260,16 @@ public class DeathMessageManager {
     }
 
     private String randomTemplate(String category) {
-        List<String> simpleList = simpleMessages.get(category.toLowerCase(Locale.ROOT));
-        if (simpleList != null && !simpleList.isEmpty()) {
-            return simpleList.get(ThreadLocalRandom.current().nextInt(simpleList.size()));
+        List<String> list = messages.get(category.toLowerCase(Locale.ROOT));
+        if (list != null && !list.isEmpty()) {
+            return list.get(ThreadLocalRandom.current().nextInt(list.size()));
         }
 
-        List<String> list = messages.get(category.toLowerCase(Locale.ROOT));
-        if (list == null || list.isEmpty()) {
+        List<String> simpleList = simpleMessages.get(category.toLowerCase(Locale.ROOT));
+        if (simpleList == null || simpleList.isEmpty()) {
             return null;
         }
-        return list.get(ThreadLocalRandom.current().nextInt(list.size()));
+        return simpleList.get(ThreadLocalRandom.current().nextInt(simpleList.size()));
     }
 
     private String applyPlaceholders(String template, Player victim, Player killer) {

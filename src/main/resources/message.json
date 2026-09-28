@@ -41,7 +41,9 @@
     "%victim% was recycled by %killer%",
     "%killer% ended %victim%'s subscription to living",
     "%victim% was sent to the menu by %killer%'s superior setup",
-    "%killer% harvested %victim%'s dignity"
+    "%killer% harvested %victim%'s dignity",
+    "%killer% reduced %victim% to a bloody meat pile with just fists",
+    "%killer% threw %victim% off a cliff"
   ],
   "player_using_item": [
     "%victim% got erased by %killer%",
@@ -63,7 +65,9 @@
     "%victim% was shredded by %killer%'s maxed-out hardware",
     "%killer% processed %victim% with a tool of mass destruction",
     "%victim% was signed off by %killer%'s personal signature",
-    "%killer%'s named gear delivered %victim% to the respawn screen"
+    "%killer%'s named gear delivered %victim% to the respawn screen",
+    "%victim% was turned into red dust by %killer% with %weapon%",
+    "%killer% deleted %victim% using %weapon%"
   ],
   "mob_kill": [
     "%victim% got bullied by wildlife",
@@ -107,7 +111,9 @@
     "%victim% let a corpse win the 1v1",
     "%victim% was converted into zombie lore",
     "%victim% got folded by a walking skill check",
-    "%victim% donated their brain to a zombie who really needed it"
+    "%victim% donated their brain to a zombie who really needed it",
+    "%victim% was beaten into meaty pulp by a zombie",
+    "%victim% was ripped apart by a zombie and instantly died"
   ],
   "skeleton": [
     "%victim% got sniped by bones with aim assist",
@@ -129,7 +135,9 @@
     "%victim% was ventilated by calcium ballistics",
     "%victim% lost to an archer who's been dead since 1.0",
     "%victim% was archived by a bone-dry headshot",
-    "%victim% got skeletal-clapped from across the chunk"
+    "%victim% got skeletal-clapped from across the chunk",
+    "%victim% took an arrow to the knee and died",
+    "%victim% was shot by a skeleton and died instantly"
   ],
   "creeper": [
     "%victim% heard the hiss and still chose denial",
@@ -151,7 +159,9 @@
     "%victim% failed to outrun a sentient bush",
     "%victim% was edited by gunpowder and a bad headset",
     "%victim% became part of the local crater geography",
-    "%victim% stood too close to the server's favorite mistake"
+    "%victim% stood too close to the server's favorite mistake",
+    "%victim% was blown to pieces by a creeper",
+    "%victim% was demolished by a creeper"
   ],
   "spider": [
     "%victim% got webbed by budget parkour",
@@ -261,7 +271,9 @@
     "%victim% failed the gold-standard audit",
     "%victim% was jumped for wearing the wrong color",
     "%victim% was bartered into a one-way trip to spawn",
-    "%victim% learned that piglins don't do credit"
+    "%victim% learned that piglins don't do credit",
+    "%victim% was assassinated by a piglin wielding a golden sword",
+    "%victim% was beaten to death by a piglin wielding a golden sword"
   ],
   "hoglin": [
     "%victim% got boar-rushed into the dirt",
@@ -723,7 +735,9 @@
     "%victim% was vaporized by crystal-meth-level-damage",
     "%victim% became a crystal PvP statistic",
     "%victim% got pop-checked",
-    "%victim% was obsidian-gapped"
+    "%victim% was obsidian-gapped",
+    "%victim% was turned into red dust by an end crystal",
+    "%victim% blew up after an end crystal detonated"
   ],
   "bed_explosion": [
     "%victim% tried to sleep in hell and got the answer",
@@ -789,7 +803,9 @@
     "%victim% lost to the server's heating bill",
     "%victim% was cooked into lore",
     "%victim% became fire-side gossip",
-    "%victim% got roast-clapped"
+    "%victim% got roast-clapped",
+    "%victim% combusted whilst fighting a player",
+    "%victim% burned to death"
   ],
   "lava": [
     "%victim% tried swimming in lava and got premium cooked",
@@ -811,7 +827,9 @@
     "%victim% lost their gear to the orange void",
     "%victim% was redecorated by liquid fire",
     "%victim% became lava-level lore",
-    "%victim% got soup-clapped"
+    "%victim% got soup-clapped",
+    "%victim% tried to swim in lava and didn't get out quick enough",
+    "%victim% died inside lava somehow"
   ],
   "campfire": [
     "%victim% became campsite seasoning",
@@ -899,7 +917,9 @@
     "%victim% lost to the ocean's inability to provide oxygen",
     "%victim% was bubbled out of existence",
     "%victim% became aquatic-debris",
-    "%victim% got wet-yeeted"
+    "%victim% got wet-yeeted",
+    "%victim% couldn't swim up quick enough",
+    "%victim% swam out of a waterfall and fell to death"
   ],
   "suffocation": [
     "%victim% got hugged by blocks too hard",
@@ -1185,7 +1205,10 @@
     "%victim% was archived by altitude",
     "%victim% became gravity-lore",
     "%victim% got floor-yeeted",
-    "%victim% lost to the floor's hit-box"
+    "%victim% lost to the floor's hit-box",
+    "%victim% broke apart from falling",
+    "%victim% fell and crushed their lungs with their legbones",
+    "%victim% broke their neck, and the rest of their body"
   ],
   "void": [
     "%victim% got accepted by the void",
@@ -1295,7 +1318,9 @@
     "%victim% was archived by self-damage",
     "%victim% became suicide-lore",
     "%victim% got self-clapped",
-    "%victim% lost to their own gear"
+    "%victim% lost to their own gear",
+    "%victim% committed suicide with an end crystal",
+    "%victim% ended their life"
   ],
   "combat_log": [
     "%victim% tried logging from combat and got written into shame",
