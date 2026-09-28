@@ -1,104 +1,135 @@
 # UtilityPlus
-> Lightweight chat, vanish, death-message, spawn, and server utility tools for Paper servers.
+
+UtilityPlus is a Paper and Folia plugin with chat controls, player utilities, server information, and administrative tools.
 
 ## Features
-- Manage chat visibility, private messages, ignores, and death-message preferences.
-- Customize join, leave, death, tab-list, broadcast, and action-bar messages.
-- Track server TPS, MSPT, CPU, memory, disk usage, uptime, and player ping.
-- Control admin utilities such as vanish, reload, kill confirmation, and shutdown countdowns.
-- Support Paper and Folia-friendly task scheduling.
+
+- Chat controls for global chat, private messages, player ignores, and death messages.
+- Clickable online player names in chat. Hover to see the message hint; click to put `/w <player>` in the chat input.
+- A paginated `/ignorelist` with clickable page controls and a shortcut to remove a permanent ignore. Each page lists nine players.
+- Player-specific regional TPS in the tab list on Folia. Each player sees the TPS for the region they are currently in.
+- Tab-list placeholders for TPS, online players, ping, and server uptime.
+- Administrative tools for vanish, inventory and ender-chest inspection, offline teleport, gamemode, broadcast, and shutdown countdowns.
+- Optional Floodgate/Geyser support for Bedrock join notices and coordinate display.
 
 ## Requirements
-- Paper 1.21.1+
-- Java 21+
 
-## Installation
-1. Download the latest `UtilityPlus-*.jar`.
-2. Drop the jar into your server's `plugins/` folder.
-3. Restart the server.
-4. Edit `plugins/UtilityPlus/config.yml` if you want custom messages or spawn behavior.
-5. Run `/upreload` after config changes when possible.
+- Java 21 or newer
+- Paper 1.21.1 or a compatible Paper fork; Folia is supported
+- Floodgate and Geyser are optional and only needed for their Bedrock features
+
+## Install
+
+1. Download the latest `UtilityPlus-<version>.jar` from [Releases](https://github.com/Deluxeg4/UtilityPlus/releases).
+2. Put the jar in the server's `plugins` folder.
+3. Start or restart the server. UtilityPlus creates `plugins/UtilityPlus/config.yml` on first start.
+4. Edit `config.yml` and run `/upreload` to apply configuration changes.
+
+## Build
+
+Use Java 21 and run the Gradle wrapper from the project root:
+
+```powershell
+./gradlew.bat shadowJar
+```
+
+The plugin jar is written to `build/libs/UtilityPlus-<version>.jar`.
 
 ## Commands
+
+### Chat
+
 | Command | Description | Permission |
 |---|---|---|
-| `/ignore <player>` | Temporarily ignore a player. | `utilityplus.chat` |
-| `/ignorehard <player>` | Permanently ignore a player. | `utilityplus.chat` |
-| `/ignorelist` | List permanently ignored players. | `utilityplus.chat` |
-| `/ignoredeathmsgs <player>` | Hide death messages from a player. | `utilityplus.chat` |
+| `/ignore <player>` | Temporarily ignore an online player. | `utilityplus.chat` |
+| `/ignorehard <player>` | Permanently ignore an online player. | `utilityplus.chat` |
+| `/ignorelist [page]` | View permanent ignores, nine players per page. | `utilityplus.chat` |
+| `/ignoredeathmsgs <player>` | Toggle ignoring an online player's death messages. | `utilityplus.chat` |
 | `/togglechat` | Toggle global chat visibility. | `utilityplus.chat` |
-| `/toggleprivatemsgs` | Toggle private message visibility. | `utilityplus.chat` |
-| `/toggledeathmsgs` | Toggle death message visibility until restart. | `utilityplus.chat` |
-| `/toggledeathmsgshard` | Toggle death message visibility permanently. | `utilityplus.chat` |
-| `/msg <player> <message>` | Send a private message. | `utilityplus.pm` |
+| `/toggleprivatemsgs` | Toggle private-message visibility. | `utilityplus.chat` |
+| `/toggledeathmsgs` | Toggle death-message visibility until restart. | `utilityplus.chat` |
+| `/toggledeathmsgshard` | Toggle persistent death-message visibility. | `utilityplus.chat` |
 | `/tell <player> <message>` (`/t`) | Send a private message. | `utilityplus.pm` |
+| `/msg <player> <message>` | Send a private message. | `utilityplus.pm` |
 | `/w <player> <message>` | Send a private message. | `utilityplus.pm` |
 | `/whisper <player> <message>` | Send a private message. | `utilityplus.pm` |
 | `/pm <player> <message>` | Send a private message. | `utilityplus.pm` |
-| `/r <message>` | Reply to the last private message. | `utilityplus.pm` |
-| `/reply <message>` | Reply to the last private message. | `utilityplus.pm` |
-| `/l <message>` | Message the player you last messaged. | `utilityplus.pm` |
-| `/last <message>` | Message the player you last messaged. | `utilityplus.pm` |
-| `/upreload` | Reload UtilityPlus config and data. | `utilityplus.reload` |
-| `/v` | Toggle vanish mode. | `utilityplus.vanish` |
-| `/bc <message>` | Broadcast a message to all players. | `utilityplus.broadcast` |
-| `/broadcast <message>` | Broadcast a message to all players. | `utilityplus.broadcast` |
+| `/r <message>` and `/reply <message>` | Reply to the last private message. | `utilityplus.pm` |
+| `/l <message>` and `/last <message>` | Message the last player you contacted. | `utilityplus.pm` |
+
+### Player and server tools
+
+| Command | Description | Permission |
+|---|---|---|
+| `/v` | Toggle vanish. | `utilityplus.vanish` |
+| `/gmc [player]`, `/gms [player]`, `/gmsp [player]`, `/gma [player]` | Change your gamemode; changing another player's gamemode also requires `utilityplus.gamemode.others`. | `utilityplus.gamemode` |
+| `/invsee <player>` | View or edit a player's inventory. | `utilityplus.invsee` |
+| `/enderchestsee <player>` (`/endersee`) | View or edit a player's ender chest. | `utilityplus.enderchestsee` |
+| `/offlinetp <player>` | Teleport to an online player's location or an offline player's last saved location. | `utilityplus.offlinetp` |
+| `/s <player>` | Summon a player to your location. | `utilityplus.summon` |
 | `/kill` | Kill yourself after confirmation. | `utilityplus.kill` |
-| `/stopnow <time\|now\|cancel\|time>` | Manage a shutdown countdown. | `server.stop` |
-| `/invsee <player>` | View or edit an online or offline player's inventory. | `utilityplus.invsee` |
-| `/enderchestsee <player>` (`/endersee`) | View or edit an online or offline player's ender chest. | `utilityplus.enderchestsee` |
-| `/offlinetp <player>` | Teleport to an online player's current location or an offline player's last saved location. | `utilityplus.offlinetp` |
-| `/help [page]` | Show the UtilityPlus help link. | `utilityplus.helps` |
-| `/tpsmore [show]` | Show detailed TPS and performance info. | `utilityplus.tpsmore` |
-| `/tps [show]` | Show detailed TPS and performance info. | `utilityplus.tpsmore` |
-| `/ping [player]` | Show your ping or another player's ping. | `utilityplus.ping` |
-| `/pingall` | Show all online player pings. | `utilityplus.ping.others` |
-| `/uptime` | Show server uptime. | `utilityplus.uptime` |
+| `/bc <message>`, `/broadcast <message>` | Broadcast a message. | `utilityplus.broadcast` |
+| `/stopnow <time\|now\|cancel\|time>` | Schedule, inspect, cancel, or start a shutdown. | `server.stop` |
+| `/overclock <enchant> <level>`, `/overclock 32k`, `/overclock name <name>` | Apply unsafe enchantments or rename the held item. | `utilityplus.overclock` |
+| `/ping [player]` | Show your ping or another player's ping. | `utilityplus.ping`; others: `utilityplus.ping.others` |
+| `/pingall` | Show online player pings. | `utilityplus.ping.others` |
+| `/tpsmore`, `/tps` | Show server performance information. | `utilityplus.tpsmore` |
+| `/uptime` | Show how long the server process has been running. | `utilityplus.uptime` |
+| `/upreload` | Reload configuration and plugin data. | `utilityplus.reload` |
+| `/help [page]` | Open the UtilityPlus help page. | `utilityplus.helps` |
 
 ## Permissions
-| Node | Default | Description |
+
+| Permission | Default | Description |
 |---|---|---|
-| `utilityplus.helps` | `true` | Access the plugin help menu. |
-| `utilityplus.chat` | `true` | Manage chat preferences. |
-| `utilityplus.pm` | `true` | Send private messages. |
-| `utilityplus.anvil.color` | `true` | Use color codes in anvil item names. |
-| `utilityplus.reload` | `op` | Reload UtilityPlus config and data. |
-| `utilityplus.vanish` | `op` | Toggle vanish mode. |
-| `utilityplus.vanish.see` | `op` | See vanished players. |
-| `utilityplus.broadcast` | `op` | Broadcast messages. |
-| `utilityplus.kill` | `true` | Use the self-kill confirmation command. |
-| `server.stop` | `op` | Start, cancel, or inspect shutdown countdowns. |
-| `utilityplus.invsee` | `op` | View and edit player inventories. |
-| `utilityplus.enderchestsee` | `op` | View and edit player ender chests. |
-| `utilityplus.offlinetp` | `op` | Teleport to a player's saved location. |
-| `utilityplus.tpsmore` | `op` | View detailed TPS and performance info. |
-| `utilityplus.ping` | `true` | View your own ping. |
-| `utilityplus.ping.others` | `op` | View other players' pings. |
-| `utilityplus.uptime` | `true` | View server uptime. |
+| `utilityplus.helps` | Everyone | Access the help menu. |
+| `utilityplus.chat` | Everyone | Use chat controls and ignore commands. |
+| `utilityplus.pm` | Everyone | Send and reply to private messages. |
+| `utilityplus.anvil.color` | Everyone | Use color codes in anvil item names. |
+| `utilityplus.kill` | Everyone | Use the self-kill command. |
+| `utilityplus.ping` | Everyone | View your own ping. |
+| `utilityplus.uptime` | Everyone | View server uptime. |
+| `utilityplus.reload` | Operators | Reload UtilityPlus. |
+| `utilityplus.vanish` | Operators | Toggle vanish. |
+| `utilityplus.vanish.see` | Operators | See vanished players. |
+| `utilityplus.broadcast` | Operators | Broadcast messages. |
+| `utilityplus.gamemode` | Operators | Change your gamemode. |
+| `utilityplus.gamemode.others` | Operators | Change another player's gamemode. |
+| `utilityplus.overclock` | Operators | Use overclock item commands. |
+| `utilityplus.invsee` | Operators | Inspect inventories. |
+| `utilityplus.invsee.unseen` | Operators | Inspect data for players who have never joined. |
+| `utilityplus.enderchestsee` | Operators | Inspect ender chests. |
+| `utilityplus.offlinetp` | Operators | Teleport to saved player locations. |
+| `utilityplus.summon` | Operators | Summon players. |
+| `utilityplus.tpsmore` | Operators | View detailed performance information. |
+| `utilityplus.ping.others` | Operators | View other players' ping. |
+| `server.stop` | Operators | Control the shutdown countdown. |
 
 ## Configuration
-`config.yml` is created on first run with sensible defaults.
 
-- `spawn`: controls first-join, death, no-respawn-point, cooldown, and warmup behavior.
-- `random-respawn`: enables random death respawns and controls radius, attempts, and target world.
-- `unsafe-blocks`: lists blocks that random respawn should avoid.
-- `join-message` and `leave-message`: control custom join/quit text, vanilla hiding, and broadcast behavior.
-- `bedrock-coordinates`: shows integer Bukkit block coordinates in the action bar for Floodgate usernames starting with `.`. The format supports `{x}`, `{y}`, and `{z}`.
-- `death-message`: controls custom death-message formatting and colors.
-- `tab-list`: configures header/footer lines and refresh interval.
-- `broadcast`: sets the prefix used by `/bc` and `/broadcast`.
-- `announcement.action-bar`: controls the repeating action-bar announcement. `text` can be a string or a list of texts shown in sequence.
-- `queue.message`: stores queue text used by queue-style output.
+The configuration file is `plugins/UtilityPlus/config.yml`. Run `/upreload` after editing it.
 
-Color formatting uses `&` codes and is rendered through Adventure components.
+| Section | Purpose |
+|---|---|
+| `spawn` | First-join and respawn behavior, teleport cooldown, and warmup. |
+| `random-respawn`, `unsafe-blocks` | Random respawn range, attempts, world, and unsafe blocks. |
+| `join-message`, `leave-message` | Custom join/leave messages, broadcasting, and vanilla message visibility. |
+| `bedrock-warning`, `bedrock-coordinates` | Optional Bedrock notices and coordinate display. |
+| `death-message` | Death-message template and colors. |
+| `tab-list` | Header/footer text and update interval. `%tps%` and `%server_tps%` use the viewer's current region TPS on Folia. |
+| `broadcast` | Prefix used by broadcast commands. |
+| `announcement.action-bar` | Repeating action-bar messages and timing. |
+| `messages` | Text for ignore commands, `/ignorelist`, bad-command feedback, and player-name hover/click behavior. |
 
-## Building from source
-```bash
-git clone
-cd UtilityPlus
-./gradlew shadowJar
-# output: build/libs/UtilityPlus-*.jar
+Message values support `&` color codes. The `messages` section supports `{player}`, `{page}`, and `{pages}` where applicable. Player-name settings include:
+
+```yaml
+messages:
+  player-name:
+    hover: "&6Message &3{player}"
+    suggest-command: "/w {player}"
 ```
 
 ## License
-GPL-3.0 — © 2025 deluxeg4
+
+GPL-3.0. See [LICENSE](LICENSE).

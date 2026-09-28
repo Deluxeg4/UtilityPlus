@@ -1,6 +1,8 @@
 package zeb.deluxeg4.utilityplus.commands;
 
 import zeb.deluxeg4.utilityplus.util.Messages;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,8 +20,30 @@ public class UptimeCommand implements CommandExecutor {
             return true;
         }
 
-        Messages.send(sender, "&3Server uptime: &e" + formatUptime());
+        sender.sendMessage(gradient("Server uptime: " + formatUptime()));
         return true;
+    }
+
+    private Component gradient(String text) {
+        final int startRed = 0x6E;
+        final int startGreen = 0x9A;
+        final int startBlue = 0xC7;
+        final int endRed = 0x72;
+        final int endGreen = 0xF1;
+        final int endBlue = 0xCC;
+        final int[] characters = text.codePoints().toArray();
+        final Component result = Component.empty();
+
+        Component gradient = result;
+        for (int index = 0; index < characters.length; index++) {
+            final double progress = characters.length <= 1 ? 0.0D : (double) index / (characters.length - 1);
+            final int red = (int) Math.round(startRed + (endRed - startRed) * progress);
+            final int green = (int) Math.round(startGreen + (endGreen - startGreen) * progress);
+            final int blue = (int) Math.round(startBlue + (endBlue - startBlue) * progress);
+            gradient = gradient.append(Component.text(new String(Character.toChars(characters[index])))
+                    .color(TextColor.color(red, green, blue)));
+        }
+        return gradient;
     }
 
     private String formatUptime() {

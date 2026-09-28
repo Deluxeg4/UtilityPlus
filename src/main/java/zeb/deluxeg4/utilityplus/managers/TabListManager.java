@@ -7,7 +7,6 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.lang.management.ManagementFactory;
@@ -32,9 +31,9 @@ public class TabListManager {
     private long updateIntervalTicks;
     private List<String> headerLines;
     private List<String> footerLines;
-    private double lastKnownTps = DEFAULT_TPS;
-    private Method worldTpsMethod;
-    private boolean worldTpsMethodChecked;
+    private volatile double lastKnownTps = DEFAULT_TPS;
+    private volatile Method regionTpsMethod;
+    private volatile boolean regionTpsMethodChecked;
 
     public TabListManager(final UtilityPlus plugin) {
         this.plugin = plugin;
@@ -52,8 +51,10 @@ public class TabListManager {
         updateIntervalTicks = updateIntervalSeconds * 20L;
         headerLines = plugin.getConfig().getStringList("tab-list.header");
         footerLines = plugin.getConfig().getStringList("tab-list.footer");
-        worldTpsMethod = null;
-        worldTpsMethodChecked = false;
+        synchronized (this) {
+            regionTpsMethod = null;
+            regionTpsMethodChecked = false;
+        }
         lastSent.clear();
 
         stop();
@@ -85,7 +86,7 @@ public class TabListManager {
             return;
         }
 
-        updatePlayerTabList(player, getAverageWorldTps(), formatUptime());
+        updatePlayerTabList(player, getPlayerRegionTps(player), formatUptime());
     }
 
     /** Clears cached tab-list state for a player who left. */
@@ -103,23 +104,21 @@ public class TabListManager {
     }
 
     private void updateAll() {
-        final double tps = getAverageWorldTps();
         final String uptime = formatUptime();
         final String onlineCount = String.valueOf(Bukkit.getOnlinePlayers().size());
 
         for (final Player player : Bukkit.getOnlinePlayers()) {
-            PaperFoliaTasks.runForPlayer(plugin, player, () -> updateIfOnline(player, tps, uptime, onlineCount));
+            PaperFoliaTasks.runForPlayer(plugin, player, () -> updateIfOnline(player, uptime, onlineCount));
         }
     }
 
     private void updateIfOnline(
             final Player player,
-            final double tps,
             final String uptime,
             final String onlineCount
     ) {
         if (player.isOnline()) {
-            updatePlayerTabList(player, tps, uptime, onlineCount);
+            updatePlayerTabList(player, getPlayerRegionTps(player), uptime, onlineCount);
             return;
         }
         onPlayerQuit(player);
@@ -173,48 +172,37 @@ public class TabListManager {
                 .replace("%server_uptime%", uptime);
     }
 
-    private double getAverageWorldTps() {
-        double total = 0.0D;
-        int count = 0;
-
-        for (final World world : Bukkit.getWorlds()) {
-            final Double tps = getWorldTps(world);
-            if (tps != null) {
-                total += tps;
-                count++;
+    private double getPlayerRegionTps(final Player player) {
+        if (!regionTpsMethodChecked) {
+            synchronized (this) {
+                if (!regionTpsMethodChecked) {
+                    try {
+                        regionTpsMethod = Bukkit.getServer().getClass().getMethod("getRegionTPS", Location.class);
+                    } catch (final NoSuchMethodException ignored) {
+                        try {
+                            // Compatibility with server builds that expose the older method name.
+                            regionTpsMethod = Bukkit.getServer().getClass().getMethod("getTPS", Location.class);
+                        } catch (final NoSuchMethodException ignoredFallback) {
+                            regionTpsMethod = null;
+                        }
+                    }
+                    regionTpsMethodChecked = true;
+                }
             }
         }
 
-        if (count > 0) {
-            lastKnownTps = total / count;
-            return lastKnownTps;
+        if (regionTpsMethod != null) {
+            try {
+                final Location location = player.getLocation();
+                final double[] tps = (double[]) regionTpsMethod.invoke(Bukkit.getServer(), location);
+                if (tps != null && tps.length > 0) {
+                    lastKnownTps = tps[0];
+                    return lastKnownTps;
+                }
+            } catch (final ReflectiveOperationException | RuntimeException ignored) {
+            }
         }
         return getServerTpsOrFallback();
-    }
-
-    private Double getWorldTps(final World world) {
-        if (!worldTpsMethodChecked) {
-            worldTpsMethodChecked = true;
-            try {
-                worldTpsMethod = Bukkit.getServer().getClass().getMethod("getTPS", Location.class);
-            } catch (final NoSuchMethodException ignored) {
-                worldTpsMethod = null;
-            }
-        }
-
-        if (worldTpsMethod == null) {
-            return null;
-        }
-
-        try {
-            final Location spawnLocation = world.getSpawnLocation();
-            final double[] tps = (double[]) worldTpsMethod.invoke(Bukkit.getServer(), spawnLocation);
-            if (tps != null && tps.length > 0) {
-                return tps[0];
-            }
-        } catch (final ReflectiveOperationException | RuntimeException ignored) {
-        }
-        return null;
     }
 
     private double getServerTpsOrFallback() {
