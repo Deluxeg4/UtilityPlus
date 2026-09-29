@@ -7,8 +7,8 @@ plugins {
 }
 
 group = 'zeb.deluxeg4'
-version = '1.0.3'
-description = 'UtilityPlus - spawn, homes, TPA, chat, teams, stats, and admin utilities'
+version = providers.gradleProperty('version').getOrElse('2.0.0')
+description = 'UtilityPlus - chat controls, player utilities, server information, and admin tools'
 
 java {
     toolchain {

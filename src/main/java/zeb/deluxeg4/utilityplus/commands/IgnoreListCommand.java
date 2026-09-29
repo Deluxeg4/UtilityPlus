@@ -6,12 +6,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +35,10 @@ public class IgnoreListCommand implements CommandExecutor {
             return true;
         }
 
-        Set<String> ignored = chatManager.getHardIgnoredPlayers(player.getUniqueId());
+        Set<String> hardIgnoredPlayers = chatManager.getHardIgnoredPlayers(player.getUniqueId());
+        Set<String> softIgnoredPlayers = chatManager.getIgnoredPlayers(player.getUniqueId());
+        Set<String> ignored = new HashSet<>(hardIgnoredPlayers);
+        ignored.addAll(softIgnoredPlayers);
         if (ignored.isEmpty()) {
             Messages.send(player, Messages.config("ignore-list.empty", "&6No players ignored."));
             return true;
@@ -57,17 +62,39 @@ public class IgnoreListCommand implements CommandExecutor {
         int start = (page - 1) * PAGE_SIZE;
         int end = Math.min(start + PAGE_SIZE, names.size());
         for (String name : names.subList(start, end)) {
+            String displayName = Bukkit.getOnlinePlayers().stream()
+                    .filter(onlinePlayer -> onlinePlayer.getName().equalsIgnoreCase(name))
+                    .map(Player::getName)
+                    .findFirst()
+                    .orElse(name);
             String rowPrefix = Messages.config("ignore-list.player-row-prefix", "&3{player} &7[")
-                    .replace("{player}", name);
-            Component row = AMPERSAND.deserialize(rowPrefix)
-                    .append(configured("ignore-list.hard-label", "&6hard")
-                            .hoverEvent(HoverEvent.showText(AMPERSAND.deserialize(Messages.config(
-                                    "ignore-list.hard-hover", "&6Click to remove the permanent ignore"))))
-                            .clickEvent(ClickEvent.runCommand("/ignorehard " + name)))
-                    .append(configured("ignore-list.player-row-suffix", "&7]"));
+                    .replace("{player}", displayName);
+            Component row = AMPERSAND.deserialize(rowPrefix);
+            boolean hardIgnored = containsIgnoreCase(hardIgnoredPlayers, name);
+            boolean softIgnored = containsIgnoreCase(softIgnoredPlayers, name);
+            if (hardIgnored) {
+                row = row.append(configured("ignore-list.hard-label", "&6hard")
+                        .hoverEvent(HoverEvent.showText(AMPERSAND.deserialize(Messages.config(
+                                "ignore-list.hard-hover", "&6Click to remove the permanent ignore"))))
+                        .clickEvent(ClickEvent.runCommand("/ignorehard " + displayName)));
+            }
+            if (hardIgnored && softIgnored) {
+                row = row.append(AMPERSAND.deserialize("&7, "));
+            }
+            if (softIgnored) {
+                row = row.append(configured("ignore-list.soft-label", "&6soft")
+                        .hoverEvent(HoverEvent.showText(AMPERSAND.deserialize(Messages.config(
+                                "ignore-list.soft-hover", "&6Click to remove the soft ignore"))))
+                        .clickEvent(ClickEvent.runCommand("/ignore " + displayName)));
+            }
+            row = row.append(configured("ignore-list.player-row-suffix", "&7]"));
             player.sendMessage(row);
         }
         return true;
+    }
+
+    private boolean containsIgnoreCase(Set<String> names, String target) {
+        return names.stream().anyMatch(name -> name.equalsIgnoreCase(target));
     }
 
     private int parsePage(String[] args, int totalPages) {

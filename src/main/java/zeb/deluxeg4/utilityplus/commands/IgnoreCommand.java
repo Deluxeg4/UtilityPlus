@@ -9,6 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 public class IgnoreCommand implements CommandExecutor {
 
     private final ChatManager chatManager;
@@ -33,10 +35,28 @@ public class IgnoreCommand implements CommandExecutor {
             return true;
         }
 
-        String targetName = args[0];
-        boolean online = Bukkit.getOnlinePlayers().stream()
-                .anyMatch(onlinePlayer -> onlinePlayer.getName().equalsIgnoreCase(targetName));
-        if (!online) {
+        Player target = Bukkit.getOnlinePlayers().stream()
+                .filter(onlinePlayer -> onlinePlayer.getName().equalsIgnoreCase(args[0]))
+                .findFirst()
+                .orElse(null);
+        Set<String> existingIgnores = deathMessages
+                ? Set.of()
+                : hard
+                ? chatManager.getHardIgnoredPlayers(player.getUniqueId())
+                : chatManager.getIgnoredPlayers(player.getUniqueId());
+        String targetName;
+        if (target != null) {
+            targetName = target.getName();
+        } else if (!existingIgnores.isEmpty()) {
+            targetName = existingIgnores.stream()
+                    .filter(name -> name.equalsIgnoreCase(args[0]))
+                    .findFirst()
+                    .orElse(null);
+            if (targetName == null) {
+                Messages.send(player, Messages.config("player-not-online", "&6This player is not online."));
+                return true;
+            }
+        } else {
             Messages.send(player, Messages.config("player-not-online", "&6This player is not online."));
             return true;
         }
@@ -58,15 +78,25 @@ public class IgnoreCommand implements CommandExecutor {
         } else if (hard) {
             sendConfigured(player, enabled ? "ignore.hard-enabled" : "ignore.hard-disabled",
                     enabled ? "&6Permanently ignoring &3{player}.&6 This is saved in &8/ignorelist."
-                            : "&6No longer permanently ignoring &3{player}.", targetName);
+                            : "&6No longer permanently ignoring &3{player}.", targetName, true);
         } else {
             sendConfigured(player, enabled ? "ignore.normal-enabled" : "ignore.normal-disabled",
-                    enabled ? "&6Now ignoring &3{player}" : "&6No longer ignoring &3{player}.", targetName);
+                    enabled ? "&6Now ignoring &3{player}" : "&6No longer ignoring &3{player}.", targetName, true);
         }
         return true;
     }
 
     private void sendConfigured(Player player, String path, String fallback, String targetName) {
-        Messages.send(player, Messages.config(path, fallback).replace("{player}", targetName));
+        sendConfigured(player, path, fallback, targetName, false);
+    }
+
+    private void sendConfigured(Player player, String path, String fallback, String targetName,
+                                boolean withoutPlayerNameHover) {
+        String message = Messages.config(path, fallback).replace("{player}", targetName);
+        if (withoutPlayerNameHover) {
+            Messages.sendUndecorated(player, message);
+            return;
+        }
+        Messages.send(player, message);
     }
 }

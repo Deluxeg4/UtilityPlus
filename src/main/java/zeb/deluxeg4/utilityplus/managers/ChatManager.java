@@ -9,7 +9,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -137,17 +136,20 @@ public class ChatManager {
     }
 
     public boolean isIgnoring(UUID viewer, String targetName) {
-        String key = normalize(targetName);
-        return ignoredPlayers.getOrDefault(viewer, Set.of()).contains(key)
-                || hardIgnoredPlayers.getOrDefault(viewer, Set.of()).contains(key);
+        return containsName(ignoredPlayers.getOrDefault(viewer, Set.of()), targetName)
+                || containsName(hardIgnoredPlayers.getOrDefault(viewer, Set.of()), targetName);
     }
 
     public boolean isIgnoringDeathMessage(UUID viewer, String targetName) {
-        return ignoredDeathMessages.getOrDefault(viewer, Set.of()).contains(normalize(targetName));
+        return containsName(ignoredDeathMessages.getOrDefault(viewer, Set.of()), targetName);
     }
 
     public Set<String> getHardIgnoredPlayers(UUID viewer) {
         return new HashSet<>(hardIgnoredPlayers.getOrDefault(viewer, Set.of()));
+    }
+
+    public Set<String> getIgnoredPlayers(UUID viewer) {
+        return new HashSet<>(ignoredPlayers.getOrDefault(viewer, Set.of()));
     }
 
     public void reload() {
@@ -235,7 +237,7 @@ public class ChatManager {
             }
             Set<String> names = ConcurrentHashMap.newKeySet();
             for (String name : dataConfig.getStringList(path + "." + uuidString)) {
-                names.add(normalize(name));
+                names.add(name);
             }
             target.put(uuid, names);
         }
@@ -254,16 +256,22 @@ public class ChatManager {
     }
 
     private boolean toggleName(Set<String> names, String targetName) {
-        String key = normalize(targetName);
-        if (names.contains(key)) {
-            names.remove(key);
-            return false;
+        for (String existingName : names) {
+            if (existingName.equalsIgnoreCase(targetName)) {
+                names.remove(existingName);
+                return false;
+            }
         }
-        names.add(key);
+        names.add(targetName);
         return true;
     }
 
-    private String normalize(String name) {
-        return name.toLowerCase(Locale.ROOT);
+    private boolean containsName(Set<String> names, String targetName) {
+        for (String name : names) {
+            if (name.equalsIgnoreCase(targetName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

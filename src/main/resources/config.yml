@@ -13,7 +13,6 @@ spawn:
   tp-spawn-cooldown: 30
   # Warmup (seconds) before teleporting — player must stand still. 0 = instant.
   tp-spawn-warmup: 5
-
 # -----------------------------------------------
 # Random Respawn Settings
 # (When enabled, players respawn at a random location on death)
@@ -37,36 +36,6 @@ unsafe-blocks:
   - MAGMA_BLOCK
   - SWEET_BERRY_BUSH
   - POWDER_SNOW
-
-# -----------------------------------------------
-# TPA Settings
-# -----------------------------------------------
-tpa:
-  # How long (seconds) a TPA request stays active before expiring
-  timeout: 60
-  # How long (seconds) to wait before teleporting after /tpaccept
-  # Player must not move during this time or the teleport is cancelled
-  warmup: 3
-
-# -----------------------------------------------
-# Home Settings
-# -----------------------------------------------
-home:
-  # Warmup (seconds) before teleporting — player must stand still. 0 = instant.
-  warmup: 3
-  # Maximum number of home slots per player (1–4).
-  max-homes: 4
-
-# -----------------------------------------------
-# Team Settings
-# -----------------------------------------------
-team:
-  # Maximum number of players per team
-  max-members: 10
-  # How long (seconds) an invite stays valid before expiring
-  invite-timeout: 60
-  # Auto-kick members offline for longer than this many minutes (0 = disabled, owner is never kicked)
-  offline-kick-minutes: 5
 
 # -----------------------------------------------
 # Custom Join/Leave Message Settings
@@ -178,16 +147,6 @@ announcement:
       - "&6dsc.gg/2b2t-th"
 
 # -----------------------------------------------
-# Queue Command Settings
-# -----------------------------------------------
-queue:
-  message:
-    - "&6Queue lengths:"
-    - "&7Regular: &f0"
-    - "&7Priority: &f0"
-    - "&7Online: &f{online}/{max}"
-
-# -----------------------------------------------
 # Command and chat messages
 # Placeholders: {player}, {page}, {pages}
 # -----------------------------------------------
@@ -198,27 +157,29 @@ messages:
     self: "&6You can not ignore yourself."
     normal-enabled: "&6Now ignoring &3{player}"
     normal-disabled: "&6No longer ignoring &3{player}."
-    hard-enabled: "&6Permanently ignoring &3{player}.&6 This is saved in &8/ignorelist."
-    hard-disabled: "&6No longer permanently ignoring &3{player}."
+    hard-enabled: "&6Permanently ignoring {player}. This is saved in &4/ignorelist."
+    hard-disabled: "&6No longer permanently ignoring &3{player}"
     death-enabled: "&6You will no longer see this players death messages."
     death-disabled: "&6You will now see this players death messages."
   ignore-list:
     empty: "&6No players ignored."
     invalid-page-singular: "&cInvalid page argument, there are only {pages} page."
     invalid-page-plural: "&cInvalid page argument, there are only {pages} pages."
-    title: "&6Ignored players &7"
+    title: "&6[ Ignored players &7"
     previous-active: "&b[<]"
     previous-inactive: "&7[<]"
     previous-hover: "&6Click to go to the previous page"
-    page-counter: " &7{page}/{pages} "
+    page-counter: " &6{page}/{pages} "
     next-active: "&b[>]"
     next-inactive: "&7[>]"
     next-hover: "&6Click to go to the next page"
-    suffix: "&7]"
+    suffix: " &6]"
     player-row-prefix: "&3{player} &7["
     hard-label: "&6hard"
+    soft-label: "&6soft"
     player-row-suffix: "&7]"
     hard-hover: "&6Click to remove the permanent ignore"
+    soft-hover: "&6Click to remove the soft ignore"
   player-name:
     hover: "&6Message &3{player}"
     suggest-command: "/w {player}"

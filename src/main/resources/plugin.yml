@@ -3,7 +3,7 @@ version: ${version}
 main: zeb.deluxeg4.utilityplus.UtilityPlus
 api-version: '1.21'
 folia-supported: true
-description: Chat controls, death messages, and admin utilities
+description: Chat controls, player utilities, server information, and admin tools
 author: CADS
 softdepend: [floodgate, Geyser-Spigot]
 
@@ -18,7 +18,7 @@ commands:
     usage: /ignorehard <player>
     permission: utilityplus.chat
   ignorelist:
-    description: List permanently ignored players
+    description: List soft and permanent ignores
     usage: /ignorelist [page]
     permission: utilityplus.chat
   ignoredeathmsgs:

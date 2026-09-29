@@ -6,7 +6,7 @@ UtilityPlus is a Paper and Folia plugin with chat controls, player utilities, se
 
 - Chat controls for global chat, private messages, player ignores, and death messages.
 - Clickable online player names in chat. Hover to see the message hint; click to put `/w <player>` in the chat input.
-- A paginated `/ignorelist` with clickable page controls and a shortcut to remove a permanent ignore. Each page lists nine players.
+- A paginated `/ignorelist` for soft and permanent ignores, with labels that can be clicked to remove the matching ignore type. Each page lists nine players.
 - Player-specific regional TPS in the tab list on Folia. Each player sees the TPS for the region they are currently in.
 - Tab-list placeholders for TPS, online players, ping, and server uptime.
 - Administrative tools for vanish, inventory and ender-chest inspection, offline teleport, gamemode, broadcast, and shutdown countdowns.
@@ -43,7 +43,7 @@ The plugin jar is written to `build/libs/UtilityPlus-<version>.jar`.
 |---|---|---|
 | `/ignore <player>` | Temporarily ignore an online player. | `utilityplus.chat` |
 | `/ignorehard <player>` | Permanently ignore an online player. | `utilityplus.chat` |
-| `/ignorelist [page]` | View permanent ignores, nine players per page. | `utilityplus.chat` |
+| `/ignorelist [page]` | View soft and permanent ignores, nine players per page. | `utilityplus.chat` |
 | `/ignoredeathmsgs <player>` | Toggle ignoring an online player's death messages. | `utilityplus.chat` |
 | `/togglechat` | Toggle global chat visibility. | `utilityplus.chat` |
 | `/toggleprivatemsgs` | Toggle private-message visibility. | `utilityplus.chat` |

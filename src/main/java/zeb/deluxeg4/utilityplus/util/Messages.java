@@ -65,4 +65,8 @@ public final class Messages {
     public static void send(CommandSender sender, String message) {
         sender.sendMessage(legacy(message));
     }
+
+    public static void sendUndecorated(CommandSender sender, String message) {
+        sender.sendMessage(LEGACY_AMPERSAND.deserialize(message));
+    }
 }
