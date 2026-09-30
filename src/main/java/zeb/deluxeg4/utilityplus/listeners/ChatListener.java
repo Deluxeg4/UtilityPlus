@@ -1,5 +1,6 @@
 package zeb.deluxeg4.utilityplus.listeners;
 
+import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -29,6 +30,12 @@ public class ChatListener implements Listener {
     public void onPlayerChat(AsyncChatEvent event) {
         Player sender = event.getPlayer();
         event.message(PlayerChatNames.decorate(highlightMessage(event.message())));
+        ChatRenderer originalRenderer = event.renderer();
+        event.renderer((source, displayName, message, viewer) -> originalRenderer.render(
+                source,
+                PlayerChatNames.decorate(displayName),
+                message,
+                viewer));
 
         if (chatManager.isGlobalMuted(sender.getUniqueId())) {
             event.setCancelled(true);

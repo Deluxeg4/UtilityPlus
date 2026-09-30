@@ -118,7 +118,7 @@ tab-list:
   footer:
     # - ""
     #- "  %server_tps_1_colored% &3tps - %server_online% players online - %player_ping% ping - &3%server_uptime% uptime "
-    - "  &8%tps%&8 tps — %server_online% players online — %player_ping% ping "
+    - "  &8%server_tps%&8 tps — %server_online% players online — %player_ping% ping "
     - ""
     #- "&7&odiscord: dsc.gg/2b2t-th"
     #- "&8&owebsite: 2b2t-th.org"
