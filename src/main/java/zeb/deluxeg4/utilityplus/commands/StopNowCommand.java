@@ -32,7 +32,7 @@ public class StopNowCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("server.stop")) {
-            Messages.send(sender, "&cYou don't have permission.");
+            Messages.send(sender, "<red>You don't have permission.");
             return true;
         }
 
@@ -42,7 +42,7 @@ public class StopNowCommand implements CommandExecutor {
         }
 
         if (args.length > 1) {
-            Messages.send(sender, "&cToo many arguments.");
+            Messages.send(sender, "<red>Too many arguments.");
             sendUsage(sender, label);
             return true;
         }
@@ -63,8 +63,8 @@ public class StopNowCommand implements CommandExecutor {
             }
             shutdownBy = sender.getName();
             shutdownAtMillis = System.currentTimeMillis();
-            broadcast("&cServer shutdown started now by &f" + shutdownBy
-                    + "&c at &f" + formatShutdownAt() + "&c.");
+            broadcast("<red>Server shutdown started now by <white>" + shutdownBy
+                    + "<red> at <white>" + formatShutdownAt() + "<red>.");
             shutdownServer();
             return true;
         }
@@ -72,7 +72,7 @@ public class StopNowCommand implements CommandExecutor {
         try {
             startCountdown(parseTime(sub), sender);
         } catch (IllegalArgumentException ex) {
-            Messages.send(sender, "&c" + ex.getMessage());
+            Messages.send(sender, "<red>" + ex.getMessage());
             sendUsage(sender, label);
         }
         return true;
@@ -80,42 +80,42 @@ public class StopNowCommand implements CommandExecutor {
 
     private void cancelCountdown(CommandSender sender) {
         if (countdownTask == null) {
-            Messages.send(sender, "&eThere is no active shutdown countdown.");
+            Messages.send(sender, "<yellow>There is no active shutdown countdown.");
             return;
         }
 
         countdownTask.cancel();
         countdownTask = null;
         secondsLeft = 0;
-        broadcast("&aServer shutdown scheduled for &f" + formatShutdownAt()
-                + "&a by &f" + shutdownBy
-                + "&a has been cancelled by &f" + sender.getName() + "&a.");
+        broadcast("<green>Server shutdown scheduled for <white>" + formatShutdownAt()
+                + "<green> by <white>" + shutdownBy
+                + "<green> has been cancelled by <white>" + sender.getName() + "<green>.");
         shutdownAtMillis = 0L;
         shutdownBy = null;
     }
 
     private void sendStatus(CommandSender sender) {
         if (countdownTask == null) {
-            Messages.send(sender, "&eThere is no active shutdown countdown.");
+            Messages.send(sender, "<yellow>There is no active shutdown countdown.");
             return;
         }
 
-        Messages.send(sender, "&eServer shutting down in &f" + formatTime(secondsLeft)
-                + "&e at &f" + formatShutdownAt()
-                + "&e. Requested by &f" + shutdownBy + "&e.");
+        Messages.send(sender, "<yellow>Server shutting down in <white>" + formatTime(secondsLeft)
+                + "<yellow> at <white>" + formatShutdownAt()
+                + "<yellow>. Requested by <white>" + shutdownBy + "<yellow>.");
     }
 
     private void startCountdown(int seconds, CommandSender sender) {
         if (countdownTask != null) {
             countdownTask.cancel();
-            broadcast("&eShutdown countdown reset by " + sender.getName() + ".");
+            broadcast("<yellow>Shutdown countdown reset by " + sender.getName() + ".");
         }
 
         secondsLeft = seconds;
         shutdownBy = sender.getName();
         shutdownAtMillis = System.currentTimeMillis() + seconds * 1000L;
-        broadcast("&cServer shutdown countdown started by &f" + shutdownBy
-                + "&c. Server will close at &f" + formatShutdownAt() + "&c.");
+        broadcast("<red>Server shutdown countdown started by <white>" + shutdownBy
+                + "<red>. Server will close at <white>" + formatShutdownAt() + "<red>.");
         broadcastCountdown(secondsLeft);
 
         countdownTask = plugin.getServer().getGlobalRegionScheduler().runAtFixedRate(
@@ -124,7 +124,7 @@ public class StopNowCommand implements CommandExecutor {
                     secondsLeft--;
 
                     if (secondsLeft <= 0) {
-                        broadcast("&cServer is closing now. Requested by &f" + shutdownBy + "&c.");
+                        broadcast("<red>Server is closing now. Requested by <white>" + shutdownBy + "<red>.");
                         task.cancel();
                         countdownTask = null;
                         shutdownServer();
@@ -149,9 +149,9 @@ public class StopNowCommand implements CommandExecutor {
     }
 
     private void broadcastCountdown(int seconds) {
-        broadcast("&cServer is shutting down in &f" + formatTime(seconds)
-                + "&c at &f" + formatShutdownAt()
-                + "&c. Requested by &f" + shutdownBy + "&c.");
+        broadcast("<red>Server is shutting down in <white>" + formatTime(seconds)
+                + "<red> at <white>" + formatShutdownAt()
+                + "<red>. Requested by <white>" + shutdownBy + "<red>.");
     }
 
     private int parseTime(String input) {
@@ -237,7 +237,7 @@ public class StopNowCommand implements CommandExecutor {
     }
 
     private void broadcast(String message) {
-        plugin.getServer().broadcast(Messages.legacy(message));
+        plugin.getServer().broadcast(Messages.parse(message));
     }
 
     private void shutdownServer() {
@@ -245,10 +245,10 @@ public class StopNowCommand implements CommandExecutor {
     }
 
     private void sendUsage(CommandSender sender, String label) {
-        Messages.send(sender, "&cUsage:");
-        Messages.send(sender, "&c  /" + label + " <time>   &7Start countdown. Examples: 30s, 5m, 1h, 1h30m");
-        Messages.send(sender, "&c  /" + label + " now      &7Shutdown immediately");
-        Messages.send(sender, "&c  /" + label + " cancel   &7Cancel active countdown");
-        Messages.send(sender, "&c  /" + label + " time     &7Show time remaining");
+        Messages.send(sender, "<red>Usage:");
+        Messages.send(sender, "<red>  /" + label + " <time>   <gray>Start countdown. Examples: 30s, 5m, 1h, 1h30m");
+        Messages.send(sender, "<red>  /" + label + " now      <gray>Shutdown immediately");
+        Messages.send(sender, "<red>  /" + label + " cancel   <gray>Cancel active countdown");
+        Messages.send(sender, "<red>  /" + label + " time     <gray>Show time remaining");
     }
 }

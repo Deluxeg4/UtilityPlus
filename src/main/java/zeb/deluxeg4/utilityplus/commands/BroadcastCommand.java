@@ -18,19 +18,19 @@ public class BroadcastCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission("utilityplus.broadcast")) {
-            Messages.send(sender, "&cYou don't have permission to use this command.");
+            Messages.send(sender, "<red>You don't have permission to use this command.");
             return true;
         }
 
         if (args.length < 1) {
-            Messages.send(sender, "&cUsage: /" + label + " <message>");
+            Messages.send(sender, "<red>Usage: /" + label + " <message>");
             return true;
         }
 
-        String prefix = plugin.getConfig().getString("broadcast.prefix", "&6&l[BROADCAST]&r ");
+        String prefix = plugin.getConfig().getString("broadcast.prefix", "<gold><bold>[BROADCAST]<reset> ");
         String message = String.join(" ", args);
 
-        PaperFoliaTasks.broadcast(plugin, Messages.legacy(prefix + message));
+        PaperFoliaTasks.broadcast(plugin, Messages.parse(prefix + message));
 
         return true;
     }

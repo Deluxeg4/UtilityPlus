@@ -1,7 +1,10 @@
 package zeb.deluxeg4.utilityplus.commands;
 
 import zeb.deluxeg4.utilityplus.UtilityPlus;
-import org.bukkit.ChatColor;
+import zeb.deluxeg4.utilityplus.util.Messages;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -29,6 +32,7 @@ import java.util.Set;
 
 public class OverclockCommand implements TabExecutor {
 
+    private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
     private static final Set<String> CURSE = Set.of("vanishing_curse", "binding_curse");
     private static final Set<String> BINARY_ENCHANTS = Set.of(
             "mending", "silk_touch", "infinity", "channeling", "multishot", "aqua_affinity"
@@ -91,39 +95,39 @@ public class OverclockCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("utilityplus.overclock")) {
-            sender.sendMessage("§cYou don't have permission!");
+            Messages.send(sender, "<red>You don't have permission!");
             return true;
         }
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cThis command can only be used by players.");
+            Messages.send(sender, "<red>This command can only be used by players.");
             return true;
         }
 
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item.getType().isAir()) {
-            player.sendMessage("§cHold an item in your main hand first.");
+            Messages.send(player, "<red>Hold an item in your main hand first.");
             return true;
         }
 
         if (args.length == 1 && args[0].equalsIgnoreCase("32k")) {
             apply32kToItem(item);
-            player.sendMessage("§aApplied 32k overclock to your item.");
+            Messages.send(player, "<green>Applied 32k overclock to your item.");
             return true;
         }
 
         if (args.length >= 2 && args[0].equalsIgnoreCase("name")) {
-            String name = ChatColor.translateAlternateColorCodes('&', String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+            String name = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
-                meta.setDisplayName(name);
+                meta.displayName(Messages.component(name));
                 item.setItemMeta(meta);
-                player.sendMessage("§aRenamed item to: §r" + name);
+                Messages.send(player, "<green>Renamed item to: <reset>" + name);
             }
             return true;
         }
 
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /overclock <enchant> <level> | /overclock 32k | /overclock name <name>");
+            Messages.send(player, "<red>Usage: /overclock \\<enchant> \\<level> | /overclock 32k | /overclock name \\<name>");
             return true;
         }
 
@@ -134,22 +138,22 @@ public class OverclockCommand implements TabExecutor {
         try {
             level = Integer.parseInt(levelInput);
         } catch (NumberFormatException e) {
-            player.sendMessage("§cInvalid level.");
+            Messages.send(player, "<red>Invalid level.");
             return true;
         }
 
         if (!relativeLevel && level < 1) {
-            player.sendMessage("§cLevel must be 1 or higher.");
+            Messages.send(player, "<red>Level must be 1 or higher.");
             return true;
         }
         if (relativeLevel && level == 0) {
-            player.sendMessage("§cRelative level cannot be 0.");
+            Messages.send(player, "<red>Relative level cannot be 0.");
             return true;
         }
 
         Enchantment enchant = getEnchant(enchName);
         if (enchant == null) {
-            player.sendMessage("§cUnknown enchantment: §e" + enchName);
+            Messages.send(player, "<red>Unknown enchantment: <yellow>" + enchName);
             return true;
         }
 
@@ -174,9 +178,9 @@ public class OverclockCommand implements TabExecutor {
         updateLore(item, real, order);
 
         if (newLevel <= 0) {
-            player.sendMessage("§aRemoved " + enchName + " from your item.");
+            Messages.send(player, "<green>Removed " + enchName + " from your item.");
         } else {
-            player.sendMessage("§a" + enchName + " level is now: §e" + newLevel);
+            Messages.send(player, "<green>" + enchName + " level is now: <yellow>" + newLevel);
         }
         return true;
     }
@@ -185,7 +189,7 @@ public class OverclockCommand implements TabExecutor {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
-        meta.setDisplayName("§b§oAlpha's Stacked 32k's");
+        meta.displayName(Messages.component("<aqua><italic>Alpha's Stacked 32k's"));
         meta.removeAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE);
 
         double baseDamage = item.getType().name().contains("NETHERITE") ? 8.0 : 7.0;
@@ -209,15 +213,15 @@ public class OverclockCommand implements TabExecutor {
         );
 
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        meta.setLore(List.of(
-                "§7Sharpness enchantment.level.32767",
-                "§7Knockback X",
-                "§7Fire Aspect enchantment.level.32767",
-                "§7Looting X",
-                "§7Sweeping Edge III",
-                "§7Unbreaking enchantment.level.32767",
-                "§7Mending",
-                "§cCurse of Vanishing"
+        meta.lore(List.of(
+                Component.text("Sharpness enchantment.level.32767", NamedTextColor.GRAY),
+                Component.text("Knockback X", NamedTextColor.GRAY),
+                Component.text("Fire Aspect enchantment.level.32767", NamedTextColor.GRAY),
+                Component.text("Looting X", NamedTextColor.GRAY),
+                Component.text("Sweeping Edge III", NamedTextColor.GRAY),
+                Component.text("Unbreaking enchantment.level.32767", NamedTextColor.GRAY),
+                Component.text("Mending", NamedTextColor.GRAY),
+                Component.text("Curse of Vanishing", NamedTextColor.RED)
         ));
         item.setItemMeta(meta);
 
@@ -238,10 +242,10 @@ public class OverclockCommand implements TabExecutor {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
-        List<String> newLore = new ArrayList<>();
-        if (meta.hasLore()) {
-            for (String line : Objects.requireNonNull(meta.getLore())) {
-                String clean = ChatColor.stripColor(line);
+        List<Component> newLore = new ArrayList<>();
+        if (meta.lore() != null) {
+            for (Component line : meta.lore()) {
+                String clean = PLAIN_TEXT.serialize(line);
                 boolean isEnchantLine = false;
                 if (clean.contains("enchantment.level.")) {
                     isEnchantLine = true;
@@ -261,18 +265,18 @@ public class OverclockCommand implements TabExecutor {
             if (!real.containsKey(key)) continue;
             int lvl = real.get(key);
             String name = VANILLA_NAME.getOrDefault(key, key);
-            String color = CURSE.contains(key) ? "§c" : "§7";
+            NamedTextColor color = CURSE.contains(key) ? NamedTextColor.RED : NamedTextColor.GRAY;
             boolean hideLevelOne = BINARY_ENCHANTS.contains(key) || CURSE.contains(key);
             if (lvl == 1 && hideLevelOne) {
-                newLore.add(color + name);
+                newLore.add(Component.text(name, color));
             } else if (lvl <= 10) {
-                newLore.add(color + name + " " + toRoman(lvl));
+                newLore.add(Component.text(name + " " + toRoman(lvl), color));
             } else {
-                newLore.add(color + name + " enchantment.level." + lvl);
+                newLore.add(Component.text(name + " enchantment.level." + lvl, color));
             }
         }
 
-        meta.setLore(newLore);
+        meta.lore(newLore);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(meta);
     }

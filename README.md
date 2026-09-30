@@ -121,12 +121,12 @@ The configuration file is `plugins/UtilityPlus/config.yml`. Run `/upreload` afte
 | `announcement.action-bar` | Repeating action-bar messages and timing. |
 | `messages` | Text for ignore commands, `/ignorelist`, bad-command feedback, and player-name hover/click behavior. |
 
-Message values support `&` color codes. The `messages` section supports `{player}`, `{page}`, and `{pages}` where applicable. Player-name settings include:
+Message values support MiniMessage tags such as `<gold>`, `<dark_aqua>`, and `<bold>`. Existing config files that use legacy `&` color codes are migrated to MiniMessage format at startup. The `messages` section supports `{player}`, `{page}`, and `{pages}` where applicable. Player-name settings include:
 
 ```yaml
 messages:
   player-name:
-    hover: "&6Message &3{player}"
+    hover: "<gold>Message <dark_aqua>{player}"
     suggest-command: "/w {player}"
 ```
 

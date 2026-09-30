@@ -146,7 +146,7 @@ public final class InventorySeeListener implements Listener {
     }
 
     private ItemStack incomingItem(InventoryClickEvent event, Player player) {
-        if (event.getAction() == InventoryAction.HOTBAR_SWAP || event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
+        if (event.getAction() == InventoryAction.HOTBAR_SWAP) {
             int hotbarButton = event.getHotbarButton();
             if (hotbarButton >= 0 && hotbarButton < 9) {
                 return player.getInventory().getItem(hotbarButton);

@@ -31,11 +31,11 @@ public class PingCommand implements CommandExecutor {
 
     private boolean handleSelfPing(CommandSender sender) {
         if (!sender.hasPermission("utilityplus.ping")) {
-            Messages.send(sender, "&cYou don't have permission to use this command.");
+            Messages.send(sender, "<red>You don't have permission to use this command.");
             return true;
         }
         if (!(sender instanceof Player player)) {
-            Messages.send(sender, "&cConsole must use /ping <player> or /pingall.");
+            Messages.send(sender, "<red>Console must use /ping <player> or /pingall.");
             return true;
         }
         sender.sendMessage(Component.text()
@@ -50,13 +50,13 @@ public class PingCommand implements CommandExecutor {
 
     private boolean handleTargetPing(CommandSender sender, String targetName) {
         if (!sender.hasPermission("utilityplus.ping.others")) {
-            Messages.send(sender, "&cYou don't have permission to view other players' ping.");
+            Messages.send(sender, "<red>You don't have permission to view other players' ping.");
             return true;
         }
 
         Player target = Bukkit.getPlayer(targetName);
         if (target == null) {
-            Messages.send(sender, "&cPlayer &e" + targetName + "&c is not online.");
+            Messages.send(sender, "<red>Player <yellow>" + targetName + "<red> is not online.");
             return true;
         }
 
@@ -73,7 +73,7 @@ public class PingCommand implements CommandExecutor {
 
     private boolean handlePingAll(CommandSender sender) {
         if (!sender.hasPermission("utilityplus.ping.others")) {
-            Messages.send(sender, "&cYou don't have permission to view all player pings.");
+            Messages.send(sender, "<red>You don't have permission to view all player pings.");
             return true;
         }
 
@@ -81,7 +81,7 @@ public class PingCommand implements CommandExecutor {
         players.sort(Comparator.comparingInt(Player::getPing));
 
         if (players.isEmpty()) {
-            Messages.send(sender, "&eNo players online.");
+            Messages.send(sender, "<yellow>No players online.");
             return true;
         }
 

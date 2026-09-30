@@ -74,7 +74,7 @@ public final class PaperFoliaTasks {
     }
 
     public static void send(Plugin plugin, Player player, String message) {
-        send(plugin, player, Messages.legacy(message));
+        send(plugin, player, Messages.parse(message));
     }
 
     public static void send(Plugin plugin, Player player, Component message) {
@@ -82,7 +82,7 @@ public final class PaperFoliaTasks {
     }
 
     public static void broadcast(Plugin plugin, String message) {
-        broadcast(plugin, Messages.legacy(message));
+        broadcast(plugin, Messages.parse(message));
     }
 
     public static void broadcast(Plugin plugin, Component message) {

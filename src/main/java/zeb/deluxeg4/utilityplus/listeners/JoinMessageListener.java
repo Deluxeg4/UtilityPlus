@@ -35,10 +35,10 @@ public class JoinMessageListener implements Listener {
             return;
         }
 
-        String message = plugin.getConfig().getString("join-message.message", "&3{player} joined the game");
+        String message = plugin.getConfig().getString("join-message.message", "<dark_aqua>{player} joined the game");
 
         if (plugin.getConfig().getBoolean("join-message.broadcast", true)) {
-            event.joinMessage(Messages.legacy(formatMessage(message, player)));
+            event.joinMessage(Messages.parse(formatMessage(message, player)));
         }
     }
 
@@ -48,8 +48,8 @@ public class JoinMessageListener implements Listener {
         boolean serverStopping = isServerStopping();
 
         if (serverStopping) {
-            String message = plugin.getConfig().getString("leave-message.message", "&3{player} left the game");
-            event.quitMessage(Messages.legacy(formatMessage(message, player)));
+            String message = plugin.getConfig().getString("leave-message.message", "<dark_aqua>{player} left the game");
+            event.quitMessage(Messages.parse(formatMessage(message, player)));
             return;
         }
 
@@ -61,10 +61,10 @@ public class JoinMessageListener implements Listener {
             return;
         }
 
-        String message = plugin.getConfig().getString("leave-message.message", "&e{player} left the game");
+        String message = plugin.getConfig().getString("leave-message.message", "<yellow>{player} left the game");
 
         if (plugin.getConfig().getBoolean("leave-message.broadcast", true)) {
-            event.quitMessage(Messages.legacy(formatMessage(message, player)));
+            event.quitMessage(Messages.parse(formatMessage(message, player)));
         }
     }
 
@@ -101,8 +101,8 @@ public class JoinMessageListener implements Listener {
         List<String> messages = plugin.getConfig().getStringList("bedrock-warning.message");
         if (messages.isEmpty()) {
             messages = List.of(
-                    "&62b2t-th is best played on Java Edition. The Bedrock Edition",
-                    "&6experience may not be optimal - 2b2t-th.org/bedrock"
+                    "<gold>2b2t-th is best played on Java Edition. The Bedrock Edition",
+                    "<gold>experience may not be optimal - 2b2t-th.org/bedrock"
             );
         }
 

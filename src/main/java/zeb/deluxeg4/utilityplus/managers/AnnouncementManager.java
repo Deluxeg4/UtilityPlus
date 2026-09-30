@@ -40,14 +40,14 @@ public class AnnouncementManager {
                 }
             }
             for (String configuredText : configuredTexts) {
-                texts.add(Messages.legacy(configuredText));
+                texts.add(Messages.parse(configuredText));
             }
         }
 
         coordinatesEnabled = plugin.getConfig().getBoolean("bedrock-coordinates.enabled", true);
         coordinateFormat = plugin.getConfig().getString(
                 "bedrock-coordinates.format",
-                "&6Pos: ({x}, {y}, {z})"
+                "<gold>Pos: ({x}, {y}, {z})"
         );
         if (texts.isEmpty() && !coordinatesEnabled) {
             return;
@@ -92,7 +92,7 @@ public class AnnouncementManager {
         Component coordinates = null;
         if (coordinatesEnabled && player.getName().startsWith(".")) {
             Location location = player.getLocation();
-            coordinates = Messages.legacy(coordinateFormat
+            coordinates = Messages.parse(coordinateFormat
                     .replace("{x}", String.valueOf(location.getBlockX()))
                     .replace("{y}", String.valueOf(location.getBlockY()))
                     .replace("{z}", String.valueOf(location.getBlockZ())));

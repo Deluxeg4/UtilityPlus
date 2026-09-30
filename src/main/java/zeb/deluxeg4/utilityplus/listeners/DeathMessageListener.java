@@ -55,7 +55,7 @@ public class DeathMessageListener implements Listener {
         }
 
         String originalMessage = deathMessageManager.getMessage(event, victim, killer, selfKillCommand);
-        String messageColor = color(plugin.getConfig().getString("death-message.message-color", "&c"));
+        String messageColor = color(plugin.getConfig().getString("death-message.message-color", "<red>"));
         String template = color(plugin.getConfig().getString("death-message.message", "{message}"));
         String killerName = killer != null ? killer.getName() : "";
 
@@ -92,7 +92,7 @@ public class DeathMessageListener implements Listener {
             }
             PaperFoliaTasks.send(plugin, player, message);
         }
-        Bukkit.getConsoleSender().sendMessage(Messages.legacy(message));
+        Bukkit.getConsoleSender().sendMessage(Messages.parse(message));
     }
 
     private void broadcastDeathMessage(PlayerDeathEvent event, Player victim, String message, Component itemComponent) {
@@ -100,7 +100,7 @@ public class DeathMessageListener implements Listener {
 
         String connector = ThreadLocalRandom.current().nextBoolean() ? " using " : " with ";
         Component component = Messages
-                .legacy(message + color(plugin.getConfig().getString("death-message.message-color", "&c")) + connector)
+                .parse(message + color(plugin.getConfig().getString("death-message.message-color", "<red>")) + connector)
                 .append(itemComponent);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -110,7 +110,7 @@ public class DeathMessageListener implements Listener {
             }
             PaperFoliaTasks.runForPlayer(plugin, player, () -> player.sendMessage(component));
         }
-        Bukkit.getConsoleSender().sendMessage(Messages.legacy(message + connector).append(itemComponent));
+        Bukkit.getConsoleSender().sendMessage(Messages.parse(message + connector).append(itemComponent));
     }
 
     private Component createSourceComponent(PlayerDeathEvent event, Player victim, Player killer) {
@@ -158,8 +158,8 @@ public class DeathMessageListener implements Listener {
             return message;
         }
 
-        String messageColor = color(plugin.getConfig().getString("death-message.message-color", "&c"));
-        String nameColor = color(plugin.getConfig().getString("death-message.name-color", "&b"));
+        String messageColor = color(plugin.getConfig().getString("death-message.message-color", "<red>"));
+        String nameColor = color(plugin.getConfig().getString("death-message.name-color", "<aqua>"));
 
         return message.replace(name, nameColor + name + messageColor);
     }
@@ -177,9 +177,9 @@ public class DeathMessageListener implements Listener {
 
         String weaponNameRaw = meta.displayName() != null ? PLAIN_TEXT.serialize(meta.displayName()) : meta.getDisplayName();
         String weaponNameStripped = weaponNameRaw;
-        String messageColor = color(plugin.getConfig().getString("death-message.message-color", "&c"));
+        String messageColor = color(plugin.getConfig().getString("death-message.message-color", "<red>"));
 
-        return message.replace(weaponNameRaw, "&6" + weaponNameStripped + messageColor);
+        return message.replace(weaponNameRaw, "<gold>" + weaponNameStripped + messageColor);
     }
 
     private String color(String value) {

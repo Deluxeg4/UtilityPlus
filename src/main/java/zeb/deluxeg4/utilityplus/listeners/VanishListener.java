@@ -35,7 +35,7 @@ public class VanishListener implements Listener {
         if (vanishCommand.isVanished(joiningPlayer.getUniqueId())) {
             vanishCommand.applyPersistentVanish(joiningPlayer);
             if (notify) {
-                Messages.send(joiningPlayer, "&7You are still vanished.");
+                Messages.send(joiningPlayer, "<gray>You are still vanished.");
             }
         }
     }

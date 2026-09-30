@@ -28,12 +28,12 @@ public class KillCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("utilityplus.kill")) {
-            Messages.send(sender, "&cYou don't have permission!");
+            Messages.send(sender, "<red>You don't have permission!");
             return true;
         }
 
         if (!(sender instanceof Player player)) {
-            Messages.send(sender, "&cOnly players can use this command.");
+            Messages.send(sender, "<red>Only players can use this command.");
             return true;
         }
 
@@ -45,7 +45,7 @@ public class KillCommand implements CommandExecutor {
         }
 
         pendingConfirmation.add(uuid);
-        Messages.send(player, "&6Type /kill again to confirm.");
+        Messages.send(player, "<gold>Type /kill again to confirm.");
         PaperFoliaTasks.runForPlayerDelayed(plugin, player, task -> pendingConfirmation.remove(uuid), 200L);
         return true;
     }

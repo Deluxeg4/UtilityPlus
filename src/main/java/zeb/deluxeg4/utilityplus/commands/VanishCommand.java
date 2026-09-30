@@ -34,18 +34,18 @@ public class VanishCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            Messages.send(sender, "&cThis command can only be used by players.");
+            Messages.send(sender, "<red>This command can only be used by players.");
             return true;
         }
 
         if (!player.hasPermission("utilityplus.vanish")) {
-            Messages.send(player, "&cYou don't have permission to use this command.");
+            Messages.send(player, "<red>You don't have permission to use this command.");
             return true;
         }
 
         boolean vanished = !isVanished(player.getUniqueId());
         setVanished(player, vanished);
-        Messages.send(player, vanished ? "&aYou are now &7vanished&a!" : "&aYou are now &evisible&a!");
+        Messages.send(player, vanished ? "<green>You are now <gray>vanished<green>!" : "<green>You are now <yellow>visible<green>!");
         return true;
     }
 

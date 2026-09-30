@@ -17,11 +17,11 @@ public class ReloadCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission("utilityplus.reload")) {
-            Messages.send(sender, "&cYou don't have permission!");
+            Messages.send(sender, "<red>You don't have permission!");
             return true;
         }
 
-        Messages.send(sender, "&eReloading UtilityPlus...");
+        Messages.send(sender, "<yellow>Reloading UtilityPlus...");
 
         plugin.getSpawnManager().saveData();
 
@@ -34,8 +34,8 @@ public class ReloadCommand implements CommandExecutor {
         plugin.getTabListManager().reload();
         plugin.getAnnouncementManager().reload();
 
-        Messages.send(sender, "&a&lUtilityPlus reloaded!");
-        Messages.send(sender, "&7config.yml &aOK  &7spawn &aOK  &7announcement &aOK");
+        Messages.send(sender, "<green><bold>UtilityPlus reloaded!");
+        Messages.send(sender, "<gray>config.yml <green>OK  <gray>spawn <green>OK  <gray>announcement <green>OK");
         return true;
     }
 }

@@ -42,7 +42,7 @@ unsafe-blocks:
 # -----------------------------------------------
 # Placeholders: {player} = player name, {displayname} = display name,
 # {world} = world name, {online} = online players count, {max} = max players
-# Use & for color codes (e.g., &a = green, &c = red, &l = bold, &e = yellow)
+# Use MiniMessage tags for formatting, e.g. <green>, <red>, <bold>, <yellow>.
 
 join-message:
   enabled: false
@@ -51,7 +51,7 @@ join-message:
   # Broadcast to all players
   broadcast: true
   # Message shown to everyone when player joins
-  message: "&3{player} joined the game"
+  message: "<dark_aqua>{player} joined the game"
 
 leave-message:
   enabled: false
@@ -60,7 +60,7 @@ leave-message:
   # Broadcast to all players
   broadcast: true
   # Message shown when player leaves
-  message: "&e{player} left the game"
+  message: "<yellow>{player} left the game"
 
 # -----------------------------------------------
 # Bedrock / Floodgate Join Warning
@@ -70,8 +70,8 @@ leave-message:
 bedrock-warning:
   enabled: true
   message:
-    - "&62b2t-th is best played on Java Edition. The Bedrock Edition"
-    - "&6experience may not be optimal - 2b2t-th.org/bedrock"
+    - "<gold>2b2t-th is best played on Java Edition. The Bedrock Edition"
+    - "<gold>experience may not be optimal - 2b2t-th.org/bedrock"
 
 # Enables Bedrock native upper-left coordinate display for Floodgate players.
 # Geyser must be installed on this server. If Geyser runs on a proxy, set
@@ -79,23 +79,23 @@ bedrock-warning:
 bedrock-coordinates:
   enabled: true
   # Placeholders: {x}, {y}, {z}
-  format: "&6Pos: ({x}, {y}, {z})"
+  format: "<gold>Pos: ({x}, {y}, {z})"
 
 # -----------------------------------------------
 # Custom Death Message Settings
 # -----------------------------------------------
 # Placeholders: {message} = original Minecraft death message,
 # {player} = dead player name, {killer} = killer name (if any)
-# Use & for color codes.
+# Use MiniMessage tags for color and formatting.
 
 death-message:
   enabled: true
   # Keep the original Minecraft death message text, but recolor it below.
   message: "{message}"
   # Main message color
-  message-color: "&4"
+  message-color: "<dark_red>"
   # Player/killer name color
-  name-color: "&3"
+  name-color: "<dark_aqua>"
 
 # -----------------------------------------------
 # Tab List Header/Footer Settings
@@ -109,19 +109,19 @@ tab-list:
   update-interval: 1
   header:
     # - ""
-    - "&7&l2BUILDERS&7&l2TOOLS"
-    #- "&6&oThailand"
-    - "&4&oT&f&oh&1&oa&f&oi&4&ol&4&oa&4&ond"
+    - "<gray><bold>2BUILDERS<gray><bold>2TOOLS"
+    #- "<gold><italic>Thailand"
+    - "<dark_red><italic>T<white><italic>h<dark_blue><italic>a<white><italic>i<dark_red><italic>l<dark_red><italic>a<dark_red><italic>nd"
     - ""
-    - "&6Server updated to 26.3"
+    - "<gold>Server updated to 26.3"
     - ""
   footer:
     # - ""
-    #- "  %server_tps_1_colored% &3tps - %server_online% players online - %player_ping% ping - &3%server_uptime% uptime "
-    - "  &8%server_tps%&8 tps — %server_online% players online — %player_ping% ping "
+    #- "  %server_tps_1_colored% <dark_aqua>tps - %server_online% players online - %player_ping% ping - <dark_aqua>%server_uptime% uptime "
+    - "  <dark_gray>%server_tps%<dark_gray> tps — %server_online% players online — %player_ping% ping "
     - ""
-    #- "&7&odiscord: dsc.gg/2b2t-th"
-    #- "&8&owebsite: 2b2t-th.org"
+    #- "<gray><italic>discord: dsc.gg/2b2t-th"
+    #- "<dark_gray><italic>website: 2b2t-th.org"
     #- ""
 
 # -----------------------------------------------
@@ -129,7 +129,7 @@ tab-list:
 # -----------------------------------------------
 broadcast:
   # Prefix shown before broadcast messages
-  prefix: "&6&l[Alert]&r "
+  prefix: "<gold><bold>[Alert]<reset> "
 
 # -----------------------------------------------
 # Announcement Settings
@@ -143,45 +143,45 @@ announcement:
     hide-duration: 300
     # The text to show in the Action Bar
     text:
-      - "&62b2t-th.org"
-      - "&6dsc.gg/2b2t-th"
+      - "<gold>2b2t-th.org"
+      - "<gold>dsc.gg/2b2t-th"
 
 # -----------------------------------------------
 # Command and chat messages
 # Placeholders: {player}, {page}, {pages}
 # -----------------------------------------------
 messages:
-  bad-command: "&4Bad command. Type /help for all commands."
-  player-not-online: "&6This player is not online."
+  bad-command: "<dark_red>Bad command. Type /help for all commands."
+  player-not-online: "<gold>This player is not online."
   ignore:
-    self: "&6You can not ignore yourself."
-    normal-enabled: "&6Now ignoring &3{player}"
-    normal-disabled: "&6No longer ignoring &3{player}."
-    hard-enabled: "&6Permanently ignoring {player}. This is saved in &4/ignorelist."
-    hard-disabled: "&6No longer permanently ignoring &3{player}"
-    death-enabled: "&6You will no longer see this players death messages."
-    death-disabled: "&6You will now see this players death messages."
+    self: "<gold>You can not ignore yourself."
+    normal-enabled: "<gold>Now ignoring <dark_aqua>{player}"
+    normal-disabled: "<gold>No longer ignoring <dark_aqua>{player}."
+    hard-enabled: "<gold>Permanently ignoring {player}. This is saved in <dark_red>/ignorelist."
+    hard-disabled: "<gold>No longer permanently ignoring <dark_aqua>{player}"
+    death-enabled: "<gold>You will no longer see this players death messages."
+    death-disabled: "<gold>You will now see this players death messages."
   ignore-list:
-    empty: "&6No players ignored."
-    invalid-page-singular: "&cInvalid page argument, there are only {pages} page."
-    invalid-page-plural: "&cInvalid page argument, there are only {pages} pages."
-    title: "&6[ Ignored players &7"
-    previous-active: "&b[<]"
-    previous-inactive: "&7[<]"
-    previous-hover: "&6Click to go to the previous page"
-    page-counter: " &6{page}/{pages} "
-    next-active: "&b[>]"
-    next-inactive: "&7[>]"
-    next-hover: "&6Click to go to the next page"
-    suffix: " &6]"
-    player-row-prefix: "&3{player} &7["
-    hard-label: "&6hard"
-    soft-label: "&6soft"
-    player-row-suffix: "&7]"
-    hard-hover: "&6Click to remove the permanent ignore"
-    soft-hover: "&6Click to remove the soft ignore"
+    empty: "<gold>No players ignored."
+    invalid-page-singular: "<red>Invalid page argument, there are only {pages} page."
+    invalid-page-plural: "<red>Invalid page argument, there are only {pages} pages."
+    title: "<gold>[ Ignored players <gray>"
+    previous-active: "<aqua>[<]"
+    previous-inactive: "<gray>[<]"
+    previous-hover: "<gold>Click to go to the previous page"
+    page-counter: " <gold>{page}/{pages} "
+    next-active: "<aqua>[>]"
+    next-inactive: "<gray>[>]"
+    next-hover: "<gold>Click to go to the next page"
+    suffix: " <gold>]"
+    player-row-prefix: "<dark_aqua>{player} <gray>["
+    hard-label: "<gold>hard"
+    soft-label: "<gold>soft"
+    player-row-suffix: "<gray>]"
+    hard-hover: "<gold>Click to remove the permanent ignore"
+    soft-hover: "<gold>Click to remove the soft ignore"
   player-name:
-    hover: "&6Message &3{player}"
+    hover: "<gold>Message <dark_aqua>{player}"
     suggest-command: "/w {player}"
 
 # -----------------------------------------------
