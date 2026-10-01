@@ -14,8 +14,8 @@ UtilityPlus is a Paper and Folia plugin with chat controls, player utilities, se
 
 ## Requirements
 
-- Java 21 or newer
-- Paper 1.21.1 or a compatible Paper fork; Folia is supported
+- Java 25 or newer
+- Paper 26.2 or a compatible Paper fork; Folia is supported
 - Floodgate and Geyser are optional and only needed for their Bedrock features
 
 ## Install
