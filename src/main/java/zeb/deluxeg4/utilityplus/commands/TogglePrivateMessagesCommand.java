@@ -19,12 +19,12 @@ public class TogglePrivateMessagesCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            Messages.send(sender, "&cThis command can only be used by players.");
+            Messages.send(sender, "<red>This command can only be used by players.");
             return true;
         }
 
         boolean disabled = chatManager.togglePmMuted(player.getUniqueId());
-        Messages.send(player, disabled ? "&6Private messages hidden." : "&6Private messages unhidden.");
+        Messages.send(player, disabled ? "<gold>Private messages hidden." : "<gold>Private messages unhidden.");
         return true;
     }
 }

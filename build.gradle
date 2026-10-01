@@ -12,10 +12,10 @@ description = 'UtilityPlus - chat controls, player utilities, server information
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 repositories {
@@ -27,12 +27,12 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle('1.21.1-R0.1-SNAPSHOT')
+    paperweight.paperDevBundle('26.2.build.+')
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.release = 21
+    options.release = 25
 }
 
 tasks.withType(ProcessResources).configureEach {
@@ -51,7 +51,7 @@ shadowJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-def mcVersion = providers.gradleProperty("minecraftVersion").orElse("1.21.11").get()
+def mcVersion = providers.gradleProperty("minecraftVersion").orElse("26.2").get()
 def paperRunDir = file("run-paper")
 def foliaRunDir = file("run-folia")
 

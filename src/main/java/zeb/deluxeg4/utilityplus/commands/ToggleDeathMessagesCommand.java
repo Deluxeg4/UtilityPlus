@@ -21,14 +21,14 @@ public class ToggleDeathMessagesCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            Messages.send(sender, "&cThis command can only be used by players.");
+            Messages.send(sender, "<red>This command can only be used by players.");
             return true;
         }
 
         boolean disabled = hard
                 ? chatManager.toggleHardDeathMessages(player.getUniqueId())
                 : chatManager.toggleDeathMessages(player.getUniqueId());
-        Messages.send(player, disabled ? "&6Death messages hidden." : "&6Death messages unhidden.");
+        Messages.send(player, disabled ? "<gold>Death messages hidden." : "<gold>Death messages unhidden.");
         return true;
     }
 }

@@ -58,7 +58,7 @@ public class TPSMoreCommand implements CommandExecutor {
             final String[] args
     ) {
         if (!sender.hasPermission("utilityplus.tpsmore")) {
-            Messages.send(sender, "&cYou don't have permission to use this command.");
+            Messages.send(sender, "<red>You don't have permission to use this command.");
             return true;
         }
 
@@ -88,16 +88,16 @@ public class TPSMoreCommand implements CommandExecutor {
         final Consumer<String> output = message ->
                 PaperFoliaTasks.runForSender(plugin, sender, () -> Messages.send(sender, message));
 
-        output.accept("&8&l--- &b&lTPS More Info &8&l---");
+        output.accept("<dark_gray><bold>--- <aqua><bold>TPS More Info <dark_gray><bold>---");
         sendServerImplementation(output);
         sendWorldBreakdown(output, worldSnapshots);
         sendTickDurations(output);
         sendSystemInfo(output);
-        output.accept("&6Summary:");
-        output.accept(" &7Total Players: &e" + totalPlayers + "&7 / &e" + maxPlayers);
-        output.accept(" &7Total Resources: &e" + totalEntities(worldSnapshots)
-                + " &7Entities | &e" + totalChunks(worldSnapshots) + " &7Chunks");
-        output.accept("&8&l-------------------------");
+        output.accept("<gold>Summary:");
+        output.accept(" <gray>Total Players: <yellow>" + totalPlayers + "<gray> / <yellow>" + maxPlayers);
+        output.accept(" <gray>Total Resources: <yellow>" + totalEntities(worldSnapshots)
+                + " <gray>Entities | <yellow>" + totalChunks(worldSnapshots) + " <gray>Chunks");
+        output.accept("<dark_gray><bold>-------------------------");
     }
 
     private void sendServerImplementation(final Consumer<String> output) {
@@ -105,35 +105,35 @@ public class TPSMoreCommand implements CommandExecutor {
         final String implementationVersion = Bukkit.getServer().getVersion();
 
         if (folia) {
-            output.accept("&7Server Implementation: &eFolia (Regionalized) &7- " + implementationVersion);
+            output.accept("<gray>Server Implementation: <yellow>Folia (Regionalized) <gray>- " + implementationVersion);
             return;
         }
 
         final double[] tps = Bukkit.getTPS();
-        output.accept("&7Server Implementation: &e" + implementationName + " &7- " + implementationVersion);
-        output.accept("&7Global TPS (1m, 5m, 15m): "
-                + formatTps(tps[0]) + "&7, "
-                + formatTps(tps[1]) + "&7, "
+        output.accept("<gray>Server Implementation: <yellow>" + implementationName + " <gray>- " + implementationVersion);
+        output.accept("<gray>Global TPS (1m, 5m, 15m): "
+                + formatTps(tps[0]) + "<gray>, "
+                + formatTps(tps[1]) + "<gray>, "
                 + formatTps(tps[2]));
     }
 
     private void sendWorldBreakdown(final Consumer<String> output, final List<WorldSnapshot> worldSnapshots) {
-        output.accept("&6Worlds Info:");
+        output.accept("<gold>Worlds Info:");
         for (final WorldSnapshot snapshot : worldSnapshots) {
-            output.accept(" &b&n" + snapshot.world.getName());
+            output.accept(" <aqua><underlined>" + snapshot.world.getName());
             if (folia) {
                 sendFoliaRegionStats(output, snapshot);
             }
-            output.accept("  &7Entities: &e" + snapshot.entityCount
-                    + " &7| Chunks: &e" + snapshot.chunks.length
-                    + " &7| Players: &e" + snapshot.playerCount);
+            output.accept("  <gray>Entities: <yellow>" + snapshot.entityCount
+                    + " <gray>| Chunks: <yellow>" + snapshot.chunks.length
+                    + " <gray>| Players: <yellow>" + snapshot.playerCount);
         }
     }
 
     private void sendFoliaRegionStats(final Consumer<String> output, final WorldSnapshot snapshot) {
         final List<Double> worldTps = getRegionTpsForWorld(snapshot.world, snapshot.chunks);
         if (worldTps.isEmpty()) {
-            output.accept("  &7Regional TPS: &cNo active regions");
+            output.accept("  <gray>Regional TPS: <red>No active regions");
             return;
         }
 
@@ -142,20 +142,20 @@ public class TPSMoreCommand implements CommandExecutor {
         final double median = worldTps.get(worldTps.size() / 2);
         final double highest = worldTps.get(worldTps.size() - 1);
 
-        output.accept("  &7Regional TPS (low/med/high): "
-                + formatTps(lowest) + " &7/ "
-                + formatTps(median) + " &7/ "
+        output.accept("  <gray>Regional TPS (low/med/high): "
+                + formatTps(lowest) + " <gray>/ "
+                + formatTps(median) + " <gray>/ "
                 + formatTps(highest));
-        output.accept("  &7Active Regions: &e" + worldTps.size());
+        output.accept("  <gray>Active Regions: <yellow>" + worldTps.size());
     }
 
     private void sendTickDurations(final Consumer<String> output) {
         final TickMonitor.Stats tenSecondStats = tickMonitor.getStats(TEN_SECOND_TICKS);
         final TickMonitor.Stats oneMinuteStats = tickMonitor.getStats(ONE_MINUTE_TICKS);
 
-        output.accept("&6Tick Durations (min/med/95%ile/max ms)");
-        output.accept(" &7last 10s: " + formatStats(tenSecondStats));
-        output.accept(" &7last 1m:  " + formatStats(oneMinuteStats));
+        output.accept("<gold>Tick Durations (min/med/95%ile/max ms)");
+        output.accept(" <gray>last 10s: " + formatStats(tenSecondStats));
+        output.accept(" <gray>last 1m:  " + formatStats(oneMinuteStats));
     }
 
     private void sendSystemInfo(final Consumer<String> output) {
@@ -167,17 +167,17 @@ public class TPSMoreCommand implements CommandExecutor {
         final long usedMemoryMb = heapUsage.getUsed() / 1024L / 1024L;
         final long maxMemoryMb = heapUsage.getMax() / 1024L / 1024L;
 
-        output.accept("&6System Info:");
-        output.accept(" &7Uptime: &e" + formatUptime());
-        output.accept(" &7CPU Usage (10s, 1m, 15m):");
-        output.accept("  &7System:  &e" + formatCpu(tenSecondCpu.system())
-                + "%&7, &e" + formatCpu(oneMinuteCpu.system())
-                + "%&7, &e" + formatCpu(fifteenMinuteCpu.system()) + "%");
-        output.accept("  &7Process: &e" + formatCpu(tenSecondCpu.process())
-                + "%&7, &e" + formatCpu(oneMinuteCpu.process())
-                + "%&7, &e" + formatCpu(fifteenMinuteCpu.process()) + "%");
-        output.accept(" &7Disk Usage: " + getDiskUsage());
-        output.accept(" &7Memory: &e" + usedMemoryMb + " MB &7/ &e" + maxMemoryMb + " MB");
+        output.accept("<gold>System Info:");
+        output.accept(" <gray>Uptime: <yellow>" + formatUptime());
+        output.accept(" <gray>CPU Usage (10s, 1m, 15m):");
+        output.accept("  <gray>System:  <yellow>" + formatCpu(tenSecondCpu.system())
+                + "%<gray>, <yellow>" + formatCpu(oneMinuteCpu.system())
+                + "%<gray>, <yellow>" + formatCpu(fifteenMinuteCpu.system()) + "%");
+        output.accept("  <gray>Process: <yellow>" + formatCpu(tenSecondCpu.process())
+                + "%<gray>, <yellow>" + formatCpu(oneMinuteCpu.process())
+                + "%<gray>, <yellow>" + formatCpu(fifteenMinuteCpu.process()) + "%");
+        output.accept(" <gray>Disk Usage: " + getDiskUsage());
+        output.accept(" <gray>Memory: <yellow>" + usedMemoryMb + " MB <gray>/ <yellow>" + maxMemoryMb + " MB");
     }
 
     private List<Double> getRegionTpsForWorld(final World world, final Chunk[] chunks) {
@@ -274,7 +274,7 @@ public class TPSMoreCommand implements CommandExecutor {
     private String formatStats(final TickMonitor.Stats stats) {
         return String.format(
                 Locale.US,
-                "%s &7/ %s &7/ %s &7/ %s",
+                "%s <gray>/ %s <gray>/ %s <gray>/ %s",
                 formatMspt(stats.min()),
                 formatMspt(stats.median()),
                 formatMspt(stats.p95()),
@@ -284,7 +284,7 @@ public class TPSMoreCommand implements CommandExecutor {
 
     private String formatCpu(final double cpu) {
         if (cpu < 0.0D) {
-            return "&cN/A";
+            return "<red>N/A";
         }
         return String.format(Locale.US, "%.1f", cpu);
     }
@@ -294,14 +294,14 @@ public class TPSMoreCommand implements CommandExecutor {
         final long total = root.getTotalSpace();
         final long free = root.getFreeSpace();
         if (total == 0L) {
-            return "&cN/A";
+            return "<red>N/A";
         }
 
         final long used = total - free;
         final double percent = (used * 100.0D) / total;
         return String.format(
                 Locale.US,
-                "&e%d GB &7/ &e%d GB &7(%.1f%%)",
+                "<yellow>%d GB <gray>/ <yellow>%d GB <gray>(%.1f%%)",
                 used / 1024L / 1024L / 1024L,
                 total / 1024L / 1024L / 1024L,
                 percent
@@ -331,12 +331,12 @@ public class TPSMoreCommand implements CommandExecutor {
 
     private String formatTps(final double tps) {
         final double clamped = Math.max(MIN_TPS, Math.min(MAX_TPS, tps));
-        final String color = clamped >= 18.0D ? "&a" : clamped >= 15.0D ? "&e" : "&c";
+        final String color = clamped >= 18.0D ? "<green>" : clamped >= 15.0D ? "<yellow>" : "<red>";
         return color + String.format(Locale.US, "%.2f", clamped);
     }
 
     private String formatMspt(final double mspt) {
-        final String color = mspt <= 40.0D ? "&a" : mspt <= 50.0D ? "&e" : "&c";
+        final String color = mspt <= 40.0D ? "<green>" : mspt <= 50.0D ? "<yellow>" : "<red>";
         return color + String.format(Locale.US, "%.1f", mspt);
     }
 

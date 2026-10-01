@@ -142,7 +142,7 @@ public class TabListManager {
             return;
         }
 
-        player.sendPlayerListHeaderAndFooter(Messages.legacy(header), Messages.legacy(footer));
+        player.sendPlayerListHeaderAndFooter(Messages.parse(header), Messages.parse(footer));
         lastSent.put(player.getUniqueId(), new String[] {header, footer});
     }
 
@@ -218,7 +218,7 @@ public class TabListManager {
     }
 
     private String formatTps(final double tps) {
-        final String color = tps < 12.0D ? "&c" : "";
+        final String color = tps < 12.0D ? "<red>" : "";
         return color + String.format(Locale.US, "%.2f", Math.min(tps, DEFAULT_TPS));
     }
 

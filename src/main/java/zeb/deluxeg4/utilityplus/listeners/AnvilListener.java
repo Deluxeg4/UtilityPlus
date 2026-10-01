@@ -41,7 +41,7 @@ public class AnvilListener implements Listener {
             return;
         }
 
-        meta.displayName(Messages.legacy(translatedName));
+        meta.displayName(Messages.parse(translatedName));
         result.setItemMeta(meta);
         event.setResult(result);
     }
@@ -66,7 +66,7 @@ public class AnvilListener implements Listener {
             return;
         }
 
-        meta.displayName(Messages.legacy(translate(PLAIN_TEXT.serialize(meta.displayName()))));
+        meta.displayName(Messages.parse(translate(PLAIN_TEXT.serialize(meta.displayName()))));
         result.setItemMeta(meta);
     }
 

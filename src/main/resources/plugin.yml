@@ -1,7 +1,7 @@
 name: UtilityPlus
 version: ${version}
 main: zeb.deluxeg4.utilityplus.UtilityPlus
-api-version: '1.21'
+api-version: '26.2'
 folia-supported: true
 description: Chat controls, player utilities, server information, and admin tools
 author: CADS

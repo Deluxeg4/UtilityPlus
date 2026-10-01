@@ -19,12 +19,12 @@ public class ToggleChatCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            Messages.send(sender, "&cThis command can only be used by players.");
+            Messages.send(sender, "<red>This command can only be used by players.");
             return true;
         }
 
         boolean disabled = chatManager.toggleGlobalMuted(player.getUniqueId());
-        Messages.send(player, disabled ? "&6Chat messages hidden." : "&6Chat messages unhidden.");
+        Messages.send(player, disabled ? "<gold>Chat messages hidden." : "<gold>Chat messages unhidden.");
         return true;
     }
 }

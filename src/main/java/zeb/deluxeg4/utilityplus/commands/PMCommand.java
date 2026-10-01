@@ -23,7 +23,7 @@ public class PMCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player from)) {
-            Messages.send(sender, "&cThis command can only be used by players!");
+            Messages.send(sender, "<red>This command can only be used by players!");
             return true;
         }
 
@@ -41,7 +41,7 @@ public class PMCommand implements CommandExecutor {
 
         Player to = from.getServer().getPlayer(args[0]);
         if (to == null || !to.isOnline()) {
-            Messages.send(from, Messages.config("player-not-online", "&6This player is not online."));
+            Messages.send(from, Messages.config("player-not-online", "<gold>This player is not online."));
             return true;
         }
 
@@ -63,7 +63,7 @@ public class PMCommand implements CommandExecutor {
 
         Player to = from.getServer().getPlayer(lastSenderUUID);
         if (to == null || !to.isOnline()) {
-            Messages.send(from, "&cThat player is no longer online.");
+            Messages.send(from, "<red>That player is no longer online.");
             return true;
         }
 
@@ -94,13 +94,13 @@ public class PMCommand implements CommandExecutor {
     }
 
     private void sendBadCommand(Player player) {
-        Messages.send(player, Messages.config("bad-command", "&4Bad command. Type /help for all commands."));
+        Messages.send(player, Messages.config("bad-command", "<dark_red>Bad command. Type /help for all commands."));
     }
 
     private void sendPM(Player from, Player to, String message) {
 
-        String toSender = "&dto " + to.getName() + ": " + message;
-        String toTarget = "&d" + from.getName() + " whispers: " + message;
+        String toSender = "<light_purple>to " + to.getName() + ": " + message;
+        String toTarget = "<light_purple>" + from.getName() + " whispers: " + message;
         UtilityPlus plugin = JavaPlugin.getPlugin(UtilityPlus.class);
 
         Messages.send(from, toSender);

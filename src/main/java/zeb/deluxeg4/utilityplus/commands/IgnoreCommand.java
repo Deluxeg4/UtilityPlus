@@ -26,12 +26,12 @@ public class IgnoreCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            Messages.send(sender, "&cThis command can only be used by players.");
+            Messages.send(sender, "<red>This command can only be used by players.");
             return true;
         }
 
         if (args.length < 1) {
-            Messages.send(player, Messages.config("bad-command", "&4Bad command. Type /help for all commands."));
+            Messages.send(player, Messages.config("bad-command", "<dark_red>Bad command. Type /help for all commands."));
             return true;
         }
 
@@ -53,15 +53,15 @@ public class IgnoreCommand implements CommandExecutor {
                     .findFirst()
                     .orElse(null);
             if (targetName == null) {
-                Messages.send(player, Messages.config("player-not-online", "&6This player is not online."));
+                Messages.send(player, Messages.config("player-not-online", "<gold>This player is not online."));
                 return true;
             }
         } else {
-            Messages.send(player, Messages.config("player-not-online", "&6This player is not online."));
+            Messages.send(player, Messages.config("player-not-online", "<gold>This player is not online."));
             return true;
         }
         if (targetName.equalsIgnoreCase(player.getName())) {
-            Messages.send(player, Messages.config("ignore.self", "&6You can not ignore yourself."));
+            Messages.send(player, Messages.config("ignore.self", "<gold>You can not ignore yourself."));
             return true;
         }
 
@@ -73,15 +73,15 @@ public class IgnoreCommand implements CommandExecutor {
 
         if (deathMessages) {
             sendConfigured(player, enabled ? "ignore.death-enabled" : "ignore.death-disabled",
-                    enabled ? "&6You will no longer see this players death messages."
-                            : "&6You will now see this players death messages.", targetName);
+                    enabled ? "<gold>You will no longer see this players death messages."
+                            : "<gold>You will now see this players death messages.", targetName);
         } else if (hard) {
             sendConfigured(player, enabled ? "ignore.hard-enabled" : "ignore.hard-disabled",
-                    enabled ? "&6Permanently ignoring &3{player}.&6 This is saved in &8/ignorelist."
-                            : "&6No longer permanently ignoring &3{player}.", targetName, true);
+                    enabled ? "<gold>Permanently ignoring <dark_aqua>{player}.<gold> This is saved in <dark_gray>/ignorelist."
+                            : "<gold>No longer permanently ignoring <dark_aqua>{player}.", targetName, true);
         } else {
             sendConfigured(player, enabled ? "ignore.normal-enabled" : "ignore.normal-disabled",
-                    enabled ? "&6Now ignoring &3{player}" : "&6No longer ignoring &3{player}.", targetName, true);
+                    enabled ? "<gold>Now ignoring <dark_aqua>{player}" : "<gold>No longer ignoring <dark_aqua>{player}.", targetName, true);
         }
         return true;
     }

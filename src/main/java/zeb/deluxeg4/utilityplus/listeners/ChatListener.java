@@ -39,7 +39,7 @@ public class ChatListener implements Listener {
 
         if (chatManager.isGlobalMuted(sender.getUniqueId())) {
             event.setCancelled(true);
-            Messages.send(sender, "&6You have toggled off chat");
+            Messages.send(sender, "<gold>You have toggled off chat");
             return;
         }
 
