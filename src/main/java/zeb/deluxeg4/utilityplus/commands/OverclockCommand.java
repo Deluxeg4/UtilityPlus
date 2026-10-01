@@ -190,7 +190,7 @@ public class OverclockCommand implements TabExecutor {
         if (meta == null) return;
 
         meta.displayName(Messages.component("<aqua><italic>Alpha's Stacked 32k's"));
-        meta.removeAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE);
+        meta.removeAttributeModifier(Attribute.ATTACK_DAMAGE);
 
         double baseDamage = item.getType().name().contains("NETHERITE") ? 8.0 : 7.0;
         AttributeModifier modifier = new AttributeModifier(
@@ -199,7 +199,7 @@ public class OverclockCommand implements TabExecutor {
                 AttributeModifier.Operation.ADD_NUMBER,
                 EquipmentSlotGroup.MAINHAND
         );
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
 
         List<String> forcedOrder = Arrays.asList(
                 "sharpness", "knockback", "fire_aspect", "looting",
